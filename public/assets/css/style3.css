@@ -1,0 +1,1571 @@
+@import url('https://fonts.googleapis.com/css?family=Prata&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Muli&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Great+Vibes&display=swap');
+@import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css");
+@import url('https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Philosopher&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Italianno&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Questrial&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Philosopher&display=swap');
+
+#float-sample {
+    position: fixed;
+    background: #000;
+    width: 100%;
+    height: 50px;
+    top: 0px;
+    z-index: 999;
+    color: #fff;
+    padding: 15px;
+    font-size: 17px;
+    letter-spacing: 2px;
+}
+
+body {
+    margin: 0;
+    font-family: 'Muli', sans-serif;
+    font-size: 14px;
+    font-size: normal;
+    font-smooth: always;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    background: #fff;
+}
+
+/* AUDIO */
+#btn-audio {
+    position: fixed;
+    right: 15px;
+    bottom: 25px;
+    display: flex;
+    align-items: center;
+    z-index: 999;
+}
+
+#click-btn {
+    z-index: 100;
+    border: none;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#playPausebtn {
+    width: 35px;
+}
+
+/* POPUP ASLI*/
+#modal {
+    height: 100%;
+    text-align: center;
+    z-index: 1000;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    transition: 1s;
+}
+
+#modal .popup {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    padding-top: 70px;
+    overflow: hidden;
+}
+
+.video-background {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 1;
+    object-fit: cover;
+}
+
+#modal .popup-content {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    color: #FFF;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+#modal .popup-content h1 {
+    font-family: 'Prata', serif;
+    font-size: 11px;
+    letter-spacing: 4px;
+    line-height: 20px;
+}
+
+#modal .popup-content h2 {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 56px;
+    letter-spacing: 1px;
+    line-height: 50px;
+    margin: 10px 0;
+}
+
+#modal .popup-content .h3 {
+    font-family: 'Prata', serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    line-height: 10px;
+}
+
+#modal .popup-content .nama-tamu {
+    text-transform: uppercase;
+    font-size: 17px;
+    line-height: 10px;
+    margin: 10px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+#modal .popup button {
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    width: 190px;
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+#modal .popup button:hover {
+    background: #FFF;
+    transform: scale(1.05);
+}
+
+/* Overlay untuk meningkatkan keterbacaan teks */
+.popup::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+
+/* HEADER */
+#header {
+    position: absolute;
+    display: block;
+    z-index: 99;
+    color: #FFF;
+    width: 100%;
+    text-align: center;
+    bottom: 0;
+    margin-bottom: 200px;
+}
+
+#header h1 {
+    font-family: 'Prata', serif;
+    font-size: 11px;
+    letter-spacing: 4px;
+    line-height: 20px;
+    text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.61);
+}
+
+#header h2 {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 56px;
+    letter-spacing: 1px;
+    line-height: 50px;
+    text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.61);
+}
+
+#header h3 {
+    font-family: 'Prata', serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    line-height: 15px;
+    text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.61);
+}
+
+.bg-wave1 {
+    position: relative;
+    z-index: 99;
+    bottom: 0;
+    margin-top: -50px;
+    margin-bottom: -50px;
+}
+
+.gradient {
+    position: absolute;
+    width: 100%;
+    height: 30%;
+    overflow-x: hidden;
+    z-index: 98;
+    bottom: 40px;
+}
+
+/* SLIDE HEADER */
+.carousel-fade .carousel-inner .item {
+    opacity: 0;
+    transition-property: opacity;
+    overflow: hidden;
+}
+
+.item.active img {
+    transition: transform 7000ms linear 0s;
+    transform: scale(1.03, 1.03);
+}
+
+.carousel-fade .carousel-inner .active {
+    opacity: 1;
+}
+
+.carousel-fade .carousel-inner .active.left,
+.carousel-fade .carousel-inner .active.right {
+    left: 0;
+    opacity: 0;
+    z-index: 1;
+}
+
+.carousel-fade .carousel-inner .next.left,
+.carousel-fade .carousel-inner .prev.right {
+    opacity: 1;
+}
+
+.carousel-fade .carousel-control {
+    z-index: 2;
+}
+
+.carousel-inner img {
+    width: 100%;
+}
+
+@media all and (transform-3d), (-webkit-transform-3d) {
+    .carousel-fade .carousel-inner > .item.next, .carousel-fade .carousel-inner > .item.active.right {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+
+    .carousel-fade .carousel-inner > .item.prev, .carousel-fade .carousel-inner > .item.active.left {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+
+    .carousel-fade .carousel-inner > .item.next.left, .carousel-fade .carousel-inner > .item.prev.right, .carousel-fade .carousel-inner > .item.active {
+        opacity: 1;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+/* PENGANTAR/PENUTUP */
+#pengantar {
+    letter-spacing: 1px;
+    color: #817a75;
+    padding: 0px 20px;
+}
+
+#pengantar img {
+    padding: 20px 0px;
+}
+
+#penutup {
+    letter-spacing: 1px;
+    color: #817a75;
+}
+
+#penutup img {
+    padding: 20px 0px;
+}
+
+/*QUOTE */
+#quote {
+    margin: 0px auto;
+    font-size: 35px;
+    font-family: 'Italianno', cursive;
+    line-height: 30px;
+    padding: 25px;
+}
+
+#quote .box {
+    padding: 30px;
+    border-radius: 10px;
+    background: rgb(238, 238, 238);
+    background: linear-gradient(0deg, rgba(238, 238, 238, 1) 21%, rgba(255, 255, 255, 1) 100%);
+}
+
+#quote h2 {
+    font-size: 16px;
+    letter-spacing: 1px;
+    font-family: 'Questrial', sans-serif;
+    line-height: 27px;
+    padding-top: 10px;
+}
+
+#quote h3 {
+    font-size: 14px;
+    letter-spacing: 1px;
+    font-family: 'Questrial', sans-serif;
+}
+
+/* SANG MEMPELAI */
+#tentang-pasangan {
+    color: #565656;
+    padding: 25px 0 10px 0;
+    position: relative;
+    z-index: 77;
+}
+
+#tentang-pasangan h2 {
+    font-size: 25px;
+    font-family: 'Philosopher', sans-serif;
+}
+
+#tentang-pasangan p {
+    margin-bottom: 20px;
+    color: #817a75;
+    font-size: 16px;
+}
+
+#tentang-pasangan .fa-instagram {
+    font-size: 30px;
+    color: #565656;
+    padding: 7px;
+}
+
+#tentang-pasangan .fa-facebook-f {
+    font-size: 26px;
+    color: #565656;
+    padding: 7px;
+}
+
+#tentang-pasangan .fa-heart-o {
+    margin: 3px;
+    color: red;
+    font-size: 15px;
+}
+
+#tentang-pasangan .hand {
+    padding: 20px;
+}
+
+/* Flip Container Styles */
+.flip-container {
+    perspective: 1000px;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.flipper {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+
+.flipper.flipped {
+    transform: rotateY(180deg);
+}
+
+.flip-container:hover .flipper {
+    transform: rotateY(180deg);
+}
+
+.front, .back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.front {
+    z-index: 2;
+    transform: rotateY(0deg);
+}
+
+.back {
+    transform: rotateY(180deg);
+}
+
+/* Wrapper untuk gambar - lingkaran sempurna */
+.image-wrapper {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: solid 1px #f26161;
+    padding: 7px;
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+/* Gambar memenuhi lingkaran sempurna */
+.profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    border-radius: 50%;
+    display: block;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .flipper {
+        width: 220px;
+        height: 220px;
+    }
+}
+
+@media (max-width: 576px) {
+    .flipper {
+        width: 200px;
+        height: 200px;
+    }
+}
+
+.tittle-section {
+    font-weight: bold;
+    font-size: 27px;
+    text-align: center;
+    color: #565656;
+    padding-bottom: 15px;
+    letter-spacing: 2px;
+    padding-top: 10px;
+    font-family: 'Quicksand', sans-serif;
+}
+
+.tittle-section2 {
+    width: 50px;
+    height: 2px;
+    background: #ffd8d8;
+    border-radius: 1px;
+    margin: auto;
+    bottom: 0;
+}
+
+/* INFO ACARA */
+#acara {
+    color: #000;
+    background: url("../images/gallery/bg-acara.jpg") no-repeat;
+    background-position: top center;
+    padding: 25px 20px;
+}
+
+#acara p {
+    line-height: 30px;
+    padding: 10px 0px;
+}
+
+#acara .box {
+    font-family: 'Muli', sans-serif;
+    font-size: 16px;
+    border-radius: 20px;
+    background: -moz-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.99) 75%, rgba(255, 255, 255, 1) 76%);
+    background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.99) 75%, rgba(255, 255, 255, 1) 76%);
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.99) 75%, rgba(255, 255, 255, 1) 76%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ffffff', endColorstr='#ffffff', GradientType=0);
+}
+
+#acara .btn-map {
+    font-size: 15px;
+    background: #f26161;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+}
+
+#acara .btn-map:hover {
+    text-decoration: none;
+    background: #fff;
+    color: #f26161;
+    border: solid 1px #f26161;
+}
+
+#acara .btn-protkes {
+    font-size: 15px;
+    padding: 9px 27px;
+    border-radius: 20px;
+    margin-top: 15px;
+    width: 220px;
+    margin: 0px auto;
+    background: #fff;
+    color: #f26161;
+    border: solid 1px #f26161;
+}
+
+#covid {
+    line-height: 25px;
+    letter-spacing: 1px;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+/* COUNTDOWN TIMER - IMPROVED dengan integrasi CSS existing */
+.countdown.show {
+    text-align: center;
+    margin: 30px 0px;
+    padding: 0;
+    font-size: 40px;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+.countdown.show h2 {
+    font-size: 32px;
+    font-family: 'Pinyon Script', cursive;
+    color: #f26161;
+    margin-bottom: 25px;
+    font-weight: normal;
+}
+
+.countdown.show .running, .running {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-flow: wrap;
+    flex-flow: wrap;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.countdown.show .running timer, .running timer {
+    font-size: 50px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    line-height: 1;
+    color: #000;
+    align-items: center;
+}
+
+.countdown.show .running timer .days,
+.running timer .days,
+.countdown.show .running timer .hours,
+.running timer .hours,
+.countdown.show .running timer .minutes,
+.running timer .minutes,
+.countdown.show .running timer .seconds,
+.running timer .seconds {
+    width: 80px;
+    text-align: center;
+    margin: 0 5px;
+    background: linear-gradient(135deg, #f26161, #e44d26);
+    color: white;
+    padding: 15px 5px;
+    border-radius: 12px;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(242, 97, 97, 0.3);
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.countdown.show .running timer .separator {
+    color: #f26161;
+    font-weight: bold;
+    margin: 0 5px;
+    font-size: 40px;
+    display: flex;
+    align-items: center;
+    height: 80px;
+}
+
+/* Labels untuk countdown */
+.countdown .labels {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-top: 10px;
+}
+
+.countdown .labels span {
+    font-size: 14px;
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    width: 80px;
+    text-align: center;
+}
+
+/* Responsive Design untuk Countdown */
+@media (max-width: 1200px) {
+    #acara .box {
+        max-width: 700px;
+        padding: 35px 25px;
+    }
+}
+
+@media (max-width: 992px) {
+    #acara .box {
+        max-width: 600px;
+        padding: 30px 20px;
+    }
+
+    #acara p {
+        font-size: 16px;
+        line-height: 30px;
+    }
+
+    .countdown.show .running timer, .running timer {
+        font-size: 45px;
+    }
+
+    .countdown.show .running timer .days,
+    .running timer .days,
+    .countdown.show .running timer .hours,
+    .running timer .hours,
+    .countdown.show .running timer .minutes,
+    .running timer .minutes,
+    .countdown.show .running timer .seconds,
+    .running timer .seconds {
+        width: 70px;
+        min-height: 70px;
+        margin: 0 4px;
+    }
+
+    .countdown.show .running timer .separator {
+        font-size: 35px;
+        height: 70px;
+    }
+
+    .countdown .labels span {
+        width: 70px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 768px) {
+    #acara {
+        padding: 15px;
+    }
+
+    #acara .box {
+        padding: 25px 20px;
+    }
+
+    #acara p {
+        font-size: 15px;
+        line-height: 28px;
+        padding: 15px 0;
+    }
+
+    .countdown.show {
+        margin: 25px 0px;
+    }
+
+    .countdown.show h2 {
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .countdown.show .running timer, .running timer {
+        font-size: 35px;
+    }
+
+    .countdown.show .running timer .days,
+    .running timer .days,
+    .countdown.show .running timer .hours,
+    .running timer .hours,
+    .countdown.show .running timer .minutes,
+    .running timer .minutes,
+    .countdown.show .running timer .seconds,
+    .running timer .seconds {
+        width: 60px;
+        min-height: 60px;
+        margin: 0 3px;
+        padding: 12px 3px;
+        border-radius: 10px;
+    }
+
+    .countdown.show .running timer .separator {
+        font-size: 28px;
+        height: 60px;
+        margin: 0 3px;
+    }
+
+    .countdown .labels {
+        gap: 22px;
+    }
+
+    .countdown .labels span {
+        width: 60px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    #acara {
+        padding: 10px;
+    }
+
+    #acara .box {
+        padding: 20px 15px;
+        border-radius: 15px;
+    }
+
+    .countdown.show {
+        margin: 20px 0px;
+    }
+
+    .countdown.show h2 {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    .countdown.show .running timer, .running timer {
+        font-size: 28px;
+    }
+
+    .countdown.show .running timer .days,
+    .running timer .days,
+    .countdown.show .running timer .hours,
+    .running timer .hours,
+    .countdown.show .running timer .minutes,
+    .running timer .minutes,
+    .countdown.show .running timer .seconds,
+    .running timer .seconds {
+        width: 50px;
+        min-height: 50px;
+        margin: 0 2px;
+        padding: 10px 2px;
+        border-radius: 8px;
+    }
+
+    .countdown.show .running timer .separator {
+        font-size: 22px;
+        height: 50px;
+        margin: 0 2px;
+    }
+
+    .countdown .labels {
+        gap: 18px;
+    }
+
+    .countdown .labels span {
+        width: 50px;
+        font-size: 11px;
+    }
+}
+
+/* Untuk very large screens */
+@media (min-width: 1400px) {
+    #acara .box {
+        max-width: 800px;
+        padding: 50px 40px;
+    }
+
+    #acara p {
+        font-size: 20px;
+        line-height: 40px;
+    }
+
+    .countdown.show .running timer, .running timer {
+        font-size: 60px;
+    }
+
+    .countdown.show .running timer .days,
+    .running timer .days,
+    .countdown.show .running timer .hours,
+    .running timer .hours,
+    .countdown.show .running timer .minutes,
+    .running timer .minutes,
+    .countdown.show .running timer .seconds,
+    .running timer .seconds {
+        width: 100px;
+        min-height: 100px;
+        margin: 0 8px;
+    }
+
+    .countdown.show .running timer .separator {
+        font-size: 50px;
+        height: 100px;
+    }
+
+    .countdown .labels span {
+        width: 100px;
+        font-size: 16px;
+    }
+}
+
+
+/* GIFT */
+#gift {
+    margin: 0px auto;
+    padding: 15px;
+    font-size: 15px;
+    letter-spacing: 1px;
+}
+
+#gift .btn {
+    font-size: 15px;
+    background: #f26161;
+    color: #fff;
+    padding: 7px 23px;
+    border-radius: 20px;
+}
+
+#gift .h2 {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 15px;
+}
+
+#covid2 {
+    font-family: 'Poppins', sans-serif;
+    line-height: 25px;
+    letter-spacing: 1px;
+    margin-top: 20px;
+    font-size: 15px;
+    color: #000;
+}
+
+#gift .button-gift {
+    padding: 7px 23px;
+    border: #cccccc solid 1px;
+    background: #e1e1e1;
+    border-radius: 20px;
+}
+
+#gift button:focus {
+    background-color: #FFF4AE;
+}
+
+#gift button:active {
+    background-color: #FFF4AE;
+}
+
+/*!* RSVP - NEW*!*/
+/*#konfirmasi {*/
+/*    color: #000;*/
+/*    background: url("../images/gallery/bg-acara-2.jpg") no-repeat;*/
+/*    background-position: top center;*/
+/*    padding: 20px 15px 0px 15px;*/
+/*    letter-spacing: 1px;*/
+/*    border-radius: 10px;*/
+/*    border: 2px solid #ECB4B5;*/
+/*    margin: 20px;*/
+/*}*/
+
+/*#konfirmasi label {*/
+/*    padding: 10px 0px 7px 0px;*/
+/*}*/
+
+/*#konfirmasi button {*/
+/*    width: 100%;*/
+/*    background: #f26161;*/
+/*    color: #fff;*/
+/*    margin: 10px 0px;*/
+/*    padding: 7px;*/
+/*    border: none;*/
+/*    letter-spacing: 2px;*/
+/*}*/
+
+/*#konfirmasi .back {*/
+/*    margin: 0px auto;*/
+/*    padding: 0px 15px;*/
+/*}*/
+
+/*#konfirmasi .btn-back {*/
+/*    background: #000;*/
+/*    color: #fff;*/
+/*    border-radius: 4px;*/
+/*    font-size: 14px;*/
+/*}*/
+
+/*.form-group {*/
+/*    margin-bottom: 5px;*/
+/*}*/
+
+/*.form-group .has-error em.help-block {*/
+/*    font-size: 12px;*/
+/*    color: #ff0000;*/
+/*    margin-bottom: 0px;*/
+/*}*/
+
+/* RSVP - CENTERED PERFECTLY */
+#konfirmasi {
+    color: #000;
+    background: url("../images/gallery/bg-rsvp.jpg") no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Overlay untuk background */
+#konfirmasi::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}
+
+/* Container utama untuk centering */
+.konfirmasi-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Wrapper untuk box */
+.konfirmasi-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.konfirmasi-box {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 50px 45px;
+    box-shadow:
+        0 25px 50px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.3);
+    border: 2px solid #ECB4B5;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    opacity: 85%;
+    transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.konfirmasi-box:hover {
+    transform: translateY(-5px);
+    box-shadow:
+        0 35px 60px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+/* Form Title */
+.form-title {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 36px;
+    color: #f26161;
+    margin-bottom: 12px;
+    font-weight: normal;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.form-subtitle {
+    color: #666;
+    font-size: 17px;
+    margin-bottom: 0;
+    line-height: 1.6;
+    font-weight: 400;
+    text-align: center;
+}
+
+/* Form Groups */
+.form-group-row {
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.form-group-row .col-12 {
+    padding: 0;
+    width: 100%;
+}
+
+/* Form Controls */
+.custom-input,
+.custom-select,
+.custom-textarea {
+    border: 2px solid #e9ecef;
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-size: 17px;
+    transition: all 0.3s ease;
+    background: #fff;
+    width: 100%;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.custom-input:focus,
+.custom-select:focus,
+.custom-textarea:focus {
+    border-color: #f26161;
+    box-shadow: 0 0 0 0.3rem rgba(242, 97, 97, 0.2);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+.custom-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 18px center;
+    background-size: 18px;
+    padding-right: 50px;
+    cursor: pointer;
+}
+
+.custom-textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.5;
+}
+
+/* Character Counter */
+.char-counter {
+    text-align: right;
+    font-size: 13px;
+    color: #666;
+    margin-top: 8px;
+    font-weight: 500;
+}
+
+#char-count {
+    font-weight: bold;
+    color: #f26161;
+}
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    background: #e44d26;
+    color: #FFFFFF;
+    border-radius: 14px;
+    padding: 16px 24px;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.btn-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Desktop Large (1441px and above) */
+@media (min-width: 1441px) {
+    .konfirmasi-box {
+        max-width: 520px;
+        padding: 55px 50px;
+    }
+
+    .form-title {
+        font-size: 38px;
+    }
+
+    .form-subtitle {
+        font-size: 18px;
+    }
+}
+
+/* Laptop (1024px - 1440px) */
+@media (min-width: 1024px) and (max-width: 1440px) {
+    .konfirmasi-box {
+        max-width: 460px;
+        padding: 45px 40px;
+    }
+
+    .form-title {
+        font-size: 34px;
+    }
+
+    .form-subtitle {
+        font-size: 16px;
+    }
+}
+
+/* Tablet (768px - 1023px) */
+@media (max-width: 1023px) {
+    .konfirmasi-container {
+        padding: 40px 30px;
+    }
+
+    .konfirmasi-box {
+        max-width: 440px;
+        padding: 40px 35px;
+        border-radius: 20px;
+    }
+
+    .form-title {
+        font-size: 32px;
+    }
+
+    .form-subtitle {
+        font-size: 16px;
+    }
+
+    .custom-input,
+    .custom-select,
+    .custom-textarea {
+        padding: 13px 16px;
+        font-size: 16px;
+    }
+
+    .btn-submit {
+        padding: 15px 22px;
+        font-size: 16px;
+    }
+}
+
+/* Mobile Large (576px - 767px) */
+@media (max-width: 767px) {
+    .konfirmasi-container {
+        padding: 30px 20px;
+    }
+
+    .konfirmasi-box {
+        max-width: 400px;
+        padding: 35px 30px;
+        border-radius: 18px;
+    }
+
+    .form-title {
+        font-size: 28px;
+    }
+
+    .form-subtitle {
+        font-size: 15px;
+    }
+
+    .custom-input,
+    .custom-select,
+    .custom-textarea {
+        padding: 12px 15px;
+        font-size: 16px;
+    }
+
+    .btn-submit {
+        padding: 14px 20px;
+        font-size: 16px;
+    }
+
+    .form-group-row {
+        margin-bottom: 20px;
+    }
+}
+
+/* Mobile Small (375px - 575px) */
+@media (max-width: 575px) {
+    .konfirmasi-container {
+        padding: 20px 15px;
+    }
+
+    .konfirmasi-box {
+        max-width: 100%;
+        padding: 30px 25px;
+        border-radius: 16px;
+        margin: 0 10px;
+    }
+
+    .form-title {
+        font-size: 26px;
+    }
+
+    .form-subtitle {
+        font-size: 14px;
+    }
+
+    .custom-input,
+    .custom-select,
+    .custom-textarea {
+        padding: 11px 14px;
+        font-size: 15px;
+        border-radius: 12px;
+    }
+
+    .btn-submit {
+        padding: 13px 18px;
+        font-size: 15px;
+        border-radius: 12px;
+    }
+
+    .form-group-row {
+        margin-bottom: 18px;
+    }
+}
+
+/* Very Small Mobile (under 375px) */
+@media (max-width: 374px) {
+    .konfirmasi-container {
+        padding: 15px 10px;
+    }
+
+    .konfirmasi-box {
+        padding: 25px 20px;
+        border-radius: 14px;
+    }
+
+    .form-title {
+        font-size: 24px;
+    }
+
+    .form-subtitle {
+        font-size: 13px;
+    }
+
+    .custom-input,
+    .custom-select,
+    .custom-textarea {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+
+    .btn-submit {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+}
+
+/* Utility Classes */
+.d-none {
+    display: none !important;
+}
+
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+/* KOMENTAR - NEW*/
+#komentar {
+    margin: 0px auto;
+    padding: 5px;
+}
+
+#komentar .komentar-box {
+}
+
+#komentar .grid {
+    border-bottom: #D6D6D6 dotted 1px;;
+    margin-bottom: 20px;
+}
+
+#komentar h2 {
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 15px;
+    margin-bottom: 5px;
+}
+
+#komentar h4 {
+    font-size: 14px;
+    font-style: italic;
+}
+
+#komentar h5 {
+    font-size: 11px;
+    color: #A8A8A8;
+    line-height: 10px;
+}
+
+/* GALLERY - NEW*/
+.masonry img {
+    width: 100%;
+}
+
+.masonry {
+    column-count: 3;
+    column-gap: 7px;
+    padding: 5px;
+}
+
+.masonry .galley {
+    display: inline-block;
+    margin-bottom: 7px;
+    width: 100%;
+}
+
+.masonry .border {
+    border-radius: 5px;
+}
+
+@media (max-width: 1199px) {
+    .masonry {
+        column-count: 3;
+    }
+}
+
+@media (max-width: 991px) {
+    .masonry {
+        column-count: 2;
+    }
+}
+
+@media (max-width: 767px) {
+    .masonry {
+        column-count: 2;
+    }
+}
+
+/* FOOTER */
+#footer-top {
+    width: 100%;
+    height: 350px;
+    position: relative;
+    bottom: 0px;
+}
+
+#footer-wave {
+    background-image: url(../images/gallery/bg-footer.jpg);
+    background-position: center;
+    background-size: cover;
+    height: 525px;
+    position: relative;
+    z-index: 89;
+}
+
+#footer {
+    background: #000;
+    position: relative;
+    width: 100%;
+    height: 400px;
+    color: #FFF;
+    font-family: 'Questrial', sans-serif;
+}
+
+.bg-wave2 {
+    position: relative;
+    z-index: 99;
+}
+
+#footer h1 {
+    padding-top: 50px;
+    font-family: 'Pinyon Script', cursive;
+    font-size: 25px;
+    letter-spacing: 1px;
+    line-height: 40px;
+    position: relative;
+    z-index: 100;
+}
+
+#footer .art {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 35px;
+    letter-spacing: 1px;
+    line-height: 20px
+}
+
+#footer h2 {
+    font-size: 13px;
+    margin-bottom: 70px;
+    font-family: 'Prata', serif;
+    letter-spacing: 2px;
+}
+
+#footer h3 {
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+#footer h3 a {
+    text-decoration: none;
+    color: #ffc000;
+}
+
+#footer .social a {
+    background: #fff;
+}
+
+#footer .social a i {
+    color: #000;
+}
+
+#footer a > img {
+    width: 100px;
+}
+
+#footer .social {
+    display: block;
+}
+
+#footer .social a {
+    padding: 10px 15px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 2px;
+}
+
+
+@media screen and (max-width: 768px) {
+    #header {
+        margin-bottom: 100px;
+    }
+
+    .bg-wave1 {
+        margin-top: -50px;
+        margin-bottom: 0px;
+    }
+
+    .bg-wave2 {
+        position: relative;
+        z-index: 99;
+    }
+
+    #footer-top {
+        height: 250px;
+    }
+
+    #footer-wave {
+        height: 290px;
+        background-position: center;
+        background-size: cover;
+    }
+
+    #quote {
+    }
+
+}
+
+@media screen and (max-width: 480px) {
+    .container2 {
+        padding-left: 0px;
+        padding-top: 105px;
+        z-index: 3;
+    }
+
+    .container2 .content2::before {
+        left: 25px;
+        top: -10px;
+        border: medium solid white;
+        border-width: 0 10px 10px 10px;
+        border-color: transparent transparent #fee2e4 transparent;
+    }
+
+    .bg-wave1 {
+        margin-top: -50px;
+        margin-bottom: 0px;
+    }
+
+    #quote {
+    }
+}
+
+@media (max-width: 480px) {
+    .countdown.show .running timer, .running timer {
+        font-size: 40px;
+    }
+
+    .countdown.show .running timer .days, .running timer .days, .countdown.show .running timer .hours, .running timer .hours, .countdown.show .running timer .minutes, .running timer .minutes,
+    .countdown.show .running timer .seconds, .running timer .seconds {
+        width: 49px;
+    }
+}
+
+.countdown.show .running .labels, running .labels {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    font-size: 15px;
+}
+
+.countdown.show .running .labels span, .running .labels span {
+    width: 69px;
+    text-align: center;
+    margin: 0px 2px;
+}
+
+@media (max-width: 480px) {
+    .countdown.show .running .labels span, .running .labels span {
+        width: 69px;
+    }
+}
+
+.countdown.show .running .break, .running .break {
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
+    height: 0;
+    padding: 5px;
+}
+
+.countdown.show .ended, .ended {
+    display: none;
+    -ms-flex-flow: wrap;
+    flex-flow: wrap;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+.countdown.show .ended .break, .ended .break {
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
+    height: 0;
+}
