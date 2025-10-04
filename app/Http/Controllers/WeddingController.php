@@ -8,26 +8,42 @@ use Illuminate\Http\Request;
 
 class WeddingController extends Controller
 {
-    public function show($guest_code = null)
+    public function show(Request $request, $guest = null)
     {
-        $guest = null;
+        $guestData = null;
 
-        if ($guest_code) {
-            $guest = Guest::where('guest_code', $guest_code)->first();
+        // Jika ada parameter guest (untuk route /p/{guest} atau /r/{guest})
+        if ($guest) {
+            $guestData = Guest::where('guest_code', $guest)->first();
+        }
 
-            if ($guest && !$guest->is_opened) {
-                $guest->update(['is_opened' => true]);
+        // Jika tidak ada guest dari parameter, cek dari query string
+        if (!$guestData && $request->has('to')) {
+            $guestName = $request->get('to');
+
+            // Cari guest berdasarkan nama
+            $guestData = Guest::where('name', 'like', '%' . $guestName . '%')->first();
+
+            if (!$guestData) {
+                $guestData = new Guest([
+                    'name' => $guestName,
+                    'guest_code' => 'temp_' . uniqid(),
+                    'max_guests' => 2
+                ]);
             }
+        }
+
+        if (!$guestData) {
+            $guestData = new Guest([
+                'name' => 'Tamu Undangan',
+                'guest_code' => 'default',
+                'max_guests' => 2
+            ]);
         }
 
         $messages = Message::orderBy('created_at', 'desc')->get();
 
-        $namaTamu = request()->get('to');
-        if ($namaTamu && !$guest) {
-            $guest = (object) ['name' => $namaTamu];
-        }
-
-        return view('wedding.invitation', compact('guest', 'messages'));
+        return view('wedding.invitation', compact('guestData', 'messages'));
     }
 
     public function storeMessage(Request $request)

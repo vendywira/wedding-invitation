@@ -130,7 +130,7 @@
 </div>
 
 <!-- Popup Modal -->
-@if(isset($guest) && $guest)
+@if(isset($guestData) && $guestData)
 <div id="modal" style="opacity: 1; top: 0;">
     <section class="popup">
         <!-- Video Background -->
@@ -144,7 +144,7 @@
             <span class="h3">12 / 11 / 25</span><br><br><br><br><br><br><br><br><br><br><br><br>
             <div class="yth">
                 Kepada Yth Bapak/Ibu/Saudara/i:<br>
-                <div class="nama-tamu">{{ $guest->name ?? request()->get('to', 'Tamu Undangan') }}</div>
+                <div class="nama-tamu">{{$guestData->name ?? request()->get('to', 'Tamu Undangan') }}</div>
                 <button id="hidePlay" onclick="hidePlay()">
                     <i class="fas fa-envelope-open-text" aria-hidden="true"></i> Buka Undangan
                 </button>
@@ -337,7 +337,7 @@
 
 <div class="container">
     <div class="masonry">
-        @for($i = 1; $i <= 5; $i++)
+        @for($i = 1; $i <= 14; $i++)
         <div class="galley" data-aos="zoom-in">
             <a class="image-popup" href="{{ asset('assets/images/gallery/gal-' . $i . '.jpg') }}">
                 <img src="{{ asset('assets/images/gallery/gal-' . $i . '.jpg') }}" class="img-responsive border">
@@ -422,7 +422,7 @@
                     <div class="form-group-row">
                         <div class="col-12">
                             <input type="text" class="form-control custom-input" name="name" id="nama-fm" placeholder="Nama Lengkap" required
-                                   value="{{ $guest->name ?? request()->get('to', '') }}">
+                                   value="{{ $guestData->name ?? request()->get('to') }}">
                         </div>
                     </div>
 
