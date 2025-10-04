@@ -248,8 +248,6 @@
                         Bapak drh. I Made Sunastra dengan Ibu Triwik Susanti<br><br>
                         <i class="fa fa-map-marker-alt" aria-hidden="true"></i> Br. Dinas Sudimara Kaja, Ds. Sudimara,
                         Kec. Tabanan, Kab. Tabanan</p>
-                    <a href="https://www.instagram.com/gustiVendya/"><i class="fab fa-2x fa-instagram"
-                                                                        aria-hidden="true"></i></a>
                 </div>
             </div>
 
@@ -274,8 +272,6 @@
                     <p>Putri kedua dari pasangan<br>
                         Bapak Hery Nainggolan dengan Ibu Timak Br Sianturi<br><br>
                         <i class="fa fa-map-marker-alt" aria-hidden="true"></i> Cipayung, Jakarta Timur, DKI Jakarta</p>
-                    <a href="https://www.instagram.com/Margarethrnt_/"><i class="fab fa-2x fa-instagram"
-                                                                          aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
