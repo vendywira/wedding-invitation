@@ -133,10 +133,21 @@
 @if(isset($guestData) && $guestData)
 <div id="modal" style="opacity: 1; top: 0;">
     <section class="popup">
-        <!-- Video Background -->
-        <video autoplay muted loop id="popupVideo" class="video-background">
-            <source src="{{ asset('assets/videos/wedding-bg.mp4') }}" type="video/mp4">
-        </video>
+        <!-- Video Background dengan fallback untuk iOS -->
+        <div class="video-container">
+            <video autoplay muted loop playsinline id="popupVideo" class="video-background" preload="auto" webkit-playsinline>
+                <source src="{{ asset('assets/videos/wedding-bg.mp4') }}" type="video/mp4">
+                <!-- Fallback image jika video tidak bisa diputar -->
+                <img src="{{ asset('assets/images/gallery/gal-2.jpg') }}" alt="Wedding Background" class="fallback-image">
+            </video>
+            <!-- Fallback button untuk iOS -->
+            <div class="ios-play-overlay" id="iosPlayOverlay" style="display: none;">
+                <button class="ios-play-btn" onclick="playVideoOnIOS()">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Tap to Play Video</span>
+                </button>
+            </div>
+        </div>
 
         <div class="popup-content" style="margin-top: -60px;">
             <h1>THE WEDDING OF</h1>
@@ -153,6 +164,7 @@
     </section>
 </div>
 @endif
+
 
 <!-- Rest of your HTML content remains the same -->
 <section id="intro"></section>
@@ -706,6 +718,68 @@
         alert("Nomor rekening berhasil disalin!");
     }
 
+    function isIOS() {
+        return [
+                'iPad Simulator',
+                'iPhone Simulator',
+                'iPod Simulator',
+                'iPad',
+                'iPhone',
+                'iPod'
+            ].includes(navigator.platform) ||
+            (navigator.userAgent.includes("Mac") && "ontouchend" in document) ||
+            /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    }
+
+    // Function untuk play video di iOS
+    function playVideoOnIOS() {
+        const video = document.getElementById('popupVideo');
+        const overlay = document.getElementById('iosPlayOverlay');
+
+        // Coba play video
+        video.play().then(() => {
+            console.log('Video played successfully on iOS');
+            // Jika berhasil, sembunyikan overlay
+            overlay.classList.remove('show');
+            overlay.classList.add('hidden');
+            video.style.display = 'block';
+        }).catch(error => {
+            console.log('Video play failed on iOS:', error);
+            // Fallback ke image
+            video.style.display = 'none';
+            const fallback = document.querySelector('.fallback-image');
+            if (fallback) {
+                fallback.style.display = 'block';
+            }
+            overlay.classList.remove('show');
+            overlay.classList.add('hidden');
+        });
+    }
+
+    // Function untuk hide popup
+    function hidePlay() {
+        var modal = document.getElementById("modal");
+        const video = document.getElementById('popupVideo');
+
+        // Pause video ketika popup ditutup
+        if (video) {
+            video.pause();
+        }
+
+        modal.style.opacity = "0";
+        modal.style.visibility = "hidden";
+
+        document.getElementById("btn-audio").style.opacity = "1";
+        startAudio();
+
+        setTimeout(function () {
+            var introSection = document.getElementById("intro");
+            if (introSection) {
+                introSection.scrollIntoView({behavior: 'smooth'});
+            }
+        }, 500);
+    }
+
     // Form submission dengan AJAX
     $(document).ready(function () {
         // Mulai audio secara otomatis ketika halaman dimuat
@@ -760,6 +834,84 @@
 
     // Auto flip dengan requestAnimationFrame untuk performance lebih baik
     document.addEventListener('DOMContentLoaded', function () {
+
+        const video = document.getElementById('popupVideo');
+        const overlay = document.getElementById('iosPlayOverlay');
+        const fallbackImage = document.querySelector('.fallback-image');
+
+        console.log('Device detection:', {
+            platform: navigator.platform,
+            userAgent: navigator.userAgent,
+            isIOS: isIOS()
+        });
+
+        if (isIOS()) {
+            console.log('iOS device detected, setting up video fallback');
+
+            // Untuk iOS, setup fallback
+            if (overlay) {
+                // Tampilkan overlay play button untuk iOS
+                setTimeout(() => {
+                    overlay.style.display = 'flex';
+                    overlay.classList.add('show');
+                    overlay.classList.remove('hidden');
+                }, 500);
+            }
+
+            // Nonaktifkan auto-play untuk iOS
+            if (video) {
+                video.autoplay = false;
+                video.load();
+            }
+
+        } else {
+            console.log('Non-iOS device, attempting auto-play');
+
+            // Untuk non-iOS devices, coba auto-play normal
+            if (video) {
+                video.play().then(() => {
+                    console.log('Auto-play successful on non-iOS device');
+                    // Sembunyikan overlay jika ada
+                    if (overlay) {
+                        overlay.style.display = 'none';
+                    }
+                }).catch(error => {
+                    console.log('Auto-play failed on non-iOS:', error);
+                    // Jangan tampilkan play button untuk non-iOS
+                    if (overlay) {
+                        overlay.style.display = 'none';
+                    }
+                    // Tampilkan fallback image
+                    if (fallbackImage) {
+                        fallbackImage.style.display = 'block';
+                    }
+                });
+            }
+        }
+
+        // Fallback: jika video tidak bisa load
+        if (video) {
+            video.addEventListener('error', function() {
+                console.log('Video load error, showing fallback image');
+                this.style.display = 'none';
+                if (fallbackImage) {
+                    fallbackImage.style.display = 'block';
+                }
+                if (overlay) {
+                    overlay.style.display = 'none';
+                }
+            });
+
+            // Event ketika video berhasil load
+            video.addEventListener('loadeddata', function() {
+                console.log('Video loaded successfully');
+                if (!isIOS()) {
+                    // Coba play untuk non-iOS
+                    this.play().catch(e => console.log('Play after load failed:', e));
+                }
+            });
+        }
+
         const flipElements = [
             {id: 'flipper-groom', interval: null},
             {id: 'flipper-bride', interval: null}
@@ -854,6 +1006,18 @@
 
         window.addEventListener('resize', centerBox);
         centerBox(); // Initial center
+    });
+
+    document.addEventListener('touchstart', function() {
+        if (isIOS()) {
+            const overlay = document.getElementById('iosPlayOverlay');
+            const video = document.getElementById('popupVideo');
+
+            // Jika overlay sedang ditampilkan dan user tap di luar, coba play
+            if (overlay && overlay.classList.contains('show') && video) {
+                playVideoOnIOS();
+            }
+        }
     });
 </script>
 </body>
