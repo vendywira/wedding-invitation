@@ -7,6 +7,7 @@
     <meta property="og:image" content="{{ asset('assets/images/gallery/gal-8.jpg') }}">
     <meta property="og:description"
           content="Undangan pada {{ (new \IntlDateFormatter('id_ID', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE, 'Asia/Jakarta', \IntlDateFormatter::GREGORIAN, 'EEEE, d MMMM y'))->format(new DateTime($event->event_date)) }}">
+    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="author" content="I Wayan Vendy Wiranatha">
     <meta name="robots" content="index, follow">
@@ -47,43 +48,6 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/images/apple-touch-icon.png') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/images/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/images/favicon-16x16.png') }}">
-
-    <!-- Structured Data / JSON-LD -->
-    <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "Event",
-            "name": "Pernikahan Vendy & Margareth",
-            "description": "Pemberkatan pernikahan I Wayan Vendy Wiranatha dan Margaretha Magdalena Br Nainggolan",
-            "eventDate": "{{ $event->event_date }}",
-            "eventStatus": "https://schema.org/EventScheduled",
-            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-            "location": {
-                "@type": "Place",
-                "name": "{{ $event->location }}",
-                "address": {
-                    "@type": "PostalAddress",
-                    "addressLocality": "Tabanan",
-                    "addressRegion": "Bali",
-                    "addressCountry": "ID"
-                }
-            },
-            "organizer": {
-                "@type": "Person",
-                "name": "I Wayan Vendy Wiranatha"
-            },
-            "performer": {
-                "@type": "Person",
-                "name": "I Wayan Vendy Wiranatha & Margaretha Magdalena Br Nainggolan"
-            },
-            "image": [
-                "{{ asset('assets/images/gallery/gal-8.jpg') }}",
-                "{{ asset('assets/images/gallery/slide1.jpg') }}",
-                "{{ asset('assets/images/gallery/slide2.jpg') }}"
-            ]
-        }
-    </script>
-
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('assets/css/style3.css') }}">
