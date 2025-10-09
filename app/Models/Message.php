@@ -11,11 +11,7 @@ class Message extends Model
 
     protected $fillable = [
         'name',
-        'guest_code',
-        'guest_count',
-        'attendance',
+        'guest_id',
         'message',
-        'category',
-        'location'
     ];
 }

@@ -5,13 +5,13 @@ $(function () {
     // Countdown
 
     /* Usage example
-    There are two ways to use this script. On is better for simple needs such a topbar. 
-    And the other one is good if you need to display more elements and have more control 
+    There are two ways to use this script. On is better for simple needs such a topbar.
+    And the other one is good if you need to display more elements and have more control
     over the CSS
 
     **** SIMPLE MODE ****: Just set a main Class and the content within the data attributes.
                  (days), (hours), etc.. will be replaced and you can use
-                p_hours, p_minutes, etc.. for pluralization 
+                p_hours, p_minutes, etc.. for pluralization
 
     <div class="countdown simple-bar" data-Date='2021/9/5 17:12:0' data-endText="Offer ended">
             (days) p_days, (hours) p_hours, and (minutes) p_minutes left!
@@ -41,7 +41,7 @@ $(function () {
 
     On this way, you have to setup a main Class, and the end Date in the data attributes.
     Then, you need to use the classes "running" and "ended" (you can change the names) and the element <timer>
-    On this way, the "ended" class will be visible when the countdown is ready and you have a lot of 
+    On this way, the "ended" class will be visible when the countdown is ready and you have a lot of
     control over the content and the layout.
 
     *** TIMER Mode ***
@@ -54,7 +54,7 @@ $(function () {
 
     *** ZERO-PAD ***
     By default, Zero-PAdding is enabled. You can set it to false in a data attribute on this way:
-    
+
     <div ......     data-zeroPad='{"Days": "false"}'>
 
     Each variable (Days, Hours, Minutes and Seconds) can be set to false
@@ -65,8 +65,8 @@ $(function () {
     - pluralization: it works now but only in simple mode, and only in English
     - weeks support
     - prevent errors with false configs
-    
- 
+
+
 
     CONFIG:
     - mainClass
@@ -75,7 +75,7 @@ $(function () {
     - endedClass (optional)
 
 
-    offset value base on which location time zone you would like to set 
+    offset value base on which location time zone you would like to set
     For India offset value +5.5,
     New York offset value -4,
     London offset value +1
@@ -87,7 +87,7 @@ $(function () {
     // CONFIG
 
     let mainClass = '.countdown';
-    let OffsetLocation = -7;
+    let OffsetLocation = 8;
 
     let runningClass = '.running'; //optinonal
     let endedClass = ".ended"; //optional

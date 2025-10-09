@@ -11,15 +11,15 @@ class Guest extends Model
 
     protected $fillable = [
         'name',
-        'guest_code',
-        'category',
-        'location',
-        'max_guests',
-        'is_opened'
+        'code',
+        'event_id',
+        'guest_attends',
+        'attendance',
+        'is_opened',
     ];
 
     public function messages()
     {
-        return $this->hasMany(Message::class, 'guest_code', 'guest_code');
+        return $this->hasMany(Message::class, 'guest_id', 'id');
     }
 }

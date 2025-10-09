@@ -11,10 +11,10 @@ return new class extends Migration {
         Schema::create('guests', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('guest_code')->unique();
-            $table->enum('category', ['utama', 'denpasar']);
-            $table->string('location');
-            $table->integer('max_guests')->default(1);
+            $table->string('code');
+            $table->foreignId('event_id')->references('id')->on('events')->onDelete('cascade');
+            $table->integer('guest_attends')->default(0);
+            $table->enum('attendance', ['Hadir', 'Tidak Hadir']);
             $table->boolean('is_opened')->default(false);
             $table->timestamps();
         });

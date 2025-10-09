@@ -10,12 +10,8 @@ return new class extends Migration {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('guest_code');
-            $table->integer('guest_count');
-            $table->enum('attendance', ['Hadir', 'Tidak Hadir']);
+            $table->foreignId('guest_id')->references('id')->on('guests')->onDelete('cascade');
             $table->text('message')->nullable();
-            $table->string('category');
-            $table->string('location');
             $table->timestamps();
         });
     }

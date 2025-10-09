@@ -8,8 +8,8 @@ Route::get('/', function () {
     return redirect()->route('wedding.public');
 });
 
-Route::get('/p/{guest}', [WeddingController::class, 'show'])->name('wedding.show');
-Route::get('/r/{guest}', [WeddingController::class, 'show'])->name('wedding.show');
+Route::get('/p/invitation', [WeddingController::class, 'show'])->name('wedding.show');
+Route::get('/r/invitation', [WeddingController::class, 'show'])->name('wedding.show');
 Route::get('/invitation', [WeddingController::class, 'show'])->name('wedding.public');
 
 // Route untuk menyimpan RSVP

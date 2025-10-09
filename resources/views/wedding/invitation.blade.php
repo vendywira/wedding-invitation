@@ -5,7 +5,8 @@
     <title>Pernikahan Vendy & Margareth</title>
     <meta property="og:title" content="Pernikahan Vendy & Margareth">
     <meta property="og:image" content="{{ asset('assets/images/thumb.jpg') }}">
-    <meta property="og:description" content="Undangan pada Rabu, 12 November 2025">
+    <meta property="og:description"
+          content="Undangan pada {{ (new \IntlDateFormatter('id_ID', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE, 'Asia/Jakarta', \IntlDateFormatter::GREGORIAN, 'EEEE, d MMMM y'))->format(new DateTime($event->event_date)) }}">
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
@@ -114,6 +115,222 @@
             z-index: 1;
             border-radius: 10px;
         }
+
+        /* Loading state styles */
+        .btn-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Comment item styling */
+        .comment-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #e44d26;
+        }
+
+        .comment-item strong {
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .comment-item small {
+            color: #666;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+
+        .comment-item p {
+            margin: 10px 0 0 0;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* Success modal styling */
+        #successModal .modal-content {
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        #successModal .btn-primary {
+            background-color: #e44d26;
+            border-color: #e44d26;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        #successModal .btn-primary:hover {
+            background-color: #d14420;
+            border-color: #d14420;
+            transform: translateY(-2px);
+        }
+
+        /* Comments Scrollable Container */
+        .comments-scrollable-container {
+            position: relative;
+            margin-top: 20px;
+        }
+
+        /* Default state - no scroll */
+        .comments-scrollable {
+            padding: 10px;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+
+        /* Scroll state - hanya ketika lebih dari 5 komentar */
+        .comments-scrollable.scroll-enabled {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Custom Scrollbar - hanya untuk yang scrollable */
+        .comments-scrollable.scroll-enabled::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .comments-scrollable.scroll-enabled::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .comments-scrollable.scroll-enabled::-webkit-scrollbar-thumb {
+            background: #e44d26;
+            border-radius: 10px;
+        }
+
+        .comments-scrollable.scroll-enabled::-webkit-scrollbar-thumb:hover {
+            background: #d14420;
+        }
+
+        /* No scroll state */
+        .comments-scrollable.no-scroll {
+            max-height: none;
+            overflow-y: visible;
+        }
+
+        /* Comment item styling */
+        .comment-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #e44d26;
+            transition: all 0.3s ease;
+        }
+
+        .comment-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .comment-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .comment-item strong {
+            color: #333;
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .comment-item small {
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        .comment-item p {
+            margin: 10px 0 0 0;
+            color: #555;
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        /* No comments state */
+        .no-comments {
+            padding: 40px 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            text-align: center;
+            padding: 10px;
+            color: #e44d26;
+            font-size: 0.9em;
+            background: rgba(228, 77, 38, 0.1);
+            border-radius: 0 0 10px 10px;
+            margin-top: -1px;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator i {
+            margin-right: 8px;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-5px);
+            }
+            60% {
+                transform: translateY(-3px);
+            }
+        }
+
+        /* Show All Button */
+        #showallcomment-btn {
+            background: linear-gradient(135deg, #e44d26, #f26161);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        #showallcomment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(228, 77, 38, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .comments-scrollable.scroll-enabled {
+                max-height: 350px;
+            }
+
+            .comment-item {
+                padding: 12px;
+            }
+
+            .comment-item strong {
+                font-size: 1em;
+            }
+
+            .scroll-indicator {
+                font-size: 0.8em;
+                padding: 8px;
+            }
+        }
     </style>
 </head>
 
@@ -135,10 +352,12 @@
     <section class="popup">
         <!-- Video Background dengan fallback untuk iOS -->
         <div class="video-container">
-            <video autoplay muted loop playsinline id="popupVideo" class="video-background" preload="auto" webkit-playsinline>
+            <video autoplay muted loop playsinline id="popupVideo" class="video-background" preload="auto"
+                   webkit-playsinline>
                 <source src="{{ asset('assets/videos/wedding-bg.mp4') }}" type="video/mp4">
                 <!-- Fallback image jika video tidak bisa diputar -->
-                <img src="{{ asset('assets/images/gallery/gal-2.jpg') }}" alt="Wedding Background" class="fallback-image">
+                <img src="{{ asset('assets/images/gallery/gal-2.jpg') }}" alt="Wedding Background"
+                     class="fallback-image">
             </video>
             <!-- Fallback button untuk iOS -->
             <div class="ios-play-overlay" id="iosPlayOverlay" style="display: none;">
@@ -174,7 +393,8 @@
     <div class="carousel-inner carousel-zoom">
         <div class="item"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide1.jpg') }}"></div>
         <div class="item"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide2.jpg') }}"></div>
-        <div class="item active"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide3.jpg') }}"></div>
+        <div class="item active"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide3.jpg') }}">
+        </div>
         <div class="item"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide4.jpg') }}"></div>
         <div class="item"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide5.jpg') }}"></div>
         <div class="item"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide6.jpg') }}"></div>
@@ -302,20 +522,25 @@
             <div class="col-lg-12">
                 <div data-aos="zoom-in-down">
                     <p>
-                        <i class="far fa-map" aria-hidden="true"></i> Wedding Venue Taman Prakerti Bhuana Indraprasta Ballroom<br>
-                        <i class="far fa-calendar-check" aria-hidden="true"></i> Rabu, 12 November 2025<br>
-                        <i class="far fa-clock" aria-hidden="true"></i> 17.00 WITA - 21.00 WITA<br>
+                        <i class="far fa-map" aria-hidden="true"></i> {{ $event->location }}<br>
+                        <i class="far fa-calendar-check" aria-hidden="true"></i> {{ (new \IntlDateFormatter('id_ID',
+                        \IntlDateFormatter::FULL, \IntlDateFormatter::NONE, 'Asia/Jakarta',
+                        \IntlDateFormatter::GREGORIAN, 'EEEE, d MMMM y'))->format(new DateTime($event->event_date))
+                        }}<br>
+                        <i class="far fa-clock" aria-hidden="true"></i> {{ $event->start_time }} WITA - {{
+                        $event->finish_time }}<br>
                     </p>
                 </div>
                 <div data-aos="fade-up">
-                    <a href="https://maps.app.goo.gl/gMvgt3TUPqrMAqRT7" target="_blank" class="btn-map">
+                    <a href="{{ $event->google_map_link }}" target="_blank" class="btn-map">
                         <i class="fas fa-map-marker-alt" aria-hidden="true"></i> Google Map
                     </a>
                 </div>
                 <br>
 
                 <!-- Countdown Timer -->
-                <div class="countdown show" data-aos="zoom-in" data-date="2025/11/12 17:00:00" style="display: block;">
+                <div class="countdown show" data-aos="zoom-in" data-date="{{$event->event_date_time_start}}"
+                     style="display: block;">
                     <div class="text"><h2>Waktu Menuju Acara</h2></div>
                     <div class="running" style="display: flex;">
                         <timer>
@@ -400,6 +625,15 @@
                         <button onclick="copyToClipboard('#p1')" class="button-gift">
                             <i class="fas fa-copy" aria-hidden="true"></i> Salin Nomor
                         </button>
+                        <br><br>
+                        <div style="margin-bottom:8px;">
+                            <img src="{{ asset('assets/images/bri.png') }}" width="150px;">
+                        </div>
+                        <div id="p1">012401062555500</div>
+                        <strong>a/n Margaretha Magdalena</strong><br><br>
+                        <button onclick="copyToClipboard('#p1')" class="button-gift">
+                            <i class="fas fa-copy" aria-hidden="true"></i> Salin Nomor
+                        </button>
                     </div>
                 </div>
             </div>
@@ -420,7 +654,8 @@
             <div class="konfirmasi-box">
                 <form id="konfirmasi-form" method="POST" autocomplete="off" class="form-group">
                     @csrf
-                    <input type="hidden" name="guest_code" value="{{ $guest->guest_code ?? '' }}">
+                    <input type="hidden" name="guest_code" value="{{ $guestData->code }}">
+                    <input type="hidden" name="guest_id" value="{{ $guestData->id }}">
 
                     <div class="text-center mb-4">
                         <h3 class="form-title">Konfirmasi Kehadiran</h3>
@@ -429,17 +664,20 @@
 
                     <div class="form-group-row">
                         <div class="col-12">
-                            <input type="text" class="form-control custom-input" name="name" id="nama-fm" placeholder="Nama Lengkap" required
+                            <input type="text" class="form-control custom-input" name="name" id="nama-fm"
+                                   placeholder="Nama Lengkap" required
                                    value="{{ $guestData->name ?? request()->get('to') }}">
                         </div>
                     </div>
 
                     <div class="form-group-row">
                         <div class="col-12">
-                            <select class="form-control custom-select" name="guest_count" id="jumlah-fm" required>
+                            <select class="form-control custom-select" name="guest_attends" id="jumlah-fm" required>
                                 <option value="" disabled selected>Pilih Jumlah Tamu</option>
                                 <option value="1">1 Orang</option>
                                 <option value="2">2 Orang</option>
+                                <option value="3">3 Orang</option>
+                                <option value="4">4 Orang</option>
                             </select>
                         </div>
                     </div>
@@ -456,7 +694,8 @@
 
                     <div class="form-group-row">
                         <div class="col-12">
-                            <textarea class="form-control custom-textarea" maxlength="250" name="message" id="pesan-fm" rows="3"
+                            <textarea class="form-control custom-textarea" maxlength="250" name="message" id="pesan-fm"
+                                      rows="3"
                                       placeholder="Ketikan Ucapan / Doa untuk mempelai"></textarea>
                             <div class="char-counter">
                                 <span id="char-count">0</span>/250 karakter
@@ -500,40 +739,42 @@
     <div class="container komentar-box">
         <div class="container-fluid">
             <div class="col-xs-8 col-sm-6" id="totalDoa-view" data-aos="zoom-in">
-                <strong>{{ $messages->count() ?? 0 }} Ucapan</strong>
-            </div>
-
-            <div class="col-xs-4 col-sm-6" align="right">
-                <select class="form-control" name="konfirmasi-display-order" id="konfirmasi-display-order"
-                        style="width: 100px;" data-aos="zoom-in">
-                    <option selected value="new">Terbaru</option>
-                    <option value="old">Terlama</option>
-                </select>
+                <strong>{{ $messages->count() }} Ucapan</strong>
             </div>
         </div>
-
-        <div class="container-fluid" id="listkomentar" data-aos="zoom-in">
-            @if(isset($messages) && $messages->count() > 0)
-            @foreach($messages as $message)
-            <div class="comment-item">
-                <strong>{{ $message->name }}</strong>
-                <small>{{ $message->created_at->format('d M Y H:i') }}</small>
-                <p>{{ $message->message }}</p>
-                <div class="attendance-badge {{ strtolower($message->attendance) }}">
-                    {{ $message->attendance }} ({{ $message->guest_count }} orang)
+        <br>
+        <!-- Scrollable Comments Container -->
+        <div class="container-fluid comments-scrollable-container" data-aos="zoom-in">
+            <div class="comments-scrollable @if($messages->count() <= 5) no-scroll @endif"
+                 id="listkomentar"
+                 @if($messages->count() > 5) style="max-height: 400px; overflow-y: auto;" @endif>
+                @if($messages->count() > 0)
+                @foreach($messages as $message)
+                <div class="comment-item">
+                    <strong>{{ $message->name }}</strong>
+                    <small>{{ $message->created_at->format('d M Y H:i') }}</small>
+                    <p>{{ $message->message }}</p>
                 </div>
+                @endforeach
+                @else
+                <div class="text-center no-comments">
+                    <p>Belum ada ucapan. Jadilah yang pertama mengucapkan selamat!</p>
+                </div>
+                @endif
             </div>
-            @endforeach
-            @else
-            <div class="text-center" style="padding: 20px;">
-                <p>Belum ada ucapan. Jadilah yang pertama mengucapkan selamat!</p>
+
+            <!-- Scroll Indicator - Hanya tampil jika lebih dari 5 komentar -->
+            @if($messages->count() > 5)
+            <div class="scroll-indicator" id="scrollIndicator">
+                <i class="fas fa-chevron-down"></i>
+                <span>Scroll untuk melihat lebih banyak ucapan</span>
             </div>
             @endif
         </div>
-
         <div align="center" data-aos="zoom-in-down">
-            <button type="button" id="showallcomment-btn" class="btn invisible" name="submit">
-                TAMPILKAN SEMUA ({{ $messages->count() ?? 0 }})
+            <button type="button" id="showallcomment-btn" class="btn @if($messages->count() <= 5) invisible @endif"
+                    name="submit">
+                TAMPILKAN SEMUA ({{ $messages->count() }})
             </button>
         </div>
     </div>
@@ -589,14 +830,14 @@
 <div id="successModal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
      aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm">
-        <div class="modal-content" style="padding:20px;">
+        <div class="modal-content" style="padding:20px; border-radius:15px;">
             <div class="row">
-                <div class="col-md-12 p-5 text-center">
-                    <img src="{{ asset('assets/images/check.svg') }}" width="40px"><br>
+                <div class="col-md-12 p-4 text-center">
+                    <img src="{{ asset('assets/images/check.svg') }}" width="50px"><br>
+                    <h5 style="margin-top:15px; color:#28a745;">Berhasil!</h5>
                 </div>
-                <div class="col-md-12 m-5 text-center">
-                    <p>Data Berhasil Dikirim</p>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                <div class="col-md-12 p-3 text-center">
+                    <p style="margin-bottom:20px;">Konfirmasi kehadiran dan ucapan Anda berhasil dikirim</p>
                 </div>
             </div>
         </div>
@@ -608,6 +849,7 @@
 <script src="{{ asset('assets/scripts/bootstrap.min.js') }}"></script>
 <script src="{{ asset('assets/scripts/aos.js') }}"></script>
 <script src="{{ asset('assets/scripts/multi-countdown.js') }}"></script>
+<script src="{{ asset('assets/scripts/konfirmasi.js') }}"></script>
 <script src="{{ asset('assets/popup/jquery.magnific-popup.min.js') }}"></script>
 <script src="{{ asset('assets/popup/magnific-popup-options.js') }}"></script>
 
@@ -780,49 +1022,6 @@
         }, 500);
     }
 
-    // Form submission dengan AJAX
-    $(document).ready(function () {
-        // Mulai audio secara otomatis ketika halaman dimuat
-        setTimeout(function () {
-            startAudio();
-        }, 500);
-
-        $('#konfirmasi-form').on('submit', function (e) {
-            e.preventDefault();
-
-            var formData = $(this).serialize();
-
-            $.ajax({
-                url: "{{ route('wedding.store-message') }}",
-                type: "POST",
-                data: formData,
-                beforeSend: function () {
-                    $('#loadingkonfirmasiform').removeClass('invisible');
-                },
-                success: function (response) {
-                    $('#successModal').modal('show');
-                    $('#konfirmasi-form')[0].reset();
-                    $('#loadingkonfirmasiform').addClass('invisible');
-
-                    // Reload halaman untuk menampilkan pesan terbaru
-                    setTimeout(function () {
-                        location.reload();
-                    }, 2000);
-                },
-                error: function (xhr) {
-                    alert('Terjadi kesalahan. Silahkan coba lagi.');
-                    $('#loadingkonfirmasiform').addClass('invisible');
-                }
-            });
-        });
-
-        // Inisialisasi carousel
-        $('#carousel').carousel({
-            interval: 3000,
-            pause: 'false'
-        });
-    });
-
     // Fallback tambahan ketika window fully loaded
     window.addEventListener('load', function () {
         setTimeout(function () {
@@ -891,7 +1090,7 @@
 
         // Fallback: jika video tidak bisa load
         if (video) {
-            video.addEventListener('error', function() {
+            video.addEventListener('error', function () {
                 console.log('Video load error, showing fallback image');
                 this.style.display = 'none';
                 if (fallbackImage) {
@@ -903,7 +1102,7 @@
             });
 
             // Event ketika video berhasil load
-            video.addEventListener('loadeddata', function() {
+            video.addEventListener('loadeddata', function () {
                 console.log('Video loaded successfully');
                 if (!isIOS()) {
                     // Coba play untuk non-iOS
@@ -938,54 +1137,15 @@
             });
         });
 
-        const textarea = document.getElementById('pesan-fm');
-        const charCount = document.getElementById('char-count');
-        const form = document.getElementById('konfirmasi-form');
-        const submitBtn = document.getElementById('send-konfirmasi');
-        const btnText = submitBtn.querySelector('.btn-text');
-        const btnLoading = submitBtn.querySelector('.btn-loading');
-
-        // Character counter
-        textarea.addEventListener('input', function() {
-            const count = this.value.length;
-            charCount.textContent = count;
-
-            if (count > 240) {
-                charCount.style.color = '#e44d26';
-            } else {
-                charCount.style.color = '#f26161';
-            }
-        });
-
-        // Form submission loading state
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            btnText.classList.add('d-none');
-            btnLoading.classList.remove('d-none');
-            submitBtn.disabled = true;
-
-            // Simulate form submission
-            setTimeout(() => {
-                // Reset button state setelah 2 detik (simulasi)
-                btnText.classList.remove('d-none');
-                btnLoading.classList.add('d-none');
-                submitBtn.disabled = false;
-                alert('Konfirmasi berhasil dikirim!');
-                form.reset();
-                charCount.textContent = '0';
-            }, 2000);
-        });
-
         // Enhanced focus effects
         const formControls = document.querySelectorAll('.custom-input, .custom-select, .custom-textarea');
 
         formControls.forEach(control => {
-            control.addEventListener('focus', function() {
+            control.addEventListener('focus', function () {
                 this.style.zIndex = '1000';
             });
 
-            control.addEventListener('blur', function() {
+            control.addEventListener('blur', function () {
                 this.style.zIndex = '1';
             });
         });
@@ -1008,7 +1168,252 @@
         centerBox(); // Initial center
     });
 
-    document.addEventListener('touchstart', function() {
+    // Form submission handler
+    $(document).ready(function () {
+        $('#konfirmasi-form').on('submit', function (e) {
+            e.preventDefault();
+
+            const submitBtn = $('#send-konfirmasi');
+            const btnText = submitBtn.find('.btn-text');
+            const btnLoading = submitBtn.find('.btn-loading');
+
+            // Show loading state
+            btnText.addClass('d-none');
+            btnLoading.removeClass('d-none');
+            submitBtn.prop('disabled', true);
+
+            // Get form data
+            const formData = new FormData(this);
+
+            // Send AJAX request
+            $.ajax({
+                url: '{{ route("wedding.store-message") }}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Show success modal
+                        $('#successModal').modal('show');
+
+                        // Reset form
+                        $('#konfirmasi-form')[0].reset();
+
+                        // Reset character counter
+                        $('#char-count').text('0');
+
+                        // Update messages section
+                        updateMessages(response.messages);
+                    }
+                },
+                error: function (xhr) {
+                    console.error('Error:', xhr);
+                    alert('Terjadi kesalahan saat mengirim konfirmasi. Silakan coba lagi.');
+                },
+                complete: function () {
+                    // Reset button state
+                    btnText.removeClass('d-none');
+                    btnLoading.addClass('d-none');
+                    submitBtn.prop('disabled', false);
+                }
+            });
+        });
+
+        // Function to update messages section dengan conditional scroll
+        function updateMessages(messages) {
+            const messagesContainer = $('#listkomentar');
+            const totalUcapan = $('#totalDoa-view');
+            const showAllBtn = $('#showallcomment-btn');
+            const scrollIndicator = $('#scrollIndicator');
+
+            if (messages.length > 0) {
+                let messagesHTML = '';
+
+                messages.forEach((message) => {
+                    const messageDate = new Date(message.created_at);
+                    const formattedDate = messageDate.toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    messagesHTML += `
+                <div class="comment-item">
+                    <strong>${message.name}</strong>
+                    <small>${formattedDate}</small>
+                    <p>${message.message || ''}</p>
+                </div>
+            `;
+                });
+
+                messagesContainer.html(messagesHTML);
+                totalUcapan.html(`<strong>${messages.length} Ucapan</strong>`);
+
+                // Check jika perlu scroll (lebih dari 5 komentar)
+                if (messages.length > 5) {
+                    // Enable scroll
+                    messagesContainer
+                        .removeClass('no-scroll')
+                        .addClass('scroll-enabled')
+                        .css({
+                            'max-height': '400px',
+                            'overflow-y': 'auto'
+                        });
+
+                    // Show scroll indicator
+                    if (scrollIndicator.length === 0) {
+                        messagesContainer.after(`
+                    <div class="scroll-indicator" id="scrollIndicator">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>Scroll untuk melihat lebih banyak ucapan</span>
+                    </div>
+                `);
+                    } else {
+                        scrollIndicator.show();
+                    }
+
+                    // Show "Tampilkan Semua" button
+                    showAllBtn.removeClass('invisible');
+                    showAllBtn.text(`TAMPILKAN SEMUA (${messages.length})`);
+
+                    // Setup scroll event
+                    setupScrollEvents();
+
+                } else {
+                    // Disable scroll
+                    messagesContainer
+                        .removeClass('scroll-enabled')
+                        .addClass('no-scroll')
+                        .css({
+                            'max-height': 'none',
+                            'overflow-y': 'visible'
+                        });
+
+                    // Hide scroll indicator
+                    scrollIndicator.hide();
+
+                    // Hide "Tampilkan Semua" button
+                    showAllBtn.addClass('invisible');
+                }
+
+            } else {
+                messagesContainer.html(`
+            <div class="text-center no-comments">
+                <p>Belum ada ucapan. Jadilah yang pertama mengucapkan selamat!</p>
+            </div>
+        `);
+
+                // Disable scroll untuk state kosong
+                messagesContainer
+                    .removeClass('scroll-enabled')
+                    .addClass('no-scroll')
+                    .css({
+                        'max-height': 'none',
+                        'overflow-y': 'visible'
+                    });
+
+                scrollIndicator.hide();
+                showAllBtn.addClass('invisible');
+            }
+
+            // Refresh AOS animations for new messages
+            AOS.refresh();
+
+            // Auto scroll ke komentar terbaru setelah submit
+            if (messages.length > 0) {
+                setTimeout(() => {
+                    if (messages.length > 5) {
+                        messagesContainer.scrollTop(0);
+                    }
+                }, 300);
+            }
+        }
+
+// Setup scroll events hanya untuk container yang scrollable
+        function setupScrollEvents() {
+            const messagesContainer = $('#listkomentar');
+            const scrollIndicator = $('#scrollIndicator');
+
+            // Remove existing events
+            messagesContainer.off('scroll');
+
+            // Add scroll event
+            messagesContainer.on('scroll', function() {
+                const scrollTop = $(this).scrollTop();
+
+                // Hide indicator ketika user scroll ke bawah
+                if (scrollTop > 50) {
+                    scrollIndicator.fadeOut();
+                }
+
+                // Show indicator lagi ketika scroll ke atas
+                if (scrollTop === 0) {
+                    scrollIndicator.fadeIn();
+                }
+            });
+
+            // Hover events untuk scroll indicator
+            messagesContainer.hover(
+                function() {
+                    if ($(this).scrollTop() === 0) {
+                        scrollIndicator.fadeIn();
+                    }
+                },
+                function() {
+                    scrollIndicator.fadeOut();
+                }
+            );
+        }
+
+// Show all comments button handler
+        $(document).on('click', '#showallcomment-btn', function() {
+            const messagesContainer = $('#listkomentar');
+            const scrollIndicator = $('#scrollIndicator');
+
+            // Disable scroll dan expand container
+            messagesContainer
+                .removeClass('scroll-enabled')
+                .addClass('no-scroll')
+                .css({
+                    'max-height': 'none',
+                    'overflow-y': 'visible'
+                });
+
+            // Hide the button dan scroll indicator
+            $(this).addClass('invisible');
+            scrollIndicator.fadeOut();
+        });
+
+// Initialize scroll behavior saat page load
+        $(document).ready(function() {
+            const messagesContainer = $('#listkomentar');
+
+            // Setup scroll events jika sudah ada lebih dari 5 komentar di awal
+            if (messagesContainer.hasClass('scroll-enabled')) {
+                setupScrollEvents();
+            }
+        });
+
+        // Character counter update
+        $('#pesan-fm').on('input', function () {
+            const count = $(this).val().length;
+            $('#char-count').text(count);
+
+            if (count > 240) {
+                $('#char-count').css('color', '#e44d26');
+            } else {
+                $('#char-count').css('color', '#f26161');
+            }
+        });
+    });
+
+    document.addEventListener('touchstart', function () {
         if (isIOS()) {
             const overlay = document.getElementById('iosPlayOverlay');
             const video = document.getElementById('popupVideo');
@@ -1018,6 +1423,19 @@
                 playVideoOnIOS();
             }
         }
+    });
+
+    // Success modal event handler - auto close setelah 3 detik
+    $(document).on('shown.bs.modal', '#successModal', function () {
+        setTimeout(function() {
+            $('#successModal').modal('hide');
+        }, 3000);
+    });
+
+    // Atau jika ingin manual close, tetap seperti sebelumnya:
+    $(document).on('hidden.bs.modal', '#successModal', function () {
+        // Optional: Focus ke input nama setelah modal tertutup
+        $('#nama-fm').focus();
     });
 </script>
 </body>
