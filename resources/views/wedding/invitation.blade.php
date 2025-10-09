@@ -2,13 +2,88 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Pernikahan Vendy & Margareth</title>
+    <title>Undangan Pernikahan Vendy & Margareth</title>
     <meta property="og:title" content="Pernikahan Vendy & Margareth">
-    <meta property="og:image" content="{{ asset('assets/images/thumb.jpg') }}">
+    <meta property="og:image" content="{{ asset('assets/images/gallery/gal-8.jpg') }}">
     <meta property="og:description"
           content="Undangan pada {{ (new \IntlDateFormatter('id_ID', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE, 'Asia/Jakarta', \IntlDateFormatter::GREGORIAN, 'EEEE, d MMMM y'))->format(new DateTime($event->event_date)) }}">
-    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="I Wayan Vendy Wiranatha">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="Undangan Pernikahan Vendy & Margareth">
+    <meta property="og:description" content="Undangan pada {{ (new \IntlDateFormatter('id_ID', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE, 'Asia/Jakarta', \IntlDateFormatter::GREGORIAN, 'EEEE, d MMMM y'))->format(new DateTime($event->event_date)) }}">
+    <meta property="og:image" content="{{ asset('assets/images/gallery/gal-8.jpg') }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Vendy & Margareth Wedding Invitation">
+    <meta property="og:site_name" content="Undangan Pernikahan Vendy & Margareth">
+    <meta property="og:locale" content="id_ID">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ url()->current() }}">
+    <meta property="twitter:title" content="Undangan Pernikahan Vendy & Margareth">
+    <meta property="twitter:description" content="Undangan pada {{ (new \IntlDateFormatter('id_ID', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE, 'Asia/Jakarta', \IntlDateFormatter::GREGORIAN, 'EEEE, d MMMM y'))->format(new DateTime($event->event_date)) }}">
+    <meta property="twitter:image" content="{{ asset('assets/images/gallery/gal-8.jpg') }}">
+    <meta property="twitter:image:alt" content="Vendy & Margareth Wedding Invitation">
+
+    <!-- Additional SEO Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#e44d26">
+    <meta name="msapplication-TileColor" content="#e44d26">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Vendy & Margareth Wedding">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/images/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/images/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/images/favicon-16x16.png') }}">
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Event",
+            "name": "Pernikahan Vendy & Margareth",
+            "description": "Pemberkatan pernikahan I Wayan Vendy Wiranatha dan Margaretha Magdalena Br Nainggolan",
+            "eventDate": "{{ $event->event_date }}",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "location": {
+                "@type": "Place",
+                "name": "{{ $event->location }}",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Tabanan",
+                    "addressRegion": "Bali",
+                    "addressCountry": "ID"
+                }
+            },
+            "organizer": {
+                "@type": "Person",
+                "name": "I Wayan Vendy Wiranatha"
+            },
+            "performer": {
+                "@type": "Person",
+                "name": "I Wayan Vendy Wiranatha & Margaretha Magdalena Br Nainggolan"
+            },
+            "image": [
+                "{{ asset('assets/images/gallery/gal-8.jpg') }}",
+                "{{ asset('assets/images/gallery/slide1.jpg') }}",
+                "{{ asset('assets/images/gallery/slide2.jpg') }}"
+            ]
+        }
+    </script>
+
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('assets/css/style3.css') }}">
