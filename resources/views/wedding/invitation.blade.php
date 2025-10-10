@@ -195,6 +195,198 @@
             transform: none !important;
         }
 
+        .gift-section {
+            padding: 40px 0;
+            background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
+        }
+
+        .gift-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .gift-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+            font-size: 2.2rem;
+            font-weight: 300;
+        }
+
+        .gift-subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .gift-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .gift-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            width: 100%;
+            max-width: 350px;
+            transition: all 0.3s ease;
+            border: 1px solid #f0f0f0;
+        }
+
+        .gift-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .gift-card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .gift-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-right: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .gift-bank-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .gift-details {
+            margin-bottom: 20px;
+        }
+
+        .gift-account-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e44d26;
+            margin: 10px 0;
+            letter-spacing: 1px;
+            word-break: break-all;
+        }
+
+        .gift-account-name {
+            color: #555;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .gift-account-holder {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .gift-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .gift-copy-btn {
+            flex: 1;
+            background: linear-gradient(135deg, #e44d26 0%, #f26161 100%);
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .gift-copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(228, 77, 38, 0.3);
+        }
+
+        .gift-copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .gift-note {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+            background: rgba(228, 77, 38, 0.05);
+            border-radius: 10px;
+        }
+
+        /* Toast notification untuk copy */
+        .copy-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .copy-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .gift-cards {
+                gap: 20px;
+            }
+
+            .gift-card {
+                max-width: 100%;
+            }
+
+            .gift-account-number {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gift-title {
+                font-size: 1.8rem;
+            }
+
+            .gift-card {
+                padding: 20px;
+            }
+
+            .gift-account-number {
+                font-size: 1.2rem;
+            }
+        }
+
         /* Comment item styling */
         .comment-item {
             background: #f8f9fa;
@@ -656,57 +848,79 @@
 </div>
 <div class="tittle-section" data-aos="zoom-in-down">Kado Digital</div>
 
-<section id="gift">
-    <div class="container text-center" data-aos="zoom-in">
-        Bagi keluarga dan sahabat yang ingin mengirimkan hadiah / kado secara cashless, silahkan mengirimkan
-        melalui:<br><br>
-        <div data-aos="zoom-in" data-toggle="modal" data-target="#myModal2" class="btn">
-            <i class="fas fa-share" aria-hidden="true"></i> Klik Disini
-        </div>
-        <br>
-    </div>
+<section id="gift" class="gift-section">
+    <div class="gift-container">
+        <p class="gift-subtitle" data-aos="zoom-in">
+            Bagi keluarga dan sahabat yang ingin mengirimkan hadiah secara cashless,
+            silahkan transfer ke salah satu rekening berikut:
+        </p>
 
-    <!-- Modal Kado Digital -->
-    <div class="modal fade" id="myModal2">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                        <img src="{{ asset('assets/images/close.svg') }}" width="20">
+        <div class="gift-cards">
+            <!-- BCA -->
+            <div class="gift-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="gift-card-header">
+                    <img src="{{ asset('assets/images/bca.png') }}" alt="BCA" class="gift-logo">
+                    <h3 class="gift-bank-name">Bank BCA</h3>
+                </div>
+                <div class="gift-details">
+                    <p class="gift-account-name">Nomor Rekening:</p>
+                    <div class="gift-account-number" id="bca-account">1420421377</div>
+                    <p class="gift-account-name">Atas Nama:</p>
+                    <p class="gift-account-holder">I Wayan Vendy Wiranatha</p>
+                </div>
+                <div class="gift-actions">
+                    <button class="gift-copy-btn" onclick="copyToClipboard('bca-account')">
+                        <i class="fas fa-copy"></i> Salin Nomor
                     </button>
                 </div>
-                <div class="modal-body" align="center">
-                    <div id="covid2">
-                        <div style="margin-bottom:8px;">
-                            <img src="{{ asset('assets/images/bca.png') }}" width="150px;">
-                        </div>
-                        <div id="p1">1420421377</div>
-                        <strong>a/n I Wayan Vendy Wiranatha</strong><br><br>
-                        <button onclick="copyToClipboard('#p1')" class="button-gift">
-                            <i class="fas fa-copy" aria-hidden="true"></i> Salin Nomor
-                        </button>
-                        <br><br>
-                        <div style="margin-bottom:8px;">
-                            <img src="{{ asset('assets/images/jago.jpg') }}" width="150px;">
-                        </div>
-                        <div id="p1">109246172960</div>
-                        <strong>a/n I Wayan Vendy Wiranatha</strong><br><br>
-                        <button onclick="copyToClipboard('#p1')" class="button-gift">
-                            <i class="fas fa-copy" aria-hidden="true"></i> Salin Nomor
-                        </button>
-                        <br><br>
-                        <div style="margin-bottom:8px;">
-                            <img src="{{ asset('assets/images/bri.png') }}" width="150px;">
-                        </div>
-                        <div id="p1">012401062555500</div>
-                        <strong>a/n Margaretha Magdalena</strong><br><br>
-                        <button onclick="copyToClipboard('#p1')" class="button-gift">
-                            <i class="fas fa-copy" aria-hidden="true"></i> Salin Nomor
-                        </button>
-                    </div>
+            </div>
+
+            <!-- Jago -->
+            <div class="gift-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="gift-card-header">
+                    <img src="{{ asset('assets/images/jago.jpg') }}" alt="Jago" class="gift-logo">
+                    <h3 class="gift-bank-name">Bank Jago</h3>
+                </div>
+                <div class="gift-details">
+                    <p class="gift-account-name">Nomor Rekening:</p>
+                    <div class="gift-account-number" id="jago-account">109246172960</div>
+                    <p class="gift-account-name">Atas Nama:</p>
+                    <p class="gift-account-holder">I Wayan Vendy Wiranatha</p>
+                </div>
+                <div class="gift-actions">
+                    <button class="gift-copy-btn" onclick="copyToClipboard('jago-account')">
+                        <i class="fas fa-copy"></i> Salin Nomor
+                    </button>
+                </div>
+            </div>
+
+            <!-- BRI -->
+            <div class="gift-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="gift-card-header">
+                    <img src="{{ asset('assets/images/bri.png') }}" alt="BRI" class="gift-logo">
+                    <h3 class="gift-bank-name">Bank BRI</h3>
+                </div>
+                <div class="gift-details">
+                    <p class="gift-account-name">Nomor Rekening:</p>
+                    <div class="gift-account-number" id="bri-account">012401062555500</div>
+                    <p class="gift-account-name">Atas Nama:</p>
+                    <p class="gift-account-holder">Margaretha Magdalena</p>
+                </div>
+                <div class="gift-actions">
+                    <button class="gift-copy-btn" onclick="copyToClipboard('bri-account')">
+                        <i class="fas fa-copy"></i> Salin Nomor
+                    </button>
                 </div>
             </div>
         </div>
+
+        <p class="gift-note" data-aos="zoom-in">
+            <i class="fas fa-info-circle"></i>
+            Kehadiran dan doa Bapak/Ibu/Saudara/i sudah merupakan kebahagiaan tersendiri bagi kami.
+            Apabila berkenan memberikan tanda kasih, kami dapat menerima konfirmasi
+            melalui WhatsApp atau form kehadiran.
+            Terima kasih atas cinta dan restunya.
+        </p>
     </div>
 </section>
 
@@ -913,6 +1127,12 @@
     </div>
 </div>
 
+<!-- Toast Notification -->
+<div id="copyToast" class="copy-toast">
+    <i class="fas fa-check-circle"></i>
+    <span class="toast-message">Nomor rekening berhasil disalin!</span>
+</div>
+
 <!-- Scripts -->
 <script src="{{ asset('assets/scripts/jquery.min.js') }}"></script>
 <script src="{{ asset('assets/scripts/bootstrap.min.js') }}"></script>
@@ -1019,14 +1239,54 @@
         }
     }
 
-    // Copy to clipboard function
-    function copyToClipboard(element) {
-        var $temp = $("<input>");
-        $("body").append($temp);
-        $temp.val($(element).text()).select();
-        document.execCommand("copy");
-        $temp.remove();
-        alert("Nomor rekening berhasil disalin!");
+    // Improved copy to clipboard function
+    function copyToClipboard(elementId) {
+        const element = document.getElementById(elementId);
+        const text = element.innerText;
+
+        // Create temporary input element
+        const tempInput = document.createElement('input');
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+
+        // Select and copy text
+        tempInput.select();
+        tempInput.setSelectionRange(0, 99999); // For mobile devices
+
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                showCopyToast();
+            } else {
+                fallbackCopyText(text);
+            }
+        } catch (err) {
+            fallbackCopyText(text);
+        }
+
+        // Remove temporary input
+        document.body.removeChild(tempInput);
+    }
+
+    // Fallback method using Clipboard API
+    async function fallbackCopyText(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            showCopyToast();
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+            alert('Gagal menyalin nomor rekening. Silakan salin manual: ' + text);
+        }
+    }
+
+    // Show copy success toast
+    function showCopyToast() {
+        const toast = document.getElementById('copyToast');
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
     }
 
     function isIOS() {
@@ -1498,7 +1758,7 @@
     $(document).on('shown.bs.modal', '#successModal', function () {
         setTimeout(function () {
             $('#successModal').modal('hide');
-        }, 3000);
+        }, 1000);
     });
 
     // Atau jika ingin manual close, tetap seperti sebelumnya:
