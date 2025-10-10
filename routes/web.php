@@ -39,5 +39,6 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/admin/guests/{id}', [AdminController::class, 'deleteGuest'])->name('admin.guests.delete');
     Route::delete('/admin/messages/{id}', [AdminController::class, 'deleteMessage'])->name('admin.messages.delete');
     Route::get('/admin/guests/export', [AdminController::class, 'exportGuests'])->name('admin.guests.export');
+    Route::get('/admin/guests/export-filtered', [AdminController::class, 'exportFiltered'])->name('admin.guests.export.filtered');
     Route::post('/guests/check', [AdminController::class, 'checkGuestExists'])->name('admin.guests.check');
 });

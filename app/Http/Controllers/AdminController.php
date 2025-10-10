@@ -247,15 +247,12 @@ class AdminController extends Controller
                 <td>
                     <strong>' . e($message->name) . '</strong>
                     ' . ($message->guest ? '
-                    <br><small class="text-muted">' . e($message->guest->name) . '</small>' : '') . '
-                </td>
-                <td>' . ($message->message ? e($message->message) : '-') . '</td>
-                <td>
-                    <small class="text-muted">
+                    <br><small class="text-muted">
                         ' . $message->created_at->format('d/m/Y') . '<br>
                         ' . $message->created_at->format('H:i') . '
-                    </small>
+                    </small>': '') . '
                 </td>
+                <td>' . ($message->message ? e($message->message) : '-') . '</td>
                 <td>
                     <button class="btn btn-sm btn-outline-danger delete-message"
                             data-id="' . $message->id . '"
@@ -500,6 +497,57 @@ class AdminController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Pesan berhasil dihapus'
+        ]);
+    }
+
+    public function exportFiltered(Request $request)
+    {
+        $eventFilter = $request->get('event', 'all');
+        $statusFilter = $request->get('status', 'all');
+
+        $query = Guest::with('event');
+
+        // Apply event filter
+        if ($eventFilter !== 'all') {
+            $query->whereHas('event', function($q) use ($eventFilter) {
+                $q->where('event_key', $eventFilter);
+            });
+        }
+
+        // Apply status filter
+        if ($statusFilter !== 'all') {
+            if ($statusFilter === 'pending') {
+                $query->where('attendance', '');
+            } else {
+                $query->where('attendance', $statusFilter);
+            }
+        }
+
+        $guests = $query->get();
+
+        $filename = "daftar-tamu-" . Carbon::now()->format('Y-m-d') . ".csv";
+        $handle = fopen('php://output', 'w');
+        fputcsv($handle, ['Nama', 'Kode', 'Jumlah Tamu', 'Konfirmasi', 'Dibuka', 'Tanggal Dibuat', 'Pesan']);
+
+        foreach ($guests as $guest) {
+            $messages = $guest->messages->pluck('message')->implode('; ');
+            fputcsv($handle, [
+                $guest->name,
+                $guest->code,
+                $guest->guest_attends,
+                $guest->attendance ?? 'Belum',
+                $guest->is_opened ? 'Ya' : 'Tidak',
+                $guest->created_at->format('d/m/Y H:i'),
+                $messages
+            ]);
+        }
+
+        fclose($handle);
+
+        return response()->streamDownload(function() use ($handle) {
+            //
+        }, $filename, [
+            'Content-Type' => 'text/csv',
         ]);
     }
 

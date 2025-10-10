@@ -696,6 +696,33 @@
                 border: 1px solid #ddd;
             }
         }
+        /* Filter Section Styles */
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .filter-info {
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 0.875rem;
+        }
+
+        /* Mobile responsive for filter */
+        @media (max-width: 768px) {
+            .filter-section {
+                padding: 15px;
+            }
+
+            .filter-info {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -914,7 +941,6 @@
                         <div class="event-card">
                             <div class="p-3">
                                 <h5 class="mb-3"><i class="fas fa-plus-circle me-2"></i>Tambah Tamu Baru</h5>
-                                <!-- Di dalam form tambah tamu -->
                                 <form id="addGuestForm">
                                     @csrf
                                     <div class="row g-2">
@@ -952,15 +978,67 @@
                         </div>
                     </div>
 
+                    <!-- Filter Section -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="event-card">
+                                <div class="p-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6 col-12 mb-2 mb-md-0">
+                                            <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Tamu</h5>
+                                        </div>
+                                        <div class="col-md-6 col-12">
+                                            <div class="row g-2">
+                                                <div class="col-md-4 col-6">
+                                                    <select class="form-control form-control-sm" id="eventFilter">
+                                                        <option value="all">Semua Acara</option>
+                                                        <option value="gedung">Gedung</option>
+                                                        <option value="rumah">Rumah</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4 col-6">
+                                                    <select class="form-control form-control-sm" id="statusFilter">
+                                                        <option value="all">Semua Status</option>
+                                                        <option value="Hadir">Hadir</option>
+                                                        <option value="Tidak Hadir">Tidak Hadir</option>
+                                                        <option value="pending">Belum Konfirmasi</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4 col-12">
+                                                    <button class="btn btn-outline-secondary w-100" id="resetFilter">
+                                                        <i class="fas fa-refresh me-1"></i> Reset
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4><i class="fas fa-users me-2"></i>Manage Tamu</h4>
                         <div>
                             <button class="btn btn-primary-custom me-2" id="refreshGuests">
                                 <i class="fas fa-sync-alt me-1"></i> Refresh
                             </button>
-                            <a href="{{ route('admin.guests.export') }}" class="btn btn-primary-custom">
+                            <button class="btn btn-primary-custom me-2" id="exportFiltered">
                                 <i class="fas fa-download me-1"></i> Export
-                            </a>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Guest Count Info -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="alert alert-info py-2">
+                                <small>
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Menampilkan <strong id="filteredCount">{{ count($guests) }}</strong> dari <strong id="totalCount">{{ count($guests) }}</strong> tamu
+                                    <span id="filterInfo" class="ms-2"></span>
+                                </small>
+                            </div>
                         </div>
                     </div>
 
@@ -979,16 +1057,17 @@
                                 </thead>
                                 <tbody id="guestsTableBody">
                                 @foreach($guests as $guest)
-                                <tr data-guest-id="{{ $guest->id }}">
+                                <tr data-guest-id="{{ $guest->id }}"
+                                    data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
+                                    data-attendance="{{ $guest->attendance }}">
                                     <td>
                                         <strong>{{ $guest->name }}</strong>
                                     </td>
                                     <td>
                                         @if($guest->event)
-                                        <span
-                                            class="badge {{ $guest->event->event_key === 'rumah' ? 'bg-success' : 'bg-primary' }} badge-custom">
-                                            {{ $guest->event->event_key }}
-                                        </span>
+                                        <span class="badge {{ $guest->event->event_key === 'rumah' ? 'bg-success' : 'bg-primary' }} badge-custom">
+                            {{ $guest->event->event_key }}
+                        </span>
                                         @else
                                         <span class="badge bg-secondary badge-custom">-</span>
                                         @endif
@@ -1064,16 +1143,17 @@
                                 $path = $eventKey === 'rumah' ? 'r' : 'p';
                                 $invitationUrl = "{$baseUrl}/{$path}/invitation?to=" . urlencode($guest->name);;
                                 @endphp
-                                <div class="card mb-3" data-guest-id="{{ $guest->id }}">
+                                <div class="card mb-3" data-guest-id="{{ $guest->id }}"
+                                     data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
+                                     data-attendance="{{ $guest->attendance }}">
                                     <div class="card-body">
                                         <h6 class="card-title">{{ $guest->name }}</h6>
                                         <p class="card-text mb-1">
                                             <strong>Acara:</strong>
                                             @if($guest->event)
-                                            <span
-                                                class="badge {{ $guest->event->event_key === 'rumah' ? 'bg-success' : 'bg-primary' }} badge-custom">
-                                                {{ $guest->event->event_key }}
-                                            </span>
+                                            <span class="badge {{ $guest->event->event_key === 'rumah' ? 'bg-success' : 'bg-primary' }} badge-custom">
+                                {{ $guest->event->event_key }}
+                            </span>
                                             @else
                                             <span class="badge bg-secondary badge-custom">-</span>
                                             @endif
@@ -1090,8 +1170,7 @@
                                             @else
                                             <span class="badge bg-warning badge-custom">Belum Konfirmasi</span>
                                             @endif
-                                            <small class="text-muted">({{ $guest->is_opened ? 'Dibuka' : 'Belum dibuka'
-                                                }})</small>
+                                            <small class="text-muted">({{ $guest->is_opened ? 'Dibuka' : 'Belum dibuka' }})</small>
                                         </p>
                                         <div class="btn-group w-100 mt-2">
                                             <button class="btn btn-sm btn-whatsapp share-guest-whatsapp"
@@ -1150,7 +1229,6 @@
                                 <tr>
                                     <th>Pengirim</th>
                                     <th>Pesan</th>
-                                    <th>Tanggal</th>
                                     <th>Aksi</th>
                                 </tr>
                                 </thead>
@@ -1160,16 +1238,13 @@
                                     <td>
                                         <strong>{{ $message->name }}</strong>
                                         @if($message->guest)
-                                        <br><small class="text-muted">{{ $message->guest->name }}</small>
-                                        @endif
-                                    </td>
-                                    <td>{{ $message->message ?: '-' }}</td>
-                                    <td>
-                                        <small class="text-muted">
+                                        <br><small class="text-muted">
                                             {{ $message->created_at->format('d/m/Y') }}<br>
                                             {{ $message->created_at->format('H:i') }}
                                         </small>
+                                        @endif
                                     </td>
+                                    <td>{{ $message->message ?: '-' }}</td>
                                     <td>
                                         <button class="btn btn-sm btn-outline-danger delete-message"
                                                 data-id="{{ $message->id }}"
@@ -1792,15 +1867,6 @@ Konfirmasi kehadiran: ${invitationLink}
             });
         }
 
-        // Handle visibility change to pause auto-refresh when tab is not active
-        // document.addEventListener('visibilitychange', function() {
-        //     if (document.visibilityState === 'hidden') {
-        //         clearInterval(refreshInterval);
-        //     } else {
-        //         initAutoRefresh();
-        //     }
-        // });
-
         // Real-time validation untuk nama tamu
         $('#guestNameInput').on('blur', function() {
             const name = $(this).val();
@@ -1841,6 +1907,134 @@ Konfirmasi kehadiran: ${invitationLink}
                 }
             });
         }
+    });
+
+    // Filter functionality
+    $('#eventFilter, #statusFilter').on('change', function() {
+        applyFilters();
+    });
+
+    $('#resetFilter').on('click', function() {
+        $('#eventFilter').val('all');
+        $('#statusFilter').val('all');
+        applyFilters();
+    });
+
+    function applyFilters() {
+        const eventFilter = $('#eventFilter').val();
+        const statusFilter = $('#statusFilter').val();
+
+        let visibleCount = 0;
+        let totalCount = 0;
+
+        // Filter desktop table
+        $('#guestsTableBody tr').each(function() {
+            const eventType = $(this).data('event-type');
+            const attendance = $(this).data('attendance');
+
+            let showRow = true;
+
+            // Apply event filter
+            if (eventFilter !== 'all' && eventType !== eventFilter) {
+                showRow = false;
+            }
+
+            // Apply status filter
+            if (statusFilter !== 'all') {
+                if (statusFilter === 'pending' && attendance !== '') {
+                    showRow = false;
+                } else if (statusFilter !== 'pending' && attendance !== statusFilter) {
+                    showRow = false;
+                }
+            }
+
+            if (showRow) {
+                $(this).show();
+                visibleCount++;
+            } else {
+                $(this).hide();
+            }
+            totalCount++;
+        });
+
+        // Filter mobile view
+        $('#mobileGuestsList .card').each(function() {
+            const eventType = $(this).data('event-type');
+            const attendance = $(this).data('attendance');
+
+            let showCard = true;
+
+            // Apply event filter
+            if (eventFilter !== 'all' && eventType !== eventFilter) {
+                showCard = false;
+            }
+
+            // Apply status filter
+            if (statusFilter !== 'all') {
+                if (statusFilter === 'pending' && attendance !== '') {
+                    showCard = false;
+                } else if (statusFilter !== 'pending' && attendance !== statusFilter) {
+                    showCard = false;
+                }
+            }
+
+            if (showCard) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+
+        // Update count display
+        $('#filteredCount').text(visibleCount);
+        $('#totalCount').text(totalCount);
+
+        // Update filter info
+        updateFilterInfo(eventFilter, statusFilter);
+    }
+
+    function updateFilterInfo(eventFilter, statusFilter) {
+        let infoText = '';
+
+        if (eventFilter !== 'all') {
+            infoText += `Acara: ${eventFilter === 'gedung' ? 'Gedung' : 'Rumah'}`;
+        }
+
+        if (statusFilter !== 'all') {
+            if (infoText !== '') infoText += ' | ';
+            infoText += `Status: ${statusFilter === 'pending' ? 'Belum Konfirmasi' : statusFilter}`;
+        }
+
+        if (infoText === '') {
+            infoText = 'Semua tamu ditampilkan';
+        }
+
+        $('#filterInfo').text(infoText);
+    }
+
+    // Export filtered data
+    $('#exportFiltered').on('click', function() {
+        const eventFilter = $('#eventFilter').val();
+        const statusFilter = $('#statusFilter').val();
+
+        let url = '{{ route("admin.guests.export.filtered") }}';
+        url += `?event=${eventFilter}&status=${statusFilter}`;
+
+        window.location.href = url;
+    });
+
+    // Update counts when refreshing guests data
+    function updateGuestCounts() {
+        const totalCount = $('#guestsTableBody tr').length;
+        const visibleCount = $('#guestsTableBody tr:visible').length;
+
+        $('#filteredCount').text(visibleCount);
+        $('#totalCount').text(totalCount);
+    }
+
+    // Update filter info on page load
+    $(document).ready(function() {
+        updateFilterInfo('all', 'all');
     });
 </script>
 </body>
