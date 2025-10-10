@@ -6,7 +6,8 @@
     <!-- Dynamic SEO Meta Tags - Optimized for Both Routes -->
     <title>{{ $metaData['title'] }}</title>
     <meta name="description" content="{{ $metaData['description'] }}">
-    <meta name="keywords" content="undangan pernikahan, {{ $metaData['location'] }}, Vendy Margareth, {{ $metaData['guest_name'] }}, {{ $metaData['event_date_formatted'] }}">
+    <meta name="keywords"
+          content="undangan pernikahan, {{ $metaData['location'] }}, Vendy Margareth, {{ $metaData['guest_name'] }}, {{ $metaData['event_date_formatted'] }}">
     <meta name="author" content="I Wayan Vendy Wiranatha">
     <meta name="robots" content="{{ $metaData['robots_meta'] }}">
 
@@ -302,7 +303,7 @@
 
         .comment-item:hover {
             transform: translateX(5px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .comment-item strong {
@@ -418,7 +419,7 @@
         <div class="video-container">
             <video autoplay muted loop playsinline id="popupVideo" class="video-background" preload="auto"
                    webkit-playsinline>
-                <source src="{{ asset('assets/videos/wedding-bg.mp4') }}" type="video/mp4">
+                <source src="{{ asset('assets/videos/wedding-bg-2.mp4') }}" type="video/mp4">
                 <!-- Fallback image jika video tidak bisa diputar -->
                 <img src="{{ asset('assets/images/gallery/gal-2.jpg') }}" alt="Wedding Background"
                      class="fallback-image">
@@ -435,7 +436,8 @@
         <div class="popup-content" style="margin-top: -60px;">
             <h1>THE WEDDING OF</h1>
             <h2>Vendy & Margareth</h2>
-            <span class="h3">{{ Carbon\Carbon::parse($event->event_date)->format('d / m / y') }}</span><br><br><br><br><br><br><br><br><br><br><br><br>
+            <span
+                class="h3">{{ Carbon\Carbon::parse($event->event_date)->format('d / m / y') }}</span><br><br><br><br><br><br><br><br><br><br><br><br>
             <div class="yth">
                 Kepada Yth Bapak/Ibu/Saudara/i:<br>
                 <div class="nama-tamu">{{$guestData->name ?? request()->get('to', 'Tamu Undangan') }}</div>
@@ -598,6 +600,9 @@
                 <div data-aos="fade-up">
                     <a href="{{ $event->google_map_link }}" target="_blank" class="btn-map">
                         <i class="fas fa-map-marker-alt" aria-hidden="true"></i> Google Map
+                    </a>
+                    <a href="javascript:void(0)" class="btn-map btn-save-date" onclick="smartAddToCalendar()" style="margin-left: 15px">
+                        <i class="far fa-calendar-plus" aria-hidden="true"></i> Save the Date
                     </a>
                 </div>
                 <br>
@@ -1408,7 +1413,7 @@
             messagesContainer.off('scroll');
 
             // Add scroll event
-            messagesContainer.on('scroll', function() {
+            messagesContainer.on('scroll', function () {
                 const scrollTop = $(this).scrollTop();
 
                 // Hide indicator ketika user scroll ke bawah
@@ -1424,19 +1429,19 @@
 
             // Hover events untuk scroll indicator
             messagesContainer.hover(
-                function() {
+                function () {
                     if ($(this).scrollTop() === 0) {
                         scrollIndicator.fadeIn();
                     }
                 },
-                function() {
+                function () {
                     scrollIndicator.fadeOut();
                 }
             );
         }
 
 // Show all comments button handler
-        $(document).on('click', '#showallcomment-btn', function() {
+        $(document).on('click', '#showallcomment-btn', function () {
             const messagesContainer = $('#listkomentar');
             const scrollIndicator = $('#scrollIndicator');
 
@@ -1455,7 +1460,7 @@
         });
 
 // Initialize scroll behavior saat page load
-        $(document).ready(function() {
+        $(document).ready(function () {
             const messagesContainer = $('#listkomentar');
 
             // Setup scroll events jika sudah ada lebih dari 5 komentar di awal
@@ -1491,7 +1496,7 @@
 
     // Success modal event handler - auto close setelah 3 detik
     $(document).on('shown.bs.modal', '#successModal', function () {
-        setTimeout(function() {
+        setTimeout(function () {
             $('#successModal').modal('hide');
         }, 3000);
     });
@@ -1501,6 +1506,219 @@
         // Optional: Focus ke input nama setelah modal tertutup
         $('#nama-fm').focus();
     });
+
+    // Smart function untuk detect device dan add ke calendar
+    async function smartAddToCalendar() {
+        const button = document.querySelector('.btn-save-date');
+        const originalHTML = button.innerHTML;
+
+        try {
+            // Add loading state
+            button.classList.add('loading');
+            button.innerHTML = '<i class="fas fa-spinner"></i> Membuka...';
+
+            const userAgent = navigator.userAgent.toLowerCase();
+
+            const isAndroid = /android/.test(userAgent);
+
+            // Tunggu sebentar untuk animasi loading
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+             if (isAndroid) {
+                // Untuk Android, buka Google Calendar
+                addToGoogleCalendar();
+            } else {
+                // Untuk desktop/lainnya, berikan pilihan
+                showCalendarOptions();
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Terjadi kesalahan, silakan coba lagi', true);
+        } finally {
+            // Reset button state
+            button.classList.remove('loading');
+            button.innerHTML = originalHTML;
+        }
+    }
+
+    // Fungsi untuk Google Calendar
+    function addToGoogleCalendar() {
+        const eventDate = new Date('{{ $event->event_date }} {{ $event->start_time }}');
+        const endDate = new Date('{{ $event->event_date }} 21:00');
+
+        // Format dates untuk Google Calendar
+        const start = eventDate.toISOString().replace(/-|:|\.\d+/g, '');
+        const end = endDate.toISOString().replace(/-|:|\.\d+/g, '');
+
+        const details = {
+            title: 'Pernikahan Vendy & Margareth',
+            location: '{{ $event->location }}',
+            description: 'Pernikahan Vendy & Margareth. {{ $event->location }} - ' + window.location.href
+        };
+
+        const url = [
+            'https://calendar.google.com/calendar/render',
+            '?action=TEMPLATE',
+            '&text=' + encodeURIComponent(details.title),
+            '&dates=' + start + '/' + end,
+            '&details=' + encodeURIComponent(details.description),
+            '&location=' + encodeURIComponent(details.location),
+            '&sprop=website:' + encodeURIComponent(window.location.href),
+            '&sprop=name:Undangan Pernikahan'
+        ].join('');
+
+        window.open(url, '_blank');
+        showToast('Membuka Google Calendar...');
+    }
+
+    // Fungsi untuk download iCalendar file (iOS & lainnya)
+    function downloadICalFile() {
+        const eventDate = new Date('{{ $event->event_date }} {{ $event->start_time }}');
+        const endDate = new Date('{{ $event->event_date }} 21:00');
+
+        // Format dates untuk iCal
+        const formatDate = (date) => {
+            return date.toISOString().replace(/-|:|\.\d+/g, '').slice(0, 15) + 'Z';
+        };
+
+        const icalContent = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//Wedding Invitation//VendyMargareth//ID',
+            'CALSCALE:GREGORIAN',
+            'BEGIN:VEVENT',
+            'UID:' + Date.now() + '@vendymargareth.wedding',
+            'SUMMARY:Pernikahan Vendy & Margareth',
+            'DESCRIPTION:Pernikahan Vendy Wiranatha dan Margaretha Magdalena Br Nainggolan. {{ $event->location }} - ' + window.location.href,
+            'LOCATION:{{ $event->location }}',
+            'DTSTART:' + formatDate(eventDate),
+            'DTEND:' + formatDate(endDate),
+            'URL:' + window.location.href,
+            'ORGANIZER;CN="Vendy Wiranatha":mailto:contact@vendymargareth.wedding',
+            'END:VEVENT',
+            'END:VCALENDAR'
+        ].join('\r\n');
+
+        // Create dan download file
+        const blob = new Blob([icalContent], {type: 'text/calendar;charset=utf-8'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'Pernikahan-Vendy-Margareth.ics';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showToast('File kalender berhasil diunduh! Buka file untuk menambahkan ke kalender.');
+    }
+
+    // Fungsi untuk menampilkan pilihan (untuk desktop)
+    function showCalendarOptions() {
+        // Create modal sederhana
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        backdrop-filter: blur(5px);
+    `;
+
+        modal.innerHTML = `
+        <div style="background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 320px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <h4 style="margin-bottom: 20px; color: #333; font-weight: 600;">Tambahkan ke Kalender</h4>
+            <button onclick="addToGoogleCalendar(); closeModal(this)" style="background: linear-gradient(135deg, #4285F4 0%, #34A853 100%); color: white; border: none; padding: 15px 20px; border-radius: 25px; width: 100%; margin-bottom: 12px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;">
+                <i class="fab fa-google"></i> Google Calendar
+            </button>
+            <button onclick="downloadICalFile(); closeModal(this)" style="background: linear-gradient(135deg, #e44d26 0%, #f26161 100%); color: white; border: none; padding: 15px 20px; border-radius: 25px; width: 100%; margin-bottom: 12px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;">
+                <i class="fas fa-download"></i> Download iCal File
+            </button>
+            <button onclick="closeModal(this)" style="background: #f8f9fa; color: #666; border: 1px solid #dee2e6; padding: 12px 20px; border-radius: 25px; width: 100%; cursor: pointer; font-weight: 500; transition: all 0.3s ease;">
+                Batal
+            </button>
+        </div>
+    `;
+
+        document.body.appendChild(modal);
+
+        // Add hover effects to modal buttons
+        const modalButtons = modal.querySelectorAll('button');
+        modalButtons.forEach(btn => {
+            btn.addEventListener('mouseenter', function () {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+            });
+            btn.addEventListener('mouseleave', function () {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // Close modal ketika klik di luar
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+    }
+
+    function closeModal(btn) {
+        const modal = btn.closest('div[style*="position: fixed"]');
+        if (modal) {
+            document.body.removeChild(modal);
+        }
+    }
+
+    // Fungsi untuk menampilkan toast notification
+    function showToast(message, isError = false) {
+        // Remove existing toast
+        const existingToast = document.querySelector('.calendar-toast');
+        if (existingToast) {
+            document.body.removeChild(existingToast);
+        }
+
+        // Create new toast
+        const toast = document.createElement('div');
+        toast.className = 'calendar-toast' + (isError ? ' error' : '');
+        toast.innerHTML = `
+        <i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+        <span>${message}</span>
+    `;
+
+        document.body.appendChild(toast);
+
+        // Show toast
+        setTimeout(() => toast.classList.add('show'), 100);
+
+        // Hide after 4 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    document.body.removeChild(toast);
+                }
+            }, 400);
+        }, 4000);
+    }
+
+    // Enhanced version dengan fallback
+    function enhancedSmartAddToCalendar() {
+        if (typeof Blob === 'undefined') {
+            showToast('Browser tidak mendukung fitur ini', true);
+            return;
+        }
+
+        smartAddToCalendar();
+    }
+
+    // Update onclick handler dengan enhanced version
+    document.querySelector('.btn-save-date').onclick = enhancedSmartAddToCalendar;
 </script>
 </body>
 </html>

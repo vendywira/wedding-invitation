@@ -19,4 +19,9 @@ class Event extends Model
         'finish_time',
         'google_map_link',
     ];
+
+    public function guests()
+    {
+        return $this->hasMany(Guest::class, 'event_id', 'id');
+    }
 }

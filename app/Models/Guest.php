@@ -18,6 +18,11 @@ class Guest extends Model
         'is_opened',
     ];
 
+    public function event()
+    {
+        return $this->belongsTo(Event::class, 'event_id');
+    }
+
     public function messages()
     {
         return $this->hasMany(Message::class, 'guest_id', 'id');

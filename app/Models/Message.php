@@ -14,4 +14,10 @@ class Message extends Model
         'guest_id',
         'message',
     ];
+
+    public function guest()
+    {
+        return $this->belongsTo(Guest::class, 'guest_id');
+    }
+
 }
