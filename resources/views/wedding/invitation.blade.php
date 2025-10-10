@@ -2,52 +2,77 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Undangan Pernikahan Vendy & Margareth</title>
-    <meta property="og:title" content="Pernikahan Vendy & Margareth">
-    <meta property="og:image" content="{{ asset('assets/images/gallery/gal-8.jpg') }}">
-    <meta property="og:description"
-          content="Undangan pada {{ (new \IntlDateFormatter('id_ID', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE, 'Asia/Jakarta', \IntlDateFormatter::GREGORIAN, 'EEEE, d MMMM y'))->format(new DateTime($event->event_date)) }}">
-    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="author" content="I Wayan Vendy Wiranatha">
-    <meta name="robots" content="index, follow">
 
-    <!-- Open Graph / Facebook -->
+    <!-- Dynamic SEO Meta Tags - Optimized for Both Routes -->
+    <title>{{ $metaData['title'] }}</title>
+    <meta name="description" content="{{ $metaData['description'] }}">
+    <meta name="keywords" content="undangan pernikahan, {{ $metaData['location'] }}, Vendy Margareth, {{ $metaData['guest_name'] }}, 12 November 2025">
+    <meta name="author" content="I Wayan Vendy Wiranatha">
+    <meta name="robots" content="{{ $metaData['robots_meta'] }}">
+
+    <!-- Open Graph / Facebook & WhatsApp - OPTIMIZED FOR BOTH ROUTES -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="Undangan Pernikahan Vendy & Margareth">
-    <meta property="og:description" content="Undangan pada {{ (new \IntlDateFormatter('id_ID', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE, 'Asia/Jakarta', \IntlDateFormatter::GREGORIAN, 'EEEE, d MMMM y'))->format(new DateTime($event->event_date)) }}">
-    <meta property="og:image" content="{{ asset('assets/images/gallery/gal-8.jpg') }}">
+    <meta property="og:url" content="{{ $metaData['og_url'] }}">
+    <meta property="og:title" content="{{ $metaData['og_title'] }}">
+    <meta property="og:description" content="{{ $metaData['og_description'] }}">
+    <meta property="og:image" content="{{ $metaData['og_image'] }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Vendy & Margareth Wedding Invitation">
+    <meta property="og:image:alt" content="Undangan {{ $metaData['location'] }} - Vendy & Margareth">
     <meta property="og:site_name" content="Undangan Pernikahan Vendy & Margareth">
     <meta property="og:locale" content="id_ID">
 
-    <!-- Twitter -->
+    <!-- Twitter Card -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ url()->current() }}">
-    <meta property="twitter:title" content="Undangan Pernikahan Vendy & Margareth">
-    <meta property="twitter:description" content="Undangan pada {{ (new \IntlDateFormatter('id_ID', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE, 'Asia/Jakarta', \IntlDateFormatter::GREGORIAN, 'EEEE, d MMMM y'))->format(new DateTime($event->event_date)) }}">
-    <meta property="twitter:image" content="{{ asset('assets/images/gallery/gal-8.jpg') }}">
-    <meta property="twitter:image:alt" content="Vendy & Margareth Wedding Invitation">
+    <meta property="twitter:url" content="{{ $metaData['og_url'] }}">
+    <meta property="twitter:title" content="{{ $metaData['og_title'] }}">
+    <meta property="twitter:description" content="{{ $metaData['og_description'] }}">
+    <meta property="twitter:image" content="{{ $metaData['og_image'] }}">
+    <meta property="twitter:image:alt" content="Undangan {{ $metaData['location'] }} - Vendy & Margareth">
 
-    <!-- Additional SEO Meta Tags -->
+    <!-- Additional Meta Tags -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#e44d26">
     <meta name="msapplication-TileColor" content="#e44d26">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Vendy & Margareth Wedding">
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="canonical" href="{{ $metaData['canonical_url'] }}">
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/images/apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/images/favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/images/favicon-16x16.png') }}">
+
+    <!-- Structured Data Final Recommended -->
+    <script type="application/ld+json">
+        @php
+        echo json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'Event',
+            'name' => 'Pernikahan Vendy & Margareth - ' . $metaData['location'],
+            'description' => $metaData['location'] . ' - Pemberkatan pernikahan Vendy Wiranatha dan Margaretha Magdalena Br Nainggolan',
+            'startDate' => '2025-11-12T17:00:00',
+            'endDate' => '2025-11-12T21:00:00',
+            'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
+            'eventStatus' => 'https://schema.org/EventScheduled',
+            'location' => [
+                '@type' => 'Place',
+                'name' => $event->location ?? $metaData['location'],
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'addressLocality' => 'Tabanan',
+                    'addressRegion' => 'Bali',
+                    'addressCountry' => 'ID'
+                ]
+            ],
+            'organizer' => [
+                '@type' => 'Person',
+                'name' => 'Vendy Wiranatha'
+            ],
+            'image' => $metaData['og_image'],
+            'url' => $metaData['canonical_url']
+        ], JSON_UNESCAPED_SLASHES);
+        @endphp
+    </script>
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('assets/css/style3.css') }}">

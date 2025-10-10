@@ -1,2 +1,26 @@
 User-agent: *
-Disallow:
+Allow: /
+Allow: /assets/
+
+# IZINKAN KEDUA ROUTE DENGAN PARAMETER ?to= UNTUK SOCIAL BOTS
+User-agent: FacebookExternalHit
+Allow: /p/invitation?to=
+Allow: /r/invitation?to=
+Allow: /*?to=
+
+User-agent: WhatsApp
+Allow: /p/invitation?to=
+Allow: /r/invitation?to=
+Allow: /*?to=
+
+User-agent: Twitterbot
+Allow: /p/invitation?to=
+Allow: /r/invitation?to=
+Allow: /*?to=
+
+Allow: /p/invitation
+Allow: /r/invitation
+Disallow: /*?to=
+Disallow: /*?*
+
+Sitemap: {{ url('/sitemap.xml') }}

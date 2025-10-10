@@ -23,3 +23,19 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Optimasi untuk Social Media Bots
+<IfModule mod_headers.c>
+    # Allow Facebook, WhatsApp, Twitter bots
+    Header always set X-Robots-Tag "noindex, follow"
+
+    # Cache control untuk assets
+    <FilesMatch "\.(jpg|jpeg|png|gif|ico|css|js)$">
+        Header set Cache-Control "max-age=2592000, public"
+    </FilesMatch>
+</IfModule>
+
+# Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript
+</IfModule>
