@@ -6,7 +6,7 @@
     <!-- Dynamic SEO Meta Tags - Optimized for Both Routes -->
     <title>{{ $metaData['title'] }}</title>
     <meta name="description" content="{{ $metaData['description'] }}">
-    <meta name="keywords" content="undangan pernikahan, {{ $metaData['location'] }}, Vendy Margareth, {{ $metaData['guest_name'] }}, 12 November 2025">
+    <meta name="keywords" content="undangan pernikahan, {{ $metaData['location'] }}, Vendy Margareth, {{ $metaData['guest_name'] }}, {{ $metaData['event_date_formatted'] }}">
     <meta name="author" content="I Wayan Vendy Wiranatha">
     <meta name="robots" content="{{ $metaData['robots_meta'] }}">
 
@@ -435,7 +435,7 @@
         <div class="popup-content" style="margin-top: -60px;">
             <h1>THE WEDDING OF</h1>
             <h2>Vendy & Margareth</h2>
-            <span class="h3">12 / 11 / 25</span><br><br><br><br><br><br><br><br><br><br><br><br>
+            <span class="h3">{{ Carbon\Carbon::parse($event->event_date)->format('d / m / y') }}</span><br><br><br><br><br><br><br><br><br><br><br><br>
             <div class="yth">
                 Kepada Yth Bapak/Ibu/Saudara/i:<br>
                 <div class="nama-tamu">{{$guestData->name ?? request()->get('to', 'Tamu Undangan') }}</div>
@@ -470,7 +470,7 @@
         <div id="header">
             <h1>PERNIKAHAN</h1>
             <h2>Vendy & Margareth</h2>
-            <h3>12 / 11 / 25</h3>
+            <h3>{{ Carbon\Carbon::parse($event->event_date)->format('d / m / y') }}</h3>
         </div>
 
         <!-- SVG Waves -->
