@@ -28,7 +28,7 @@ class AdminController extends Controller
             'total_messages' => Message::count(),
             'attending_guests' => $attendingGuests->count(),
             'not_attending_guests' => $guests->where('attendance', 'Tidak Hadir')->count(),
-            'pending_guests' => $guests->where('attendance', null)->count(), // Yang belum konfirmasi
+            'pending_guests' => $guests->where('attendance', 'Belum Konfirmasi')->count(), // Yang belum konfirmasi
             'all_guests_count' => $guests->count(), // Total semua tamu
         ];
 
@@ -438,7 +438,7 @@ class AdminController extends Controller
             ],
             'guest_attends' => 'required|integer|min:1|max:10',
             'event_type' => 'required|in:p,r',
-            'attendance' => 'nullable|in:Hadir,Tidak Hadir'
+            'attendance' => 'nullable|in:Hadir,Tidak Hadir,Belum Konfirmasi'
         ]);
 
         $guest = Guest::findOrFail($id);

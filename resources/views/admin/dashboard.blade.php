@@ -727,6 +727,25 @@
                 font-size: 0.8rem;
             }
         }
+        /* Tambahkan di bagian CSS yang responsive */
+        @media (max-width: 768px) {
+            .input-group-sm .input-group-text {
+                padding: 0.375rem 0.5rem;
+                font-size: 0.775rem;
+            }
+
+            #searchFilter {
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Styling untuk highlight hasil pencarian */
+        .highlight {
+            background-color: #fff3cd;
+            font-weight: bold;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
@@ -744,7 +763,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="#">
-            <i class="fas fa-heart me-2"></i>Wedding Admin
+            <i class="fas fa-grip me-2"></i>Dashboard
         </a>
         <div class="navbar-nav ms-auto">
             <a href="/logout" class="nav-link text-white"
@@ -993,6 +1012,13 @@
                                         </div>
                                         <div class="col-md-6 col-12">
                                             <div class="row g-2">
+                                                <!-- Input Search Baru -->
+                                                <div class="col-md-3 col-12">
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                                        <input type="text" class="form-control" id="searchFilter" placeholder="Cari nama...">
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-4 col-6">
                                                     <select class="form-control form-control-sm" id="eventFilter">
                                                         <option value="all">Semua Acara</option>
@@ -1063,8 +1089,8 @@
                                 @foreach($guests as $guest)
                                 <tr data-guest-id="{{ $guest->id }}"
                                     data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
-                                    data-attendance="{{ $guest->attendance }}">
-                                    <td>
+                                    data-attendance="{{ $guest->attendance ?? 'Belum Konfirmasi' }}">
+                                <td>
                                         <strong>{{ $guest->name }}</strong>
                                     </td>
                                     <td>
@@ -1122,7 +1148,7 @@
                                                     data-name="{{ $guest->name }}"
                                                     data-guest-attends="{{ $guest->guest_attends }}"
                                                     data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
-                                                    data-attendance="{{ $guest->attendance }}"
+                                                    data-attendance="{{ $guest->attendance ?? 'Belum Konfirmasi' }}"
                                                     title="Edit Tamu">
                                                 <i class="fas fa-edit"></i>
                                             </button>
@@ -1199,7 +1225,7 @@
                                                     data-name="{{ $guest->name }}"
                                                     data-guest-attends="{{ $guest->guest_attends }}"
                                                     data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
-                                                    data-attendance="{{ $guest->attendance }}"
+                                                    data-attendance="{{ $guest->attendance ?? '' }}"
                                                     title="Edit Tamu">
                                                 <i class="fas fa-edit"></i> Edit
                                             </button>
@@ -1358,7 +1384,7 @@
                     <div class="mb-3">
                         <label class="form-label">Status Konfirmasi</label>
                         <select class="form-control" id="editAttendance" name="attendance">
-                            <option value="">Belum Konfirmasi</option>
+                            <option value="Belum Konfirmasi">Belum Konfirmasi</option>
                             <option value="Hadir">Hadir</option>
                             <option value="Tidak Hadir">Tidak Hadir</option>
                         </select>
@@ -1526,28 +1552,43 @@
             const guestName = $(this).data('name');
             const guestAttends = $(this).data('guest-attends');
             const eventType = $(this).data('event-type');
-            const attendance = $(this).data('attendance');
+            let attendance = $(this).data('attendance');
+
+            let formattedEventType = 'p'; // default
+            if (eventType === 'rumah') {
+                formattedEventType = 'r';
+            } else if (eventType === 'gedung') {
+                formattedEventType = 'p';
+            }
+
+            // Handle attendance yang null/undefined
+            if (!attendance || attendance === 'null' || attendance === 'undefined') {
+                attendance = 'Belum Konfirmasi';
+            }
 
             $('#editGuestId').val(guestId);
             $('#editGuestName').val(guestName);
             $('#editGuestAttends').val(guestAttends);
-            $('#editEventType').val(eventType);
-            $('#editAttendance').val(attendance || '');
-
+            $('#editEventType').val(formattedEventType);
+            $('#editAttendance').val(attendance);
             $('#editGuestModal').modal('show');
         });
 
-        // Save edited guest
+// Save edited guest - PERBAIKAN LENGKAP
         $('#saveEditGuest').on('click', function() {
+            const guestId = $('#editGuestId').val();
             const formData = {
                 _token: '{{ csrf_token() }}',
-                name: $('#editGuestName').val(),
+                name: $('#editGuestName').val().trim(),
                 guest_attends: $('#editGuestAttends').val(),
                 event_type: $('#editEventType').val(),
-                attendance: $('#editAttendance').val()
+                attendance: $('#editAttendance').val() || '' // Pastikan tidak null
             };
 
-            const guestId = $('#editGuestId').val();
+            if (!validateEditForm()) {
+                return;
+            }
+
             showLoading();
 
             $.ajax({
@@ -1567,11 +1608,17 @@
                 },
                 error: function(xhr) {
                     hideLoading();
+                    console.error('Error response:', xhr.responseJSON); // Debug log
+
                     if (xhr.status === 422) {
                         // Validation error
                         const errors = xhr.responseJSON.errors;
                         if (errors && errors.name) {
                             showToast(errors.name[0], 'error');
+                        } else if (errors && errors.event_type) {
+                            showToast(errors.event_type[0], 'error');
+                        } else if (errors && errors.attendance) {
+                            showToast(errors.attendance[0], 'error');
                         } else {
                             showToast(xhr.responseJSON.message || 'Terjadi kesalahan validasi', 'error');
                         }
@@ -1581,6 +1628,25 @@
                 }
             });
         });
+
+        function validateEditForm() {
+            const name = $('#editGuestName').val().trim();
+            const eventType = $('#editEventType').val();
+
+            if (!name) {
+                showToast('Nama tamu harus diisi', 'error');
+                $('#editGuestName').focus();
+                return false;
+            }
+
+            if (!eventType) {
+                showToast('Jenis acara harus dipilih', 'error');
+                $('#editEventType').focus();
+                return false;
+            }
+
+            return true;
+        }
 
         // Share guest via WhatsApp
         $(document).on('click', '.share-guest-whatsapp', function() {
@@ -1911,6 +1977,28 @@ Konfirmasi kehadiran: ${invitationLink}
                 }
             });
         }
+
+        $('#searchFilter').on('input', function() {
+            const hasValue = $(this).val().length > 0;
+
+            // Hapus tombol clear yang sudah ada
+            $(this).parent().find('.search-clear').remove();
+
+            if (hasValue) {
+                // Tambahkan tombol clear
+                const clearBtn = $('<button type="button" class="btn btn-sm search-clear" style="border: none; background: transparent; position: absolute; right: 5px; top: 50%; transform: translateY(-50%); z-index: 3;">' +
+                    '<i class="fas fa-times text-muted"></i>' +
+                    '</button>');
+
+                $(this).parent().css('position', 'relative').append(clearBtn);
+
+                clearBtn.on('click', function() {
+                    $('#searchFilter').val('');
+                    applyFilters();
+                    $(this).remove();
+                });
+            }
+        });
     });
 
     // Filter functionality
@@ -2039,6 +2127,199 @@ Konfirmasi kehadiran: ${invitationLink}
     // Update filter info on page load
     $(document).ready(function() {
         updateFilterInfo('all', 'all');
+    });
+
+    // Tambahkan event listener untuk search input
+    $('#searchFilter').on('input', function() {
+        applyFilters();
+    });
+
+    // Update fungsi applyFilters untuk menangani pencarian
+    function applyFilters() {
+        const eventFilter = $('#eventFilter').val();
+        const statusFilter = $('#statusFilter').val();
+        const searchTerm = $('#searchFilter').val().toLowerCase().trim();
+
+        let visibleCount = 0;
+        let totalCount = 0;
+
+        // Filter desktop table
+        $('#guestsTableBody tr').each(function() {
+            const eventType = $(this).data('event-type');
+            const attendance = $(this).data('attendance');
+            const guestName = $(this).find('td:first strong').text().toLowerCase();
+
+            let showRow = true;
+
+            // Apply search filter
+            if (searchTerm !== '' && !guestName.includes(searchTerm)) {
+                showRow = false;
+            }
+
+            // Apply event filter
+            if (eventFilter !== 'all' && eventType !== eventFilter) {
+                showRow = false;
+            }
+
+            // Apply status filter
+            if (statusFilter !== 'all') {
+                if (statusFilter === 'pending' && attendance !== '') {
+                    showRow = false;
+                } else if (statusFilter !== 'pending' && attendance !== statusFilter) {
+                    showRow = false;
+                }
+            }
+
+            if (showRow) {
+                $(this).show();
+                visibleCount++;
+
+                // Highlight search term jika ada
+                if (searchTerm !== '') {
+                    highlightSearchTerm($(this), searchTerm);
+                } else {
+                    removeHighlight($(this));
+                }
+            } else {
+                $(this).hide();
+                removeHighlight($(this));
+            }
+            totalCount++;
+        });
+
+        // Filter mobile view
+        $('#mobileGuestsList .card').each(function() {
+            const eventType = $(this).data('event-type');
+            const attendance = $(this).data('attendance');
+            const guestName = $(this).find('.card-title').text().toLowerCase();
+
+            let showCard = true;
+
+            // Apply search filter
+            if (searchTerm !== '' && !guestName.includes(searchTerm)) {
+                showCard = false;
+            }
+
+            // Apply event filter
+            if (eventFilter !== 'all' && eventType !== eventFilter) {
+                showCard = false;
+            }
+
+            // Apply status filter
+            if (statusFilter !== 'all') {
+                if (statusFilter === 'pending' && attendance !== '') {
+                    showCard = false;
+                } else if (statusFilter !== 'pending' && attendance !== statusFilter) {
+                    showCard = false;
+                }
+            }
+
+            if (showCard) {
+                $(this).show();
+
+                // Highlight search term jika ada
+                if (searchTerm !== '') {
+                    highlightSearchTermMobile($(this), searchTerm);
+                } else {
+                    removeHighlightMobile($(this));
+                }
+            } else {
+                $(this).hide();
+                removeHighlightMobile($(this));
+            }
+        });
+
+        // Update count display
+        $('#filteredCount').text(visibleCount);
+        $('#totalCount').text(totalCount);
+
+        // Update filter info
+        updateFilterInfo(eventFilter, statusFilter, searchTerm);
+    }
+
+    // Fungsi untuk highlight teks di desktop view
+    function highlightSearchTerm($row, searchTerm) {
+        const $nameCell = $row.find('td:first strong');
+        const originalText = $nameCell.data('original-text') || $nameCell.text();
+        $nameCell.data('original-text', originalText);
+
+        const highlightedText = originalText.replace(
+            new RegExp(searchTerm, 'gi'),
+            match => `<span class="highlight">${match}</span>`
+        );
+        $nameCell.html(highlightedText);
+    }
+
+    function removeHighlight($row) {
+        const $nameCell = $row.find('td:first strong');
+        const originalText = $nameCell.data('original-text');
+        if (originalText) {
+            $nameCell.text(originalText);
+            $nameCell.removeData('original-text');
+        }
+    }
+
+    // Fungsi untuk highlight teks di mobile view
+    function highlightSearchTermMobile($card, searchTerm) {
+        const $nameElement = $card.find('.card-title');
+        const originalText = $nameElement.data('original-text') || $nameElement.text();
+        $nameElement.data('original-text', originalText);
+
+        const highlightedText = originalText.replace(
+            new RegExp(searchTerm, 'gi'),
+            match => `<span class="highlight">${match}</span>`
+        );
+        $nameElement.html(highlightedText);
+    }
+
+    function removeHighlightMobile($card) {
+        const $nameElement = $card.find('.card-title');
+        const originalText = $nameElement.data('original-text');
+        if (originalText) {
+            $nameElement.text(originalText);
+            $nameElement.removeData('original-text');
+        }
+    }
+
+    // Update fungsi updateFilterInfo untuk menampilkan info pencarian
+    function updateFilterInfo(eventFilter, statusFilter, searchTerm = '') {
+        let infoText = '';
+
+        if (searchTerm !== '') {
+            infoText += `Pencarian: "${searchTerm}"`;
+        }
+
+        if (eventFilter !== 'all') {
+            if (infoText !== '') infoText += ' | ';
+            infoText += `Acara: ${eventFilter === 'gedung' ? 'Gedung' : 'Rumah'}`;
+        }
+
+        if (statusFilter !== 'all') {
+            if (infoText !== '') infoText += ' | ';
+            infoText += `Status: ${statusFilter === 'pending' ? 'Belum Konfirmasi' : statusFilter}`;
+        }
+
+        if (infoText === '') {
+            infoText = 'Semua tamu ditampilkan';
+        }
+
+        $('#filterInfo').text(infoText);
+    }
+
+    // Update reset filter untuk membersihkan search juga
+    $('#resetFilter').on('click', function() {
+        $('#eventFilter').val('all');
+        $('#statusFilter').val('all');
+        $('#searchFilter').val('');
+        applyFilters();
+    });
+
+    // Tambahkan event untuk clear search dengan tombol ESC
+    $('#searchFilter').on('keydown', function(e) {
+        if (e.key === 'Escape') {
+            $(this).val('');
+            applyFilters();
+        }
     });
 </script>
 </body>
