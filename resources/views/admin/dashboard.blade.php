@@ -1205,7 +1205,7 @@
                                                 Nama sudah terdaftar untuk acara ini
                                             </div>
                                         </div>
-                                        <div class="col-md-2 col-6">
+                                        <div class="col-md-3 col-12">
                                             <input type="text" name="whatsapp_number" class="form-control form-control-sm"
                                                    placeholder="Nomor WhatsApp (opsional)" id="whatsappInput">
                                         </div>
