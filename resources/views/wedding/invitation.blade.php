@@ -629,6 +629,14 @@
             justify-content: center;
             align-items: center;
         }
+        h2[data-aos="fade-up"] {
+            margin-bottom: 0.5rem !important;
+        }
+
+        h6[data-aos="fade-up"] {
+            margin-top: 0.1rem !important;
+            margin-bottom: 0;
+        }
     </style>
 </head>
 
@@ -1140,6 +1148,7 @@
     <div class="col-sm-12 text-center">
         <h1 data-aos="fade-down">Kami Yang Berbahagia</h1>
         <h2 data-aos="fade-up">Vendy & Margareth</h2>
+        <h6 data-aos="fade-up">#loVENDYngnyaMARGARETH</h6>
         <h3>© 2025 Wedding Invitation by <a href="https://linkedin.com/in/vendywira">I Wayan Vendy Wiranatha</a></h3>
         <div class="col-md-12 col-sm-12 social">
             <a href="https://www.facebook.com/vendy.wiranatha" target="_blank">
