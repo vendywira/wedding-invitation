@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\MessageTemplateController;
 use App\Http\Controllers\WeddingController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -41,4 +42,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/guests/export', [AdminController::class, 'exportGuests'])->name('admin.guests.export');
     Route::get('/admin/guests/export-filtered', [AdminController::class, 'exportFiltered'])->name('admin.guests.export.filtered');
     Route::post('/guests/check', [AdminController::class, 'checkGuestExists'])->name('admin.guests.check');
+
+    Route::get('/templates', [MessageTemplateController::class, 'index'])->name('admin.templates.index');
+    Route::post('/templates', [MessageTemplateController::class, 'store'])->name('admin.templates.store');
+    Route::put('/templates/{id}', [MessageTemplateController::class, 'update'])->name('admin.templates.update');
+    Route::delete('/templates/{id}', [MessageTemplateController::class, 'destroy'])->name('admin.templates.destroy');
+    Route::post('/templates/{id}/set-default', [MessageTemplateController::class, 'setDefault'])->name('admin.templates.set-default');
+    Route::get('/templates/active', [MessageTemplateController::class, 'getActiveTemplates'])->name('admin.templates.active');
 });

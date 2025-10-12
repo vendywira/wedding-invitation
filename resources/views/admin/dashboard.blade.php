@@ -746,6 +746,276 @@
             padding: 2px 4px;
             border-radius: 3px;
         }
+        /* Template Management Enhanced Styles */
+        .template-management {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .template-form-container {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .template-list-container {
+            background: white;
+            border-radius: 10px;
+            padding: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        #templatesTable {
+            margin-bottom: 0;
+        }
+
+        #templatesTable th {
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        #templatesTable td {
+            vertical-align: middle;
+            padding: 12px 15px;
+        }
+
+        .template-actions {
+            white-space: nowrap;
+        }
+
+        .template-variables-hint {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .template-variables-hint code {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin: 0 2px;
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .template-management {
+                max-height: 60vh;
+            }
+
+            .template-form-container {
+                padding: 15px;
+            }
+
+            #templatesTable td {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+
+            .template-actions .btn-group {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .template-actions .btn {
+                padding: 4px 8px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Loading state for templates */
+        .template-loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .template-empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .template-empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* Form styling enhancements */
+        #addTemplateForm .form-check {
+            margin-bottom: 10px;
+        }
+
+        #addTemplateForm .form-check-label {
+            font-weight: 500;
+        }
+
+        #addTemplateForm textarea {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Elegant Confirmation Modal Styles */
+        #elegantConfirmModal .modal-content {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        #elegantConfirmModal .modal-header {
+            padding: 1.5rem 1.5rem 0;
+        }
+
+        #elegantConfirmModal .modal-body {
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        .confirm-icon {
+            font-size: 4rem;
+            animation: pulse 2s infinite;
+        }
+
+        .confirm-icon .fa-exclamation-circle {
+            color: #ffc107;
+            filter: drop-shadow(0 4px 8px rgba(255, 193, 7, 0.3));
+        }
+
+        .success-icon .fa-check-circle {
+            filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.3));
+        }
+
+        #elegantConfirmModal .btn {
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        #elegantConfirmModal .btn-outline-secondary {
+            border-color: #6c757d;
+            color: #6c757d;
+        }
+
+        #elegantConfirmModal .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        #elegantConfirmModal .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border: none;
+            box-shadow: 0 4px 15px rgba(228, 77, 38, 0.3);
+        }
+
+        #elegantConfirmModal .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(228, 77, 38, 0.4);
+        }
+
+        /* Success Toast Modal */
+        #successToastModal .modal-content {
+            border-radius: 16px;
+            border: none;
+            animation: slideInUp 0.5s ease;
+        }
+
+        #successToastModal .modal-body {
+            border-radius: 16px;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Different icon colors for different actions */
+        .confirm-icon.delete .fa-exclamation-circle {
+            color: #dc3545;
+            filter: drop-shadow(0 4px 8px rgba(220, 53, 69, 0.3));
+        }
+
+        .confirm-icon.warning .fa-exclamation-circle {
+            color: #fd7e14;
+            filter: drop-shadow(0 4px 8px rgba(253, 126, 20, 0.3));
+        }
+
+        .confirm-icon.info .fa-exclamation-circle {
+            color: #0dcaf0;
+            filter: drop-shadow(0 4px 8px rgba(13, 202, 240, 0.3));
+        }
+
+        .confirm-icon.success .fa-exclamation-circle {
+            color: #198754;
+            filter: drop-shadow(0 4px 8px rgba(25, 135, 84, 0.3));
+        }
+
+        /* Responsive design */
+        @media (max-width: 576px) {
+            #elegantConfirmModal .modal-dialog {
+                margin: 20px;
+            }
+
+            #elegantConfirmModal .modal-body {
+                padding: 0 1rem 1rem;
+            }
+
+            #elegantConfirmModal .btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+
+            .confirm-icon {
+                font-size: 3rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1031,7 +1301,7 @@
                                                         <option value="all">Semua Status</option>
                                                         <option value="Hadir">Hadir</option>
                                                         <option value="Tidak Hadir">Tidak Hadir</option>
-                                                        <option value="pending">Belum Konfirmasi</option>
+                                                        <option value="Belum Konfirmasi">Belum Konfirmasi</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4 col-12">
@@ -1050,11 +1320,14 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4><i class="fas fa-users me-2"></i>Manage Tamu</h4>
                         <div>
-                            <button class="btn btn-primary-custom me-2" id="refreshGuests">
-                                <i class="fas fa-sync-alt me-1"></i> Refresh
+                            <button class="btn btn-primary-custom me-2" id="manageTemplate"">
+                                <i class="fas fa-envelope me-1"></i>
+                            </button>
+                            <button class="btn btn-primary-custom me-2" id="refreshGuests" >
+                                <i class="fas fa-sync-alt me-1"></i>
                             </button>
                             <button class="btn btn-primary-custom me-2" id="exportFiltered">
-                                <i class="fas fa-download me-1"></i> Export
+                                <i class="fas fa-download me-1"></i>
                             </button>
                         </div>
                     </div>
@@ -1324,6 +1597,15 @@
                     <label class="form-label">Nama Tamu</label>
                     <input type="text" class="form-control" id="modalGuestName" readonly>
                 </div>
+
+                <!-- Template Selection -->
+                <div class="mb-3">
+                    <label class="form-label">Pilih Template</label>
+                    <select class="form-control" id="templateSelect">
+                        <option value="">Loading template...</option>
+                    </select>
+                </div>
+
                 <div class="mb-3">
                     <label class="form-label">Link Undangan</label>
                     <div class="input-group">
@@ -1334,8 +1616,17 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Template Pesan</label>
+                    <label class="form-label">Preview Pesan</label>
                     <textarea class="form-control" id="modalMessageTemplate" rows="6" readonly></textarea>
+                </div>
+
+                <div class="alert alert-info">
+                    <small>
+                        <i class="fas fa-info-circle me-1"></i>
+                        Variabel yang tersedia: <code>{guest_name}</code>, <code>{groom_name}</code>,
+                        <code>{bride_name}</code>, <code>{event_date}</code>, <code>{event_time}</code>,
+                        <code>{event_location}</code>, <code>{invitation_link}</code>
+                    </small>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1343,6 +1634,87 @@
                 <button type="button" class="btn btn-whatsapp" id="modalShareWhatsApp">
                     <i class="fab fa-whatsapp me-1"></i> Share via WhatsApp
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal untuk Manage Templates -->
+<div class="modal fade" id="manageTemplatesModal" tabindex="-1" aria-labelledby="manageTemplatesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content modal-custom">
+            <div class="modal-header">
+                <h5 class="modal-title" id="manageTemplatesModalLabel">
+                    <i class="fas fa-envelope me-2"></i>Kelola Template WhatsApp
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form Tambah Template -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0"><i class="fas fa-plus me-2"></i>Tambah Template Baru</h6>
+                    </div>
+                    <div class="card-body">
+                        <form id="addTemplateForm">
+                            @csrf
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nama Template</label>
+                                        <input type="text" class="form-control" name="name" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Status</label>
+                                        <div class="form-check mt-2">
+                                            <input class="form-check-input" type="checkbox" name="is_active" id="isActive" checked>
+                                            <label class="form-check-label" for="isActive">Aktif</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="is_default" id="isDefault">
+                                            <label class="form-check-label" for="isDefault">Jadikan Default</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Template Pesan</label>
+                                <textarea class="form-control" name="template" rows="8" required
+                                          placeholder="Gunakan variabel: {guest_name}, {groom_name}, {bride_name}, {event_date}, {event_time}, {event_location}, {invitation_link}"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary-custom">
+                                <i class="fas fa-save me-1"></i> Simpan Template
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Daftar Template -->
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0"><i class="fas fa-list me-2"></i>Daftar Template</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="templatesTable">
+                                <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Status</th>
+                                    <th>Default</th>
+                                    <th>Aksi</th>
+                                </tr>
+                                </thead>
+                                <tbody id="templatesTableBody">
+                                <!-- Template list akan diisi via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1401,19 +1773,101 @@
     </div>
 </div>
 
+<!-- Elegant Confirmation Modal -->
+<div class="modal fade" id="elegantConfirmModal" tabindex="-1" aria-labelledby="elegantConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center pt-0">
+                <div class="confirm-icon mb-3">
+                    <i class="fas fa-exclamation-circle text-warning"></i>
+                </div>
+                <h5 class="modal-title mb-3" id="elegantConfirmModalLabel">Konfirmasi</h5>
+                <p class="text-muted mb-4" id="confirmMessage">Apakah Anda yakin ingin melanjutkan?</p>
+
+                <div class="d-flex gap-3 justify-content-center">
+                    <button type="button" class="btn btn-lg btn-outline-secondary flex-fill" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-lg btn-primary flex-fill" id="confirmActionBtn">
+                        <i class="fas fa-check me-2"></i>Ya, Lanjutkan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Toast Modal -->
+<div class="modal fade" id="successToastModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-success text-white">
+            <div class="modal-body text-center p-4">
+                <div class="success-icon mb-3">
+                    <i class="fas fa-check-circle fa-2x"></i>
+                </div>
+                <h5 class="mb-2">Berhasil!</h5>
+                <p class="mb-0" id="successMessage">Operasi berhasil dilakukan</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     $(document).ready(function() {
-        // Variables for auto-refresh
-        let refreshInterval;
-        let lastUpdateTime = new Date();
+        // Global variables
+        let templates = [];
+        let currentTemplate = null;
         let isRefreshing = false;
+        let lastUpdateTime = new Date();
+        let startY = 0;
+        let currentY = 0;
+        let pullDelta = 0;
+        const pullToRefresh = $('#pullToRefresh');
+        const pullThreshold = 60;
 
-        // Initialize auto-refresh
-        // initAutoRefresh();
+        // ==================== UTILITY FUNCTIONS ====================
+        function showLoading() {
+            $('#loadingOverlay').fadeIn();
+        }
 
-        // Tab functionality
+        function hideLoading() {
+            $('#loadingOverlay').fadeOut();
+        }
+
+        function showToast(message, type = 'info') {
+            const toastId = 'toast-' + Date.now();
+            const bgClass = type === 'success' ? 'bg-success' :
+                type === 'error' ? 'bg-danger' :
+                    type === 'warning' ? 'bg-warning' : 'bg-info';
+
+            const toastHtml = `
+                <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+
+            $('#toastContainer').append(toastHtml);
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+            toast.show();
+
+            // Remove toast from DOM after it's hidden
+            toastElement.addEventListener('hidden.bs.toast', function() {
+                $(this).remove();
+            });
+        }
+
+        // ==================== TAB FUNCTIONALITY ====================
         $('.nav-link, .mobile-nav-item').on('click', function(e) {
             e.preventDefault();
             const target = $(this).attr('href');
@@ -1435,6 +1889,7 @@
             $(target).addClass('show active');
         });
 
+        // ==================== GUEST MANAGEMENT ====================
         // Add guest form
         $('#addGuestForm').on('submit', function(e) {
             e.preventDefault();
@@ -1447,26 +1902,19 @@
                 success: function(response) {
                     hideLoading();
                     if (response.success) {
-                        showToast('Tamu berhasil ditambahkan!', 'success');
                         if (response.invitation_url) {
-                            setTimeout(() => {
-                                if (confirm('Link undangan berhasil dibuat! Copy ke clipboard?')) {
-                                    navigator.clipboard.writeText(response.invitation_url);
-                                }
-                            }, 500);
+                            showAddGuestSuccess(response.invitation_url);
+                        } else {
+                            showSuccessMessage('Tamu berhasil ditambahkan!');
                         }
-                        // Reset form
                         $('#addGuestForm')[0].reset();
-                        // Refresh guests data
                         refreshGuestsData();
-                        // Refresh dashboard stats
                         refreshDashboardData();
                     }
                 },
                 error: function(xhr) {
                     hideLoading();
                     if (xhr.status === 422) {
-                        // Validation error
                         const errors = xhr.responseJSON.errors;
                         if (errors && errors.name) {
                             showToast(errors.name[0], 'error');
@@ -1485,6 +1933,8 @@
             const url = $(this).data('url');
             navigator.clipboard.writeText(url).then(function() {
                 showToast('Link berhasil disalin!', 'success');
+            }).catch(function() {
+                showToast('Gagal menyalin link', 'error');
             });
         });
 
@@ -1493,57 +1943,37 @@
             const guestId = $(this).data('id');
             const guestName = $(this).data('name');
 
-            if (confirm(`Hapus tamu "${guestName}"?`)) {
-                showLoading();
-                $.ajax({
-                    url: `/admin/guests/${guestId}`,
-                    type: 'DELETE',
-                    data: { _token: '{{ csrf_token() }}' },
-                    success: function(response) {
-                        hideLoading();
-                        if (response.success) {
-                            showToast('Tamu berhasil dihapus!', 'success');
-                            // Remove guest from UI
-                            $(`[data-guest-id="${guestId}"]`).remove();
-                            // Refresh stats
-                            refreshDashboardData();
+            showElegantConfirm(
+                `Anda akan menghapus tamu "<strong>${guestName}</strong>". Tindakan ini tidak dapat dibatalkan.`,
+                {
+                    title: 'Hapus Tamu',
+                    type: 'delete',
+                    confirmText: 'Ya, Hapus',
+                    icon: 'trash'
+                }
+            ).then((confirmed) => {
+                if (confirmed) {
+                    showLoading();
+                    $.ajax({
+                        url: `/admin/guests/${guestId}`,
+                        type: 'DELETE',
+                        data: { _token: '{{ csrf_token() }}' },
+                        success: function(response) {
+                            hideLoading();
+                            if (response.success) {
+                                showSuccessMessage('Tamu berhasil dihapus!');
+                                $(`[data-guest-id="${guestId}"]`).remove();
+                                refreshDashboardData();
+                                updateGuestCounts();
+                            }
+                        },
+                        error: function(xhr) {
+                            hideLoading();
+                            showToast('Error menghapus tamu', 'error');
                         }
-                    },
-                    error: function(xhr) {
-                        hideLoading();
-                        showToast('Error menghapus tamu', 'error');
-                    }
-                });
-            }
-        });
-
-        // Delete message
-        $(document).on('click', '.delete-message', function() {
-            const messageId = $(this).data('id');
-            const messageName = $(this).data('name');
-
-            if (confirm(`Hapus ucapan dari "${messageName}"?`)) {
-                showLoading();
-                $.ajax({
-                    url: `/admin/messages/${messageId}`,
-                    type: 'DELETE',
-                    data: { _token: '{{ csrf_token() }}' },
-                    success: function(response) {
-                        hideLoading();
-                        if (response.success) {
-                            showToast('Ucapan berhasil dihapus!', 'success');
-                            // Remove message from UI
-                            $(`[data-message-id="${messageId}"]`).remove();
-                            // Refresh stats
-                            refreshDashboardData();
-                        }
-                    },
-                    error: function(xhr) {
-                        hideLoading();
-                        showToast('Error menghapus ucapan', 'error');
-                    }
-                });
-            }
+                    });
+                }
+            });
         });
 
         // Edit guest functionality
@@ -1574,7 +2004,7 @@
             $('#editGuestModal').modal('show');
         });
 
-// Save edited guest - PERBAIKAN LENGKAP
+        // Save edited guest
         $('#saveEditGuest').on('click', function() {
             const guestId = $('#editGuestId').val();
             const formData = {
@@ -1582,7 +2012,7 @@
                 name: $('#editGuestName').val().trim(),
                 guest_attends: $('#editGuestAttends').val(),
                 event_type: $('#editEventType').val(),
-                attendance: $('#editAttendance').val() || '' // Pastikan tidak null
+                attendance: $('#editAttendance').val() || 'Belum Konfirmasi'
             };
 
             if (!validateEditForm()) {
@@ -1608,8 +2038,6 @@
                 },
                 error: function(xhr) {
                     hideLoading();
-                    console.error('Error response:', xhr.responseJSON); // Debug log
-
                     if (xhr.status === 422) {
                         // Validation error
                         const errors = xhr.responseJSON.errors;
@@ -1648,10 +2076,422 @@
             return true;
         }
 
-        // Share guest via WhatsApp
+        function showAddGuestSuccess(invitationUrl) {
+            showElegantConfirm(
+                'Tamu berhasil ditambahkan! Apakah Anda ingin menyalin link undangan ke clipboard?',
+                {
+                    title: 'Berhasil',
+                    type: 'success',
+                    confirmText: 'Ya, Salin Link',
+                    cancelText: 'Nanti Saja',
+                    icon: 'copy'
+                }
+            ).then((confirmed) => {
+                if (confirmed) {
+                    navigator.clipboard.writeText(invitationUrl).then(function() {
+                        showSuccessMessage('Link berhasil disalin!');
+                    }).catch(function() {
+                        showToast('Gagal menyalin link', 'error');
+                    });
+                }
+            });
+        }
+
+        // ==================== MESSAGE MANAGEMENT ====================
+        // Delete message
+        $(document).on('click', '.delete-message', function() {
+            const messageId = $(this).data('id');
+            const messageName = $(this).data('name');
+
+            showElegantConfirm(
+                `Anda akan menghapus ucapan dari "<strong>${messageName}</strong>".`,
+                {
+                    title: 'Hapus Ucapan',
+                    type: 'delete',
+                    confirmText: 'Ya, Hapus',
+                    icon: 'trash'
+                }
+            ).then((confirmed) => {
+                if (confirmed) {
+                    showLoading();
+                    $.ajax({
+                        url: `/admin/messages/${messageId}`,
+                        type: 'DELETE',
+                        data: { _token: '{{ csrf_token() }}' },
+                        success: function(response) {
+                            hideLoading();
+                            if (response.success) {
+                                showSuccessMessage('Ucapan berhasil dihapus!');
+                                $(`[data-message-id="${messageId}"]`).remove();
+                                refreshDashboardData();
+                            }
+                        },
+                        error: function(xhr) {
+                            hideLoading();
+                            showToast('Error menghapus ucapan', 'error');
+                        }
+                    });
+                }
+            });
+        });
+
+        // ==================== TEMPLATE MANAGEMENT ====================
+        // Function to open manage templates modal
+        $("#manageTemplate").on("click", function() {
+            loadAllTemplates();
+            $('#manageTemplatesModal').modal('show');
+        });
+
+        // Load all templates for management
+        function loadAllTemplates() {
+            showLoading();
+            $.ajax({
+                url: '{{ route("admin.templates.index") }}',
+                type: 'GET',
+                success: function(response) {
+                    hideLoading();
+                    templates = response;
+                    populateTemplatesTable(templates);
+                },
+                error: function(xhr) {
+                    hideLoading();
+                    showToast('Gagal memuat template', 'error');
+                    console.error('Error loading templates:', xhr);
+                }
+            });
+        }
+
+        // Populate templates table
+        function populateTemplatesTable(templates) {
+            const $tbody = $('#templatesTableBody');
+            $tbody.empty();
+
+            if (templates.length === 0) {
+                $tbody.append(`
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-2"></i><br>
+                            Belum ada template
+                        </td>
+                    </tr>
+                `);
+                return;
+            }
+
+            templates.forEach(template => {
+                // Escape template content untuk JSON
+                const templateJson = JSON.stringify(template).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+
+                const $row = $(`
+                    <tr data-template-id="${template.id}">
+                        <td>
+                            <strong>${template.name}</strong>
+                            ${template.is_default ? '<span class="badge bg-success ms-2">Default</span>' : ''}
+                        </td>
+                        <td>
+                            <span class="badge ${template.is_active ? 'bg-success' : 'bg-secondary'}">
+                                ${template.is_active ? 'Aktif' : 'Non-Aktif'}
+                            </span>
+                        </td>
+                        <td>${template.is_default ? '<i class="fas fa-star text-warning"></i> Ya' : 'Tidak'}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary edit-template"
+                                        data-template='${templateJson}'
+                                        title="Edit Template">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                ${!template.is_default ? `
+                                <button class="btn btn-outline-success set-default-template"
+                                        data-id="${template.id}"
+                                        title="Jadikan Default">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                                <button class="btn btn-outline-danger delete-template"
+                                        data-id="${template.id}"
+                                        data-name="${template.name}"
+                                        title="Hapus Template">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                ` : `
+                                <button class="btn btn-outline-secondary" disabled title="Template Default Tidak Dapat Dihapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                `}
+                            </div>
+                        </td>
+                    </tr>
+                `);
+                $tbody.append($row);
+            });
+        }
+
+        // Load active templates for share modal
+        function loadTemplates() {
+            $.ajax({
+                url: '{{ route("admin.templates.active") }}',
+                type: 'GET',
+                success: function(response) {
+                    templates = response;
+                    populateTemplateSelect();
+
+                    // Set template default
+                    const defaultTemplate = templates.find(t => t.is_default) || templates[0];
+                    if (defaultTemplate) {
+                        $('#templateSelect').val(defaultTemplate.id);
+                        currentTemplate = defaultTemplate;
+                        updateMessagePreview();
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error loading active templates:', xhr);
+                    showToast('Gagal memuat template', 'error');
+                }
+            });
+        }
+
+        // Populate template select dropdown
+        function populateTemplateSelect() {
+            const $select = $('#templateSelect');
+            $select.empty();
+
+            if (templates.length === 0) {
+                $select.append('<option value="">Tidak ada template</option>');
+                return;
+            }
+
+            templates.forEach(template => {
+                $select.append(
+                    $('<option>', {
+                        value: template.id,
+                        text: template.name + (template.is_default ? ' (Default)' : '')
+                    })
+                );
+            });
+        }
+
+        // Add template form
+        $('#addTemplateForm').on('submit', function(e) {
+            e.preventDefault();
+
+            const formData = {
+                _token: '{{ csrf_token() }}',
+                name: $(this).find('input[name="name"]').val(),
+                template: $(this).find('textarea[name="template"]').val(),
+                is_active: $(this).find('#isActive').is(':checked') ? 1 : 0,
+                is_default: $(this).find('#isDefault').is(':checked') ? 1 : 0
+            };
+
+            // Validasi
+            if (!formData.name.trim()) {
+                showToast('Nama template harus diisi', 'error');
+                return;
+            }
+
+            if (!formData.template.trim()) {
+                showToast('Template pesan harus diisi', 'error');
+                return;
+            }
+
+            showLoading();
+
+            $.ajax({
+                url: '{{ route("admin.templates.store") }}',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    hideLoading();
+                    if (response.success) {
+                        showToast('Template berhasil ditambahkan', 'success');
+                        $('#addTemplateForm')[0].reset();
+                        loadAllTemplates();
+                        loadTemplates(); // Refresh templates di share modal juga
+                    }
+                },
+                error: function(xhr) {
+                    hideLoading();
+                    if (xhr.status === 422) {
+                        const errors = xhr.responseJSON.errors;
+                        if (errors.name) {
+                            showToast(errors.name[0], 'error');
+                        } else if (errors.template) {
+                            showToast(errors.template[0], 'error');
+                        } else {
+                            showToast('Terjadi kesalahan validasi', 'error');
+                        }
+                    } else {
+                        showToast('Error menambahkan template', 'error');
+                    }
+                    console.error('Error adding template:', xhr);
+                }
+            });
+        });
+
+        // Edit template functionality
+        $(document).on('click', '.edit-template', function() {
+            const templateJson = $(this).data('template');
+            const template = typeof templateJson === 'string' ?
+                JSON.parse(templateJson.replace(/&#39;/g, "'").replace(/&quot;/g, '"')) : templateJson;
+
+            // Isi form edit
+            $('#addTemplateForm input[name="name"]').val(template.name);
+            $('#addTemplateForm textarea[name="template"]').val(template.template);
+            $('#addTemplateForm #isActive').prop('checked', template.is_active);
+            $('#addTemplateForm #isDefault').prop('checked', template.is_default);
+
+            // Ubah form menjadi edit mode
+            $('#addTemplateForm').data('edit-mode', true);
+            $('#addTemplateForm').data('edit-id', template.id);
+            $('#addTemplateForm button[type="submit"]').html('<i class="fas fa-save me-1"></i> Update Template');
+
+            // Scroll ke form
+            $('html, body').animate({
+                scrollTop: $('#addTemplateForm').offset().top - 100
+            }, 500);
+        });
+
+        // Set default template
+        $(document).on('click', '.set-default-template', function() {
+            const templateId = $(this).data('id');
+            const templateName = $(this).closest('tr').find('strong').text().trim();
+
+            showElegantConfirm(
+                `Jadikan template "<strong>${templateName}</strong>" sebagai template default?`,
+                {
+                    title: 'Template Default',
+                    type: 'info',
+                    confirmText: 'Ya, Jadikan Default',
+                    icon: 'star'
+                }
+            ).then((confirmed) => {
+                if (confirmed) {
+                    showLoading();
+                    $.ajax({
+                        url: `/templates/${templateId}/set-default`,
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            hideLoading();
+                            if (response.success) {
+                                showSuccessMessage('Template default berhasil diubah!');
+                                loadAllTemplates();
+                                loadTemplates();
+                            }
+                        },
+                        error: function(xhr) {
+                            hideLoading();
+                            showToast('Error mengubah template default', 'error');
+                        }
+                    });
+                }
+            });
+        });
+
+        // Delete template
+        $(document).on('click', '.delete-template', function() {
+            const templateId = $(this).data('id');
+            const templateName = $(this).data('name');
+
+            showElegantConfirm(
+                `Anda akan menghapus template "<strong>${templateName}</strong>". Tindakan ini tidak dapat dibatalkan.`,
+                {
+                    title: 'Hapus Template',
+                    type: 'delete',
+                    confirmText: 'Ya, Hapus',
+                    icon: 'trash'
+                }
+            ).then((confirmed) => {
+                if (confirmed) {
+                    showLoading();
+                    $.ajax({
+                        url: `/templates/${templateId}`,
+                        type: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            hideLoading();
+                            if (response.success) {
+                                showSuccessMessage('Template berhasil dihapus!');
+                                loadAllTemplates();
+                                loadTemplates();
+                            }
+                        },
+                        error: function(xhr) {
+                            hideLoading();
+                            if (xhr.status === 422) {
+                                showElegantConfirm(
+                                    xhr.responseJSON.message || 'Tidak dapat menghapus template default.',
+                                    {
+                                        title: 'Tidak Dapat Dihapus',
+                                        type: 'warning',
+                                        confirmText: 'Mengerti',
+                                        icon: 'info-circle'
+                                    }
+                                );
+                            } else {
+                                showToast('Error menghapus template', 'error');
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        // Reset form ketika modal ditutup
+        $('#manageTemplatesModal').on('hidden.bs.modal', function() {
+            resetTemplateForm();
+        });
+
+        // Function to reset template form
+        function resetTemplateForm() {
+            $('#addTemplateForm')[0].reset();
+            $('#addTemplateForm').removeData('edit-mode');
+            $('#addTemplateForm').removeData('edit-id');
+            $('#addTemplateForm button[type="submit"]').html('<i class="fas fa-save me-1"></i> Simpan Template');
+            $('#isActive').prop('checked', true);
+            $('#isDefault').prop('checked', false);
+        }
+
+        // Update template selection in share modal
+        $('#templateSelect').on('change', function() {
+            const templateId = $(this).val();
+            currentTemplate = templates.find(t => t.id == templateId);
+            if (currentTemplate) {
+                updateMessagePreview();
+            }
+        });
+
+        // Update message preview
+        function updateMessagePreview() {
+            if (!currentTemplate) return;
+
+            const guestName = $('#modalGuestName').val();
+            const invitationLink = $('#modalInvitationLink').val();
+            const eventData = $('#shareModal').data('event-data');
+
+            if (!eventData) return;
+
+            let message = currentTemplate.template;
+
+            // Replace variables
+            message = message.replace(/{guest_name}/g, guestName || 'Nama Tamu');
+            message = message.replace(/{groom_name}/g, 'Vendy');
+            message = message.replace(/{bride_name}/g, 'Margareth');
+            message = message.replace(/{event_date}/g, eventData.formattedDate || 'Tanggal Acara');
+            message = message.replace(/{event_time}/g, eventData.eventTime || 'Waktu Acara');
+            message = message.replace(/{event_location}/g, eventData.eventLocation || 'Lokasi Acara');
+            message = message.replace(/{invitation_link}/g, invitationLink || 'Link Undangan');
+
+            $('#modalMessageTemplate').val(message);
+        }
+
+        // Update share guest via WhatsApp dengan template
         $(document).on('click', '.share-guest-whatsapp', function() {
             const guestName = $(this).data('name');
-            const event = $(this).data('event')
+            const event = $(this).data('event');
 
             const baseUrl = '{{ url("/") }}';
             const path = event.event_key === 'rumah' ? 'r' : 'p';
@@ -1669,49 +2509,325 @@
             const eventTime = `${event.start_time} WITA - ${event.finish_time}`;
             const eventLocation = event.location;
 
-            // Create WhatsApp-compatible message template
-            const messageTemplate =
-                `*UNDANGAN PERNIKAHAN*
+            // Simpan data event di modal untuk digunakan nanti
+            $('#shareModal').data('event-data', {
+                formattedDate,
+                eventTime,
+                eventLocation
+            });
 
-Kepada Yth. ${guestName}
-
-Dengan penuh sukacita, kami mengundang Bapak/Ibu/Saudara/i untuk hadir dalam acara pernikahan kami:
-
-*Vendy & Margareth*
-📅 *${formattedDate}*
-⏰ *${eventTime}*
-📌 *${eventLocation}*
-
-Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.
-
-Konfirmasi kehadiran: ${invitationLink}
-
-*Terima kasih,*
-*Vendy & Margareth*`;
-
-            // Show modal with options
             $('#modalGuestName').val(guestName);
             $('#modalInvitationLink').val(invitationLink);
-            $('#modalMessageTemplate').val(messageTemplate);
 
-            // Set up modal share button
-            $('#modalShareWhatsApp').off('click').on('click', function() {
-                const encodedMessage = encodeURIComponent(messageTemplate);
-                const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
-                window.open(whatsappUrl, '_blank');
-                $('#shareModal').modal('hide');
-            });
-
-            // Set up modal copy link button
-            $('#modalCopyLink').off('click').on('click', function() {
-                navigator.clipboard.writeText(invitationLink).then(function() {
-                    showToast('Link berhasil disalin!', 'success');
-                });
-            });
-
+            // Load templates dan buka modal
+            loadTemplates();
             $('#shareModal').modal('show');
         });
 
+        // Update modal share WhatsApp button
+        $('#modalShareWhatsApp').on('click', function() {
+            if (!currentTemplate) {
+                showToast('Pilih template terlebih dahulu', 'error');
+                return;
+            }
+
+            const message = $('#modalMessageTemplate').val();
+            if (!message.trim()) {
+                showToast('Pesan tidak boleh kosong', 'error');
+                return;
+            }
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
+            $('#shareModal').modal('hide');
+        });
+
+        // Modal copy link
+        $('#modalCopyLink').on('click', function() {
+            const invitationLink = $('#modalInvitationLink').val();
+            navigator.clipboard.writeText(invitationLink).then(function() {
+                showToast('Link berhasil disalin!', 'success');
+            }).catch(function() {
+                showToast('Gagal menyalin link', 'error');
+            });
+        });
+
+        // Load templates when share modal is shown
+        $('#shareModal').on('show.bs.modal', function() {
+            loadTemplates();
+        });
+
+        // ==================== FILTER & SEARCH FUNCTIONALITY ====================
+        // Filter functionality
+        $('#eventFilter, #statusFilter').on('change', function() {
+            applyFilters();
+        });
+
+        // Confirm untuk reset filter
+        $('#resetFilter').on('click', function() {
+            showElegantConfirm(
+                'Anda akan mengatur ulang semua filter pencarian. Lanjutkan?',
+                {
+                    title: 'Reset Filter',
+                    type: 'info',
+                    confirmText: 'Ya, Reset',
+                    icon: 'filter'
+                }
+            ).then((confirmed) => {
+                if (confirmed) {
+                    $('#eventFilter').val('all');
+                    $('#statusFilter').val('all');
+                    $('#searchFilter').val('');
+                    applyFilters();
+                    showSuccessMessage('Filter berhasil direset!');
+                }
+            });
+        });
+
+        // Search functionality
+        $('#searchFilter').on('input', function() {
+            applyFilters();
+
+            const hasValue = $(this).val().length > 0;
+            $(this).parent().find('.search-clear').remove();
+
+            if (hasValue) {
+                const clearBtn = $('<button type="button" class="btn btn-sm search-clear" style="border: none; background: transparent; position: absolute; right: 5px; top: 50%; transform: translateY(-50%); z-index: 3;">' +
+                    '<i class="fas fa-times text-muted"></i>' +
+                    '</button>');
+
+                $(this).parent().css('position', 'relative').append(clearBtn);
+
+                clearBtn.on('click', function() {
+                    $('#searchFilter').val('');
+                    applyFilters();
+                    $(this).remove();
+                });
+            }
+        });
+
+        // Clear search with ESC key
+        $('#searchFilter').on('keydown', function(e) {
+            if (e.key === 'Escape') {
+                $(this).val('');
+                applyFilters();
+            }
+        });
+
+        function applyFilters() {
+            const eventFilter = $('#eventFilter').val();
+            const statusFilter = $('#statusFilter').val();
+            const searchTerm = $('#searchFilter').val().toLowerCase().trim();
+
+            let visibleCount = 0;
+            let totalCount = 0;
+
+            // Filter desktop table
+            $('#guestsTableBody tr').each(function() {
+                const eventType = $(this).data('event-type');
+                let attendance = $(this).data('attendance');
+                const guestName = $(this).find('td:first strong').text().toLowerCase();
+
+                // Normalize attendance data
+                if (!attendance || attendance === 'null' || attendance === 'undefined') {
+                    attendance = 'Belum Konfirmasi';
+                }
+
+                let showRow = true;
+
+                // Apply search filter
+                if (searchTerm !== '' && !guestName.includes(searchTerm)) {
+                    showRow = false;
+                }
+
+                // Apply event filter - handle both 'gedung'/'rumah' and 'p'/'r'
+                if (eventFilter !== 'all') {
+                    let normalizedEventType = eventType;
+
+                    // Convert 'p' to 'gedung' and 'r' to 'rumah' for comparison
+                    if (eventType === 'p') normalizedEventType = 'gedung';
+                    if (eventType === 'r') normalizedEventType = 'rumah';
+
+                    if (normalizedEventType !== eventFilter) {
+                        showRow = false;
+                    }
+                }
+
+                // Apply status filter
+                if (statusFilter !== 'all') {
+                    if (statusFilter === 'Belum Konfirmasi') {
+                        // Handle various representations of "Belum Konfirmasi"
+                        if (attendance && attendance !== '' && attendance !== 'Belum Konfirmasi') {
+                            showRow = false;
+                        }
+                    } else if (attendance !== statusFilter) {
+                        showRow = false;
+                    }
+                }
+
+                if (showRow) {
+                    $(this).show();
+                    visibleCount++;
+
+                    // Highlight search term jika ada
+                    if (searchTerm !== '') {
+                        highlightSearchTerm($(this), searchTerm);
+                    } else {
+                        removeHighlight($(this));
+                    }
+                } else {
+                    $(this).hide();
+                    removeHighlight($(this));
+                }
+                totalCount++;
+            });
+
+            // Filter mobile view
+            $('#mobileGuestsList .card').each(function() {
+                const eventType = $(this).data('event-type');
+                let attendance = $(this).data('attendance');
+                const guestName = $(this).find('.card-title').text().toLowerCase();
+
+                // Normalize attendance data
+                if (!attendance || attendance === 'null' || attendance === 'undefined') {
+                    attendance = 'Belum Konfirmasi';
+                }
+
+                let showCard = true;
+
+                // Apply search filter
+                if (searchTerm !== '' && !guestName.includes(searchTerm)) {
+                    showCard = false;
+                }
+
+                // Apply event filter - handle both 'gedung'/'rumah' and 'p'/'r'
+                if (eventFilter !== 'all') {
+                    let normalizedEventType = eventType;
+
+                    // Convert 'p' to 'gedung' and 'r' to 'rumah' for comparison
+                    if (eventType === 'p') normalizedEventType = 'gedung';
+                    if (eventType === 'r') normalizedEventType = 'rumah';
+
+                    if (normalizedEventType !== eventFilter) {
+                        showCard = false;
+                    }
+                }
+
+                // Apply status filter
+                if (statusFilter !== 'all') {
+                    if (statusFilter === 'Belum Konfirmasi') {
+                        // Handle various representations of "Belum Konfirmasi"
+                        if (attendance && attendance !== '' && attendance !== 'Belum Konfirmasi') {
+                            showCard = false;
+                        }
+                    } else if (attendance !== statusFilter) {
+                        showCard = false;
+                    }
+                }
+
+                if (showCard) {
+                    $(this).show();
+
+                    // Highlight search term jika ada
+                    if (searchTerm !== '') {
+                        highlightSearchTermMobile($(this), searchTerm);
+                    } else {
+                        removeHighlightMobile($(this));
+                    }
+                } else {
+                    $(this).hide();
+                    removeHighlightMobile($(this));
+                }
+            });
+
+            // Update count display
+            $('#filteredCount').text(visibleCount);
+            $('#totalCount').text(totalCount);
+
+            // Update filter info
+            updateFilterInfo(eventFilter, statusFilter, searchTerm);
+        }
+
+        // Fungsi untuk highlight teks di desktop view
+        function highlightSearchTerm($row, searchTerm) {
+            const $nameCell = $row.find('td:first strong');
+            const originalText = $nameCell.data('original-text') || $nameCell.text();
+            $nameCell.data('original-text', originalText);
+
+            const highlightedText = originalText.replace(
+                new RegExp(searchTerm, 'gi'),
+                match => `<span class="highlight">${match}</span>`
+            );
+            $nameCell.html(highlightedText);
+        }
+
+        function removeHighlight($row) {
+            const $nameCell = $row.find('td:first strong');
+            const originalText = $nameCell.data('original-text');
+            if (originalText) {
+                $nameCell.text(originalText);
+                $nameCell.removeData('original-text');
+            }
+        }
+
+        // Fungsi untuk highlight teks di mobile view
+        function highlightSearchTermMobile($card, searchTerm) {
+            const $nameElement = $card.find('.card-title');
+            const originalText = $nameElement.data('original-text') || $nameElement.text();
+            $nameElement.data('original-text', originalText);
+
+            const highlightedText = originalText.replace(
+                new RegExp(searchTerm, 'gi'),
+                match => `<span class="highlight">${match}</span>`
+            );
+            $nameElement.html(highlightedText);
+        }
+
+        function removeHighlightMobile($card) {
+            const $nameElement = $card.find('.card-title');
+            const originalText = $nameElement.data('original-text');
+            if (originalText) {
+                $nameElement.text(originalText);
+                $nameElement.removeData('original-text');
+            }
+        }
+
+        // Update fungsi updateFilterInfo untuk menampilkan info pencarian
+        function updateFilterInfo(eventFilter, statusFilter, searchTerm = '') {
+            let infoText = '';
+
+            if (searchTerm !== '') {
+                infoText += `Pencarian: "${searchTerm}"`;
+            }
+
+            if (eventFilter !== 'all') {
+                if (infoText !== '') infoText += ' | ';
+                infoText += `Acara: ${eventFilter === 'gedung' ? 'Resepsi Gedung' : 'Resepsi Rumah'}`;
+            }
+
+            if (statusFilter !== 'all') {
+                if (infoText !== '') infoText += ' | ';
+                infoText += `Status: ${statusFilter}`;
+            }
+
+            if (infoText === '') {
+                infoText = 'Semua tamu ditampilkan';
+            }
+
+            $('#filterInfo').text(infoText);
+        }
+
+        // Update counts when refreshing guests data
+        function updateGuestCounts() {
+            const totalCount = $('#guestsTableBody tr').length;
+            const visibleCount = $('#guestsTableBody tr:visible').length;
+
+            $('#filteredCount').text(visibleCount);
+            $('#totalCount').text(totalCount);
+        }
+
+        // ==================== REFRESH FUNCTIONALITY ====================
         // Manual refresh buttons
         $('#refreshGuests').on('click', function() {
             refreshGuestsData();
@@ -1721,14 +2837,7 @@ Konfirmasi kehadiran: ${invitationLink}
             refreshMessagesData();
         });
 
-        // HAPUS PULL-TO-REFRESH UNTUK MANAGE TAMU DAN MANAGE MESSAGE
-        // Hanya aktif di dashboard tab
-        let startY = 0;
-        let currentY = 0;
-        let pullDelta = 0;
-        const pullToRefresh = $('#pullToRefresh');
-        const pullThreshold = 60;
-
+        // Pull to refresh functionality
         document.addEventListener('touchstart', (e) => {
             // Hanya aktif jika di dashboard tab
             if (window.scrollY === 0 && $('#dashboard').hasClass('active')) {
@@ -1777,16 +2886,6 @@ Konfirmasi kehadiran: ${invitationLink}
             currentY = 0;
             pullDelta = 0;
         });
-
-        // Auto-refresh functions
-        // function initAutoRefresh() {
-        //     // Refresh every 30 seconds
-        //     refreshInterval = setInterval(() => {
-        //         if (!isRefreshing && document.visibilityState === 'visible') {
-        //             refreshCurrentTab();
-        //         }
-        //     }, 30000);
-        // }
 
         function refreshCurrentTab() {
             const activeTab = $('.tab-pane.active').attr('id');
@@ -1868,6 +2967,8 @@ Konfirmasi kehadiran: ${invitationLink}
                     lastUpdateTime = new Date();
                     isRefreshing = false;
                     showToast('Data tamu diperbarui', 'success');
+                    // Update filter counts
+                    updateGuestCounts();
                 },
                 error: function() {
                     hideLoading();
@@ -1900,43 +3001,7 @@ Konfirmasi kehadiran: ${invitationLink}
             });
         }
 
-        // Utility functions
-        function showLoading() {
-            $('#loadingOverlay').fadeIn();
-        }
-
-        function hideLoading() {
-            $('#loadingOverlay').fadeOut();
-        }
-
-        function showToast(message, type = 'info') {
-            const toastId = 'toast-' + Date.now();
-            const bgClass = type === 'success' ? 'bg-success' :
-                type === 'error' ? 'bg-danger' :
-                    type === 'warning' ? 'bg-warning' : 'bg-info';
-
-            const toastHtml = `
-            <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        ${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            </div>
-        `;
-
-            $('#toastContainer').append(toastHtml);
-            const toastElement = document.getElementById(toastId);
-            const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
-            toast.show();
-
-            // Remove toast from DOM after it's hidden
-            toastElement.addEventListener('hidden.bs.toast', function() {
-                $(this).remove();
-            });
-        }
-
+        // ==================== VALIDATION & INITIALIZATION ====================
         // Real-time validation untuk nama tamu
         $('#guestNameInput').on('blur', function() {
             const name = $(this).val();
@@ -1978,348 +3043,164 @@ Konfirmasi kehadiran: ${invitationLink}
             });
         }
 
-        $('#searchFilter').on('input', function() {
-            const hasValue = $(this).val().length > 0;
+        // Export filtered data
+        $('#exportFiltered').on('click', function() {
+            const eventFilter = $('#eventFilter').val();
+            const statusFilter = $('#statusFilter').val();
 
-            // Hapus tombol clear yang sudah ada
-            $(this).parent().find('.search-clear').remove();
+            let filterInfo = '';
+            if (eventFilter !== 'all') {
+                filterInfo += `Acara: ${eventFilter === 'gedung' ? 'Gedung' : 'Rumah'}`;
+            }
+            if (statusFilter !== 'all') {
+                if (filterInfo) filterInfo += ', ';
+                filterInfo += `Status: ${statusFilter === 'Belum Konfirmasi' ? 'Belum Konfirmasi' : statusFilter}`;
+            }
 
-            if (hasValue) {
-                // Tambahkan tombol clear
-                const clearBtn = $('<button type="button" class="btn btn-sm search-clear" style="border: none; background: transparent; position: absolute; right: 5px; top: 50%; transform: translateY(-50%); z-index: 3;">' +
-                    '<i class="fas fa-times text-muted"></i>' +
-                    '</button>');
+            const message = filterInfo ?
+                `Export data dengan filter: <strong>${filterInfo}</strong>?` :
+                'Export semua data tamu?';
 
-                $(this).parent().css('position', 'relative').append(clearBtn);
+            showElegantConfirm(
+                message,
+                {
+                    title: 'Export Data',
+                    type: 'info',
+                    confirmText: 'Ya, Export',
+                    icon: 'download'
+                }
+            ).then((confirmed) => {
+                if (confirmed) {
+                    let url = '{{ route("admin.guests.export.filtered") }}';
+                    url += `?event=${eventFilter}&status=${statusFilter}`;
+                    window.location.href = url;
+                    showSuccessMessage('Data sedang diexport...');
+                }
+            });
+        });
 
-                clearBtn.on('click', function() {
-                    $('#searchFilter').val('');
-                    applyFilters();
-                    $(this).remove();
+        // Initialize on page load
+        function initializePage() {
+            // Load templates untuk siap digunakan
+            loadTemplates();
+
+            // Update filter info
+            updateFilterInfo('all', 'all');
+
+            // Update guest counts
+            updateGuestCounts();
+
+            console.log('Admin dashboard initialized successfully');
+        }
+
+        // ==================== ELEGANT CONFIRM SYSTEM ====================
+        let currentConfirmAction = null;
+        let currentConfirmData = null;
+
+// Fungsi confirm yang elegan
+        function showElegantConfirm(message, options = {}) {
+            return new Promise((resolve) => {
+                const {
+                    title = 'Konfirmasi',
+                    type = 'warning', // warning, delete, info, success
+                    confirmText = 'Ya, Lanjutkan',
+                    cancelText = 'Batal',
+                    icon = 'exclamation-circle'
+                } = options;
+
+                // Set modal content
+                $('#elegantConfirmModalLabel').text(title);
+                $('#confirmMessage').html(message);
+                $('#confirmActionBtn').html(`<i class="fas fa-${icon} me-2"></i>${confirmText}`);
+                $('#elegantConfirmModal .btn-outline-secondary').html(`<i class="fas fa-times me-2"></i>${cancelText}`);
+
+                // Set icon type
+                const $confirmIcon = $('#elegantConfirmModal .confirm-icon');
+                $confirmIcon.removeClass('warning delete info success').addClass(type);
+                $confirmIcon.find('i').removeClass().addClass(`fas fa-${icon} text-${getColorByType(type)}`);
+
+                // Set button color based on type
+                const $confirmBtn = $('#confirmActionBtn');
+                $confirmBtn.removeClass('btn-primary btn-danger btn-warning btn-info btn-success')
+                    .addClass(`btn-${getButtonClassByType(type)}`);
+
+                // Set gradient for primary buttons
+                if (type === 'warning' || type === 'info') {
+                    $confirmBtn.css({
+                        'background': `linear-gradient(135deg, var(--${type === 'warning' ? 'warning' : 'info'}), ${getLightColor(type)})`,
+                        'border': 'none',
+                        'box-shadow': `0 4px 15px rgba(var(--${type}-rgb), 0.3)`
+                    });
+                } else {
+                    $confirmBtn.css({
+                        'background': '',
+                        'border': '',
+                        'box-shadow': ''
+                    });
+                }
+
+                // Show modal
+                const confirmModal = new bootstrap.Modal(document.getElementById('elegantConfirmModal'));
+                confirmModal.show();
+
+                // Handle confirm action
+                $('#confirmActionBtn').off('click').on('click', function() {
+                    confirmModal.hide();
+                    resolve(true);
                 });
-            }
-        });
-    });
 
-    // Filter functionality
-    $('#eventFilter, #statusFilter').on('change', function() {
-        applyFilters();
-    });
-
-    $('#resetFilter').on('click', function() {
-        $('#eventFilter').val('all');
-        $('#statusFilter').val('all');
-        applyFilters();
-    });
-
-    function applyFilters() {
-        const eventFilter = $('#eventFilter').val();
-        const statusFilter = $('#statusFilter').val();
-
-        let visibleCount = 0;
-        let totalCount = 0;
-
-        // Filter desktop table
-        $('#guestsTableBody tr').each(function() {
-            const eventType = $(this).data('event-type');
-            const attendance = $(this).data('attendance');
-
-            let showRow = true;
-
-            // Apply event filter
-            if (eventFilter !== 'all' && eventType !== eventFilter) {
-                showRow = false;
-            }
-
-            // Apply status filter
-            if (statusFilter !== 'all') {
-                if (statusFilter === 'pending' && attendance !== '') {
-                    showRow = false;
-                } else if (statusFilter !== 'pending' && attendance !== statusFilter) {
-                    showRow = false;
-                }
-            }
-
-            if (showRow) {
-                $(this).show();
-                visibleCount++;
-            } else {
-                $(this).hide();
-            }
-            totalCount++;
-        });
-
-        // Filter mobile view
-        $('#mobileGuestsList .card').each(function() {
-            const eventType = $(this).data('event-type');
-            const attendance = $(this).data('attendance');
-
-            let showCard = true;
-
-            // Apply event filter
-            if (eventFilter !== 'all' && eventType !== eventFilter) {
-                showCard = false;
-            }
-
-            // Apply status filter
-            if (statusFilter !== 'all') {
-                if (statusFilter === 'pending' && attendance !== '') {
-                    showCard = false;
-                } else if (statusFilter !== 'pending' && attendance !== statusFilter) {
-                    showCard = false;
-                }
-            }
-
-            if (showCard) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
-        });
-
-        // Update count display
-        $('#filteredCount').text(visibleCount);
-        $('#totalCount').text(totalCount);
-
-        // Update filter info
-        updateFilterInfo(eventFilter, statusFilter);
-    }
-
-    function updateFilterInfo(eventFilter, statusFilter) {
-        let infoText = '';
-
-        if (eventFilter !== 'all') {
-            infoText += `Acara: ${eventFilter === 'gedung' ? 'Gedung' : 'Rumah'}`;
+                // Handle cancel action
+                $('#elegantConfirmModal').off('hidden.bs.modal').on('hidden.bs.modal', function() {
+                    resolve(false);
+                });
+            });
         }
 
-        if (statusFilter !== 'all') {
-            if (infoText !== '') infoText += ' | ';
-            infoText += `Status: ${statusFilter === 'pending' ? 'Belum Konfirmasi' : statusFilter}`;
+// Helper functions
+        function getColorByType(type) {
+            const colors = {
+                'warning': 'warning',
+                'delete': 'danger',
+                'info': 'info',
+                'success': 'success'
+            };
+            return colors[type] || 'warning';
         }
 
-        if (infoText === '') {
-            infoText = 'Semua tamu ditampilkan';
+        function getButtonClassByType(type) {
+            const buttons = {
+                'warning': 'warning',
+                'delete': 'danger',
+                'info': 'info',
+                'success': 'success'
+            };
+            return buttons[type] || 'primary';
         }
 
-        $('#filterInfo').text(infoText);
-    }
-
-    // Export filtered data
-    $('#exportFiltered').on('click', function() {
-        const eventFilter = $('#eventFilter').val();
-        const statusFilter = $('#statusFilter').val();
-
-        let url = '{{ route("admin.guests.export.filtered") }}';
-        url += `?event=${eventFilter}&status=${statusFilter}`;
-
-        window.location.href = url;
-    });
-
-    // Update counts when refreshing guests data
-    function updateGuestCounts() {
-        const totalCount = $('#guestsTableBody tr').length;
-        const visibleCount = $('#guestsTableBody tr:visible').length;
-
-        $('#filteredCount').text(visibleCount);
-        $('#totalCount').text(totalCount);
-    }
-
-    // Update filter info on page load
-    $(document).ready(function() {
-        updateFilterInfo('all', 'all');
-    });
-
-    // Tambahkan event listener untuk search input
-    $('#searchFilter').on('input', function() {
-        applyFilters();
-    });
-
-    // Update fungsi applyFilters untuk menangani pencarian
-    function applyFilters() {
-        const eventFilter = $('#eventFilter').val();
-        const statusFilter = $('#statusFilter').val();
-        const searchTerm = $('#searchFilter').val().toLowerCase().trim();
-
-        let visibleCount = 0;
-        let totalCount = 0;
-
-        // Filter desktop table
-        $('#guestsTableBody tr').each(function() {
-            const eventType = $(this).data('event-type');
-            const attendance = $(this).data('attendance');
-            const guestName = $(this).find('td:first strong').text().toLowerCase();
-
-            let showRow = true;
-
-            // Apply search filter
-            if (searchTerm !== '' && !guestName.includes(searchTerm)) {
-                showRow = false;
-            }
-
-            // Apply event filter
-            if (eventFilter !== 'all' && eventType !== eventFilter) {
-                showRow = false;
-            }
-
-            // Apply status filter
-            if (statusFilter !== 'all') {
-                if (statusFilter === 'pending' && attendance !== '') {
-                    showRow = false;
-                } else if (statusFilter !== 'pending' && attendance !== statusFilter) {
-                    showRow = false;
-                }
-            }
-
-            if (showRow) {
-                $(this).show();
-                visibleCount++;
-
-                // Highlight search term jika ada
-                if (searchTerm !== '') {
-                    highlightSearchTerm($(this), searchTerm);
-                } else {
-                    removeHighlight($(this));
-                }
-            } else {
-                $(this).hide();
-                removeHighlight($(this));
-            }
-            totalCount++;
-        });
-
-        // Filter mobile view
-        $('#mobileGuestsList .card').each(function() {
-            const eventType = $(this).data('event-type');
-            const attendance = $(this).data('attendance');
-            const guestName = $(this).find('.card-title').text().toLowerCase();
-
-            let showCard = true;
-
-            // Apply search filter
-            if (searchTerm !== '' && !guestName.includes(searchTerm)) {
-                showCard = false;
-            }
-
-            // Apply event filter
-            if (eventFilter !== 'all' && eventType !== eventFilter) {
-                showCard = false;
-            }
-
-            // Apply status filter
-            if (statusFilter !== 'all') {
-                if (statusFilter === 'pending' && attendance !== '') {
-                    showCard = false;
-                } else if (statusFilter !== 'pending' && attendance !== statusFilter) {
-                    showCard = false;
-                }
-            }
-
-            if (showCard) {
-                $(this).show();
-
-                // Highlight search term jika ada
-                if (searchTerm !== '') {
-                    highlightSearchTermMobile($(this), searchTerm);
-                } else {
-                    removeHighlightMobile($(this));
-                }
-            } else {
-                $(this).hide();
-                removeHighlightMobile($(this));
-            }
-        });
-
-        // Update count display
-        $('#filteredCount').text(visibleCount);
-        $('#totalCount').text(totalCount);
-
-        // Update filter info
-        updateFilterInfo(eventFilter, statusFilter, searchTerm);
-    }
-
-    // Fungsi untuk highlight teks di desktop view
-    function highlightSearchTerm($row, searchTerm) {
-        const $nameCell = $row.find('td:first strong');
-        const originalText = $nameCell.data('original-text') || $nameCell.text();
-        $nameCell.data('original-text', originalText);
-
-        const highlightedText = originalText.replace(
-            new RegExp(searchTerm, 'gi'),
-            match => `<span class="highlight">${match}</span>`
-        );
-        $nameCell.html(highlightedText);
-    }
-
-    function removeHighlight($row) {
-        const $nameCell = $row.find('td:first strong');
-        const originalText = $nameCell.data('original-text');
-        if (originalText) {
-            $nameCell.text(originalText);
-            $nameCell.removeData('original-text');
-        }
-    }
-
-    // Fungsi untuk highlight teks di mobile view
-    function highlightSearchTermMobile($card, searchTerm) {
-        const $nameElement = $card.find('.card-title');
-        const originalText = $nameElement.data('original-text') || $nameElement.text();
-        $nameElement.data('original-text', originalText);
-
-        const highlightedText = originalText.replace(
-            new RegExp(searchTerm, 'gi'),
-            match => `<span class="highlight">${match}</span>`
-        );
-        $nameElement.html(highlightedText);
-    }
-
-    function removeHighlightMobile($card) {
-        const $nameElement = $card.find('.card-title');
-        const originalText = $nameElement.data('original-text');
-        if (originalText) {
-            $nameElement.text(originalText);
-            $nameElement.removeData('original-text');
-        }
-    }
-
-    // Update fungsi updateFilterInfo untuk menampilkan info pencarian
-    function updateFilterInfo(eventFilter, statusFilter, searchTerm = '') {
-        let infoText = '';
-
-        if (searchTerm !== '') {
-            infoText += `Pencarian: "${searchTerm}"`;
+        function getLightColor(type) {
+            const colors = {
+                'warning': '#ffda6a',
+                'info': '#6edff6',
+                'success': '#75b798',
+                'delete': '#e6858f'
+            };
+            return colors[type] || '#ffda6a';
         }
 
-        if (eventFilter !== 'all') {
-            if (infoText !== '') infoText += ' | ';
-            infoText += `Acara: ${eventFilter === 'gedung' ? 'Gedung' : 'Rumah'}`;
+// Fungsi untuk show success message
+        function showSuccessMessage(message, duration = 2000) {
+            $('#successMessage').text(message);
+            const successModal = new bootstrap.Modal(document.getElementById('successToastModal'));
+            successModal.show();
+
+            // Auto hide after duration
+            setTimeout(() => {
+                successModal.hide();
+            }, duration);
         }
 
-        if (statusFilter !== 'all') {
-            if (infoText !== '') infoText += ' | ';
-            infoText += `Status: ${statusFilter === 'pending' ? 'Belum Konfirmasi' : statusFilter}`;
-        }
-
-        if (infoText === '') {
-            infoText = 'Semua tamu ditampilkan';
-        }
-
-        $('#filterInfo').text(infoText);
-    }
-
-    // Update reset filter untuk membersihkan search juga
-    $('#resetFilter').on('click', function() {
-        $('#eventFilter').val('all');
-        $('#statusFilter').val('all');
-        $('#searchFilter').val('');
-        applyFilters();
-    });
-
-    // Tambahkan event untuk clear search dengan tombol ESC
-    $('#searchFilter').on('keydown', function(e) {
-        if (e.key === 'Escape') {
-            $(this).val('');
-            applyFilters();
-        }
+        // Run initialization
+        initializePage();
     });
 </script>
 </body>
