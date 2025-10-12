@@ -588,6 +588,47 @@
                 padding: 8px;
             }
         }
+        .social {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 0;
+        }
+
+        .social a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .social a:hover {
+            transform: scale(1.1);
+        }
+
+        .social a:nth-child(1) i {
+            color: #3b5998; /* Facebook blue */
+        }
+
+        .social a:nth-child(2) i {
+            color: #e4405f; /* Instagram pink */
+        }
+
+        .social a:nth-child(3) i {
+            color: #0077b5; /* LinkedIn blue */
+        }
+        .col-md-12.col-sm-12 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 
@@ -1099,12 +1140,15 @@
         <h2 data-aos="fade-up">Vendy & Margareth</h2>
         <h3>© 2025 Wedding Invitation by <a href="https://linkedin.com/in/vendywira">I Wayan Vendy Wiranatha</a></h3>
         <div class="col-md-12 col-sm-12 social">
-            <a href="https://www.facebook.com/vendy.wiranatha" target="_blank"><i
-                    class="fab fa-1x fa-facebook-f" aria-hidden="true"></i></a>
-            <a href="https://www.instagram.com/vendywira/" target="_blank"><i class="fab fa-1x fa-instagram"
-                                                                              aria-hidden="true"></i></a>
-            <a href="https://linkedin.com/in/vendywira" target="_blank"><i class="fab fa-1x fa-linkedin"
-                                                                           aria-hidden="true"></i></a>
+            <a href="https://www.facebook.com/vendy.wiranatha" target="_blank">
+                <i class="fab fa-1x fa-facebook-f" aria-hidden="true"></i>
+            </a>
+            <a href="https://www.instagram.com/vendywira/" target="_blank">
+                <i class="fab fa-1x fa-instagram" aria-hidden="true"></i>
+            </a>
+            <a href="https://linkedin.com/in/vendywira" target="_blank">
+                <i class="fab fa-1x fa-linkedin" aria-hidden="true"></i>
+            </a>
         </div>
     </div>
 </section>
