@@ -11,6 +11,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/images/apple-touch-icon.png') }}">
 
     <style>
+        {{-- CSS yang sama seperti sebelumnya --}}
         :root {
             --primary: #e44d26;
             --primary-light: #f26161;
@@ -205,12 +206,6 @@
             border-left: 4px solid var(--primary);
         }
 
-        .template-message pre {
-            margin: 0;
-            white-space: pre-wrap;
-            font-family: inherit;
-        }
-
         .modal-custom .modal-header {
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
@@ -312,7 +307,6 @@
         /* ============================ */
 
         @media (max-width: 768px) {
-            /* Hide sidebar and hamburger menu */
             .sidebar {
                 display: none;
             }
@@ -321,7 +315,6 @@
                 display: none !important;
             }
 
-            /* Mobile bottom navigation */
             .mobile-bottom-nav {
                 display: flex;
             }
@@ -330,7 +323,6 @@
                 padding-bottom: 70px;
             }
 
-            /* Container adjustments */
             .container-fluid {
                 padding-left: 15px;
                 padding-right: 15px;
@@ -340,7 +332,6 @@
                 padding: 15px !important;
             }
 
-            /* Stat cards mobile optimization */
             .stat-card {
                 padding: 18px 15px;
                 margin-bottom: 15px;
@@ -356,7 +347,6 @@
                 font-size: 0.85rem;
             }
 
-            /* Stat cards grid layout dengan jarak yang baik */
             .row.mobile-stats {
                 margin-left: -10px;
                 margin-right: -10px;
@@ -369,7 +359,6 @@
                 margin-bottom: 8px;
             }
 
-            /* Event cards mobile optimization */
             .event-card {
                 margin-bottom: 20px;
                 border-radius: 10px;
@@ -410,7 +399,6 @@
                 height: 6px;
             }
 
-            /* Table responsive */
             .table-responsive {
                 font-size: 0.8rem;
             }
@@ -430,7 +418,6 @@
                 font-size: 0.9rem;
             }
 
-            /* Mobile table styling */
             .table-mobile-view {
                 display: block;
             }
@@ -472,19 +459,16 @@
                 font-size: 0.8rem;
             }
 
-            /* Toast container mobile */
             .toast-container {
                 top: 70px;
                 right: 10px;
                 left: 10px;
             }
 
-            /* Pull to refresh mobile */
             .pull-to-refresh {
                 display: block;
             }
 
-            /* Button adjustments */
             .btn-primary-custom, .btn-whatsapp {
                 padding: 8px 15px;
                 font-size: 0.875rem;
@@ -492,7 +476,6 @@
         }
 
         @media (max-width: 576px) {
-            /* Container adjustments */
             .container-fluid {
                 padding-left: 12px;
                 padding-right: 12px;
@@ -502,7 +485,6 @@
                 padding: 12px !important;
             }
 
-            /* Stat cards small screen optimization */
             .stat-card {
                 padding: 16px 12px;
                 margin-bottom: 12px;
@@ -523,7 +505,6 @@
                 font-size: 0.75rem;
             }
 
-            /* Stat cards grid dengan jarak lebih compact */
             .row.mobile-stats {
                 margin-left: -8px;
                 margin-right: -8px;
@@ -536,7 +517,6 @@
                 margin-bottom: 6px;
             }
 
-            /* Event cards small screen */
             .event-card {
                 margin-bottom: 15px;
             }
@@ -565,13 +545,11 @@
                 font-size: 0.7rem;
             }
 
-            /* Button adjustments */
             .btn-primary-custom, .btn-whatsapp {
                 padding: 8px 12px;
                 font-size: 0.85rem;
             }
 
-            /* Mobile bottom nav small screen */
             .mobile-nav-item {
                 font-size: 0.7rem;
                 padding: 8px 3px;
@@ -582,7 +560,6 @@
             }
         }
 
-        /* Untuk screen yang sangat kecil (iPhone SE dll) */
         @media (max-width: 375px) {
             .stat-card {
                 padding: 14px 10px;
@@ -618,7 +595,6 @@
             }
         }
 
-        /* Form validation styles */
         .is-invalid {
             border-color: #dc3545 !important;
         }
@@ -635,7 +611,6 @@
             display: block;
         }
 
-        /* Custom scrollbar untuk webkit browsers */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -654,7 +629,6 @@
             background: var(--primary);
         }
 
-        /* Animation for pull to refresh */
         @keyframes pullRefresh {
             0% {
                 transform: translateY(0);
@@ -671,13 +645,11 @@
             animation: pullRefresh 1s ease-in-out infinite;
         }
 
-        /* Hover effects for better UX */
         .btn-primary-custom:active,
         .btn-whatsapp:active {
             transform: translateY(0);
         }
 
-        /* Focus states for accessibility */
         .btn-primary-custom:focus,
         .btn-whatsapp:focus,
         .form-control:focus {
@@ -685,7 +657,6 @@
             border-color: var(--primary);
         }
 
-        /* Print styles */
         @media print {
             .mobile-bottom-nav,
             .navbar,
@@ -700,7 +671,7 @@
                 border: 1px solid #ddd;
             }
         }
-        /* Filter Section Styles */
+
         .filter-section {
             background: white;
             border-radius: 12px;
@@ -716,7 +687,6 @@
             font-size: 0.875rem;
         }
 
-        /* Mobile responsive for filter */
         @media (max-width: 768px) {
             .filter-section {
                 padding: 15px;
@@ -727,7 +697,7 @@
                 font-size: 0.8rem;
             }
         }
-        /* Tambahkan di bagian CSS yang responsive */
+
         @media (max-width: 768px) {
             .input-group-sm .input-group-text {
                 padding: 0.375rem 0.5rem;
@@ -739,14 +709,13 @@
             }
         }
 
-        /* Styling untuk highlight hasil pencarian */
         .highlight {
             background-color: #fff3cd;
             font-weight: bold;
             padding: 2px 4px;
             border-radius: 3px;
         }
-        /* Template Management Enhanced Styles */
+
         .template-management {
             max-height: 70vh;
             overflow-y: auto;
@@ -803,7 +772,6 @@
             margin: 0 2px;
         }
 
-        /* Responsive improvements */
         @media (max-width: 768px) {
             .template-management {
                 max-height: 60vh;
@@ -830,7 +798,6 @@
             }
         }
 
-        /* Loading state for templates */
         .template-loading {
             text-align: center;
             padding: 40px;
@@ -849,7 +816,6 @@
             opacity: 0.5;
         }
 
-        /* Form styling enhancements */
         #addTemplateForm .form-check {
             margin-bottom: 10px;
         }
@@ -864,7 +830,6 @@
             line-height: 1.4;
         }
 
-        /* Elegant Confirmation Modal Styles */
         #elegantConfirmModal .modal-content {
             border: none;
             border-radius: 20px;
@@ -924,7 +889,6 @@
             box-shadow: 0 8px 25px rgba(228, 77, 38, 0.4);
         }
 
-        /* Success Toast Modal */
         #successToastModal .modal-content {
             border-radius: 16px;
             border: none;
@@ -935,7 +899,6 @@
             border-radius: 16px;
         }
 
-        /* Animations */
         @keyframes pulse {
             0% {
                 transform: scale(1);
@@ -976,7 +939,6 @@
             }
         }
 
-        /* Different icon colors for different actions */
         .confirm-icon.delete .fa-exclamation-circle {
             color: #dc3545;
             filter: drop-shadow(0 4px 8px rgba(220, 53, 69, 0.3));
@@ -997,7 +959,6 @@
             filter: drop-shadow(0 4px 8px rgba(25, 135, 84, 0.3));
         }
 
-        /* Responsive design */
         @media (max-width: 576px) {
             #elegantConfirmModal .modal-dialog {
                 margin: 20px;
@@ -1237,12 +1198,16 @@
                                 <form id="addGuestForm">
                                     @csrf
                                     <div class="row g-2">
-                                        <div class="col-md-4 col-12">
+                                        <div class="col-md-3 col-12">
                                             <input type="text" name="name" class="form-control form-control-sm"
                                                    placeholder="Nama tamu" required id="guestNameInput">
                                             <div class="form-text text-danger d-none" id="nameError">
                                                 Nama sudah terdaftar untuk acara ini
                                             </div>
+                                        </div>
+                                        <div class="col-md-2 col-6">
+                                            <input type="text" name="whatsapp_number" class="form-control form-control-sm"
+                                                   placeholder="Nomor WhatsApp (opsional)" id="whatsappInput">
                                         </div>
                                         <div class="col-md-2 col-6">
                                             <select name="guest_attends" class="form-control form-control-sm">
@@ -1282,7 +1247,6 @@
                                         </div>
                                         <div class="col-md-6 col-12">
                                             <div class="row g-2">
-                                                <!-- Input Search Baru -->
                                                 <div class="col-md-3 col-12">
                                                     <div class="input-group input-group-sm">
                                                         <span class="input-group-text"><i class="fas fa-search"></i></span>
@@ -1320,10 +1284,10 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4><i class="fas fa-users me-2"></i>Manage Tamu</h4>
                         <div>
-                            <button class="btn btn-primary-custom me-2" id="manageTemplate"">
+                            <button class="btn btn-primary-custom me-2" id="manageTemplate">
                                 <i class="fas fa-envelope me-1"></i>
                             </button>
-                            <button class="btn btn-primary-custom me-2" id="refreshGuests" >
+                            <button class="btn btn-primary-custom me-2" id="refreshGuests">
                                 <i class="fas fa-sync-alt me-1"></i>
                             </button>
                             <button class="btn btn-primary-custom me-2" id="exportFiltered">
@@ -1352,27 +1316,45 @@
                                 <tr>
                                     <th>Nama Tamu</th>
                                     <th>Acara</th>
+                                    <th>WhatsApp</th>
                                     <th>Jumlah</th>
                                     <th>Status</th>
+                                    <th>Dibuat</th>
+                                    <th>Diupdate</th>
                                     <th>Link</th>
                                     <th>Aksi</th>
                                 </tr>
                                 </thead>
                                 <tbody id="guestsTableBody">
                                 @foreach($guests as $guest)
+                                @php
+                                $baseUrl = url('/');
+                                $eventKey = $guest->event ? $guest->event->event_key : 'gedung';
+                                $path = $eventKey === 'rumah' ? 'r' : 'p';
+                                $invitationUrl = "{$baseUrl}/{$path}/invitation?to=" . urlencode($guest->name);
+                                @endphp
                                 <tr data-guest-id="{{ $guest->id }}"
                                     data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
-                                    data-attendance="{{ $guest->attendance ?? 'Belum Konfirmasi' }}">
-                                <td>
+                                    data-attendance="{{ $guest->attendance ?? 'Belum Konfirmasi' }}"
+                                    data-whatsapp="{{ $guest->whatsapp_number }}">
+                                    <td>
                                         <strong>{{ $guest->name }}</strong>
+                                        <br><small class="text-muted">{{ $guest->code }}</small>
                                     </td>
                                     <td>
                                         @if($guest->event)
                                         <span class="badge {{ $guest->event->event_key === 'rumah' ? 'bg-success' : 'bg-primary' }} badge-custom">
-                            {{ $guest->event->event_key }}
-                        </span>
+                                                    {{ $guest->event->event_key }}
+                                                </span>
                                         @else
                                         <span class="badge bg-secondary badge-custom">-</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($guest->whatsapp_number)
+                                        <small>{{ $guest->whatsapp_number }}</small>
+                                        @else
+                                        <small class="text-muted">-</small>
                                         @endif
                                     </td>
                                     <td>{{ $guest->guest_attends }} orang</td>
@@ -1390,16 +1372,17 @@
                                         </small>
                                     </td>
                                     <td>
-                                        @php
-                                        $baseUrl = url('/');
-                                        $eventKey = $guest->event ? $guest->event->event_key : 'gedung';
-                                        $path = $eventKey === 'rumah' ? 'r' : 'p';
-                                        $invitationUrl = "{$baseUrl}/{$path}/invitation?to=" . urlencode($guest->name);
-                                        @endphp
+                                        <small class="text-muted">{{ $guest->created_at->format('d/m/Y H:i') }}</small>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ $guest->updated_at->format('d/m/Y H:i') }}</small>
+                                    </td>
+                                    <td>
                                         <div class="btn-group btn-group-sm">
                                             <button class="btn btn-sm btn-whatsapp share-guest-whatsapp"
                                                     data-name="{{ $guest->name }}"
-                                                    data-event="{{ $guest->event }}"
+                                                    data-event='@json($guest->event)'
+                                                    data-number="{{ $guest->formatted_whatsapp_number }}"
                                                     title="Share via WhatsApp">
                                                 <i class="fab fa-whatsapp"></i>
                                             </button>
@@ -1422,6 +1405,7 @@
                                                     data-guest-attends="{{ $guest->guest_attends }}"
                                                     data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
                                                     data-attendance="{{ $guest->attendance ?? 'Belum Konfirmasi' }}"
+                                                    data-whatsapp="{{ $guest->whatsapp_number }}"
                                                     title="Edit Tamu">
                                                 <i class="fas fa-edit"></i>
                                             </button>
@@ -1444,22 +1428,29 @@
                                 $baseUrl = url('/');
                                 $eventKey = $guest->event ? $guest->event->event_key : 'gedung';
                                 $path = $eventKey === 'rumah' ? 'r' : 'p';
-                                $invitationUrl = "{$baseUrl}/{$path}/invitation?to=" . urlencode($guest->name);;
+                                $invitationUrl = "{$baseUrl}/{$path}/invitation?to=" . urlencode($guest->name);
                                 @endphp
                                 <div class="card mb-3" data-guest-id="{{ $guest->id }}"
                                      data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
-                                     data-attendance="{{ $guest->attendance }}">
+                                     data-attendance="{{ $guest->attendance }}"
+                                     data-whatsapp="{{ $guest->whatsapp_number }}">
                                     <div class="card-body">
                                         <h6 class="card-title">{{ $guest->name }}</h6>
+                                        <p class="card-text mb-1">
+                                            <small class="text-muted">Kode: {{ $guest->code }}</small>
+                                        </p>
                                         <p class="card-text mb-1">
                                             <strong>Acara:</strong>
                                             @if($guest->event)
                                             <span class="badge {{ $guest->event->event_key === 'rumah' ? 'bg-success' : 'bg-primary' }} badge-custom">
-                                {{ $guest->event->event_key }}
-                            </span>
+                                                        {{ $guest->event->event_key }}
+                                                    </span>
                                             @else
                                             <span class="badge bg-secondary badge-custom">-</span>
                                             @endif
+                                        </p>
+                                        <p class="card-text mb-1">
+                                            <strong>WhatsApp:</strong> {{ $guest->whatsapp_number ?? '-' }}
                                         </p>
                                         <p class="card-text mb-1">
                                             <strong>Jumlah:</strong> {{ $guest->guest_attends }} orang
@@ -1475,10 +1466,17 @@
                                             @endif
                                             <small class="text-muted">({{ $guest->is_opened ? 'Dibuka' : 'Belum dibuka' }})</small>
                                         </p>
+                                        <p class="card-text mb-1">
+                                            <strong>Dibuat:</strong> <small class="text-muted">{{ $guest->created_at->format('d/m/Y H:i') }}</small>
+                                        </p>
+                                        <p class="card-text mb-1">
+                                            <strong>Diupdate:</strong> <small class="text-muted">{{ $guest->updated_at->format('d/m/Y H:i') }}</small>
+                                        </p>
                                         <div class="btn-group w-100 mt-2">
                                             <button class="btn btn-sm btn-whatsapp share-guest-whatsapp"
                                                     data-name="{{ $guest->name }}"
-                                                    data-event="{{ $guest->event }}"
+                                                    data-event='@json($guest->event)'
+                                                    data-number="{{ $guest->formatted_whatsapp_number }}"
                                                     title="Share via WhatsApp">
                                                 <i class="fab fa-whatsapp"></i> Share
                                             </button>
@@ -1499,6 +1497,7 @@
                                                     data-guest-attends="{{ $guest->guest_attends }}"
                                                     data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
                                                     data-attendance="{{ $guest->attendance ?? '' }}"
+                                                    data-whatsapp="{{ $guest->whatsapp_number }}"
                                                     title="Edit Tamu">
                                                 <i class="fas fa-edit"></i> Edit
                                             </button>
@@ -1532,6 +1531,7 @@
                                 <tr>
                                     <th>Pengirim</th>
                                     <th>Pesan</th>
+                                    <th>Dibuat</th>
                                     <th>Aksi</th>
                                 </tr>
                                 </thead>
@@ -1548,6 +1548,9 @@
                                         @endif
                                     </td>
                                     <td>{{ $message->message ?: '-' }}</td>
+                                    <td>
+                                        <small class="text-muted">{{ $message->created_at->format('d/m/Y H:i') }}</small>
+                                    </td>
                                     <td>
                                         <button class="btn btn-sm btn-outline-danger delete-message"
                                                 data-id="{{ $message->id }}"
@@ -1596,6 +1599,7 @@
                 <div class="mb-3">
                     <label class="form-label">Nama Tamu</label>
                     <input type="text" class="form-control" id="modalGuestName" readonly>
+                    <input type="hidden" id="modalWhatsappNumber" readonly>
                 </div>
 
                 <!-- Template Selection -->
@@ -1754,6 +1758,11 @@
                         </select>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">Nomor WhatsApp (opsional)</label>
+                        <input type="text" class="form-control" id="editWhatsappNumber"
+                               name="whatsapp_number" placeholder="Contoh: 081234567890">
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Status Konfirmasi</label>
                         <select class="form-control" id="editAttendance" name="attendance">
                             <option value="Belum Konfirmasi">Belum Konfirmasi</option>
@@ -1861,7 +1870,6 @@
             const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
             toast.show();
 
-            // Remove toast from DOM after it's hidden
             toastElement.addEventListener('hidden.bs.toast', function() {
                 $(this).remove();
             });
@@ -1872,19 +1880,16 @@
             e.preventDefault();
             const target = $(this).attr('href');
 
-            // Update active states
             $('.nav-link').removeClass('active');
             $('.mobile-nav-item').removeClass('active');
             $(this).addClass('active');
 
-            // Find corresponding nav link for mobile nav items
             if ($(this).hasClass('mobile-nav-item')) {
                 $(`.nav-link[href="${target}"]`).addClass('active');
             } else {
                 $(`.mobile-nav-item[href="${target}"]`).addClass('active');
             }
 
-            // Show target tab
             $('.tab-pane').removeClass('show active');
             $(target).addClass('show active');
         });
@@ -1938,6 +1943,17 @@
             });
         });
 
+        // WhatsApp chat functionality
+        $(document).on('click', '.whatsapp-chat', function() {
+            const phoneNumber = $(this).data('number');
+            if (phoneNumber) {
+                const whatsappUrl = `https://wa.me/${phoneNumber}`;
+                window.open(whatsappUrl, '_blank');
+            } else {
+                showToast('Nomor WhatsApp tidak valid', 'error');
+            }
+        });
+
         // Delete guest
         $(document).on('click', '.delete-guest', function() {
             const guestId = $(this).data('id');
@@ -1982,16 +1998,16 @@
             const guestName = $(this).data('name');
             const guestAttends = $(this).data('guest-attends');
             const eventType = $(this).data('event-type');
+            const whatsappNumber = $(this).data('whatsapp') || '';
             let attendance = $(this).data('attendance');
 
-            let formattedEventType = 'p'; // default
+            let formattedEventType = 'p';
             if (eventType === 'rumah') {
                 formattedEventType = 'r';
             } else if (eventType === 'gedung') {
                 formattedEventType = 'p';
             }
 
-            // Handle attendance yang null/undefined
             if (!attendance || attendance === 'null' || attendance === 'undefined') {
                 attendance = 'Belum Konfirmasi';
             }
@@ -1999,6 +2015,7 @@
             $('#editGuestId').val(guestId);
             $('#editGuestName').val(guestName);
             $('#editGuestAttends').val(guestAttends);
+            $('#editWhatsappNumber').val(whatsappNumber);
             $('#editEventType').val(formattedEventType);
             $('#editAttendance').val(attendance);
             $('#editGuestModal').modal('show');
@@ -2011,6 +2028,7 @@
                 _token: '{{ csrf_token() }}',
                 name: $('#editGuestName').val().trim(),
                 guest_attends: $('#editGuestAttends').val(),
+                whatsapp_number: $('#editWhatsappNumber').val().trim(),
                 event_type: $('#editEventType').val(),
                 attendance: $('#editAttendance').val() || 'Belum Konfirmasi'
             };
@@ -2030,16 +2048,13 @@
                     if (response.success) {
                         showToast('Data tamu berhasil diperbarui!', 'success');
                         $('#editGuestModal').modal('hide');
-                        // Refresh guests data
                         refreshGuestsData();
-                        // Refresh dashboard stats
                         refreshDashboardData();
                     }
                 },
                 error: function(xhr) {
                     hideLoading();
                     if (xhr.status === 422) {
-                        // Validation error
                         const errors = xhr.responseJSON.errors;
                         if (errors && errors.name) {
                             showToast(errors.name[0], 'error');
@@ -2179,7 +2194,6 @@
             }
 
             templates.forEach(template => {
-                // Escape template content untuk JSON
                 const templateJson = JSON.stringify(template).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
 
                 const $row = $(`
@@ -2235,7 +2249,6 @@
                     templates = response;
                     populateTemplateSelect();
 
-                    // Set template default
                     const defaultTemplate = templates.find(t => t.is_default) || templates[0];
                     if (defaultTemplate) {
                         $('#templateSelect').val(defaultTemplate.id);
@@ -2282,7 +2295,6 @@
                 is_default: $(this).find('#isDefault').is(':checked') ? 1 : 0
             };
 
-            // Validasi
             if (!formData.name.trim()) {
                 showToast('Nama template harus diisi', 'error');
                 return;
@@ -2305,7 +2317,7 @@
                         showToast('Template berhasil ditambahkan', 'success');
                         $('#addTemplateForm')[0].reset();
                         loadAllTemplates();
-                        loadTemplates(); // Refresh templates di share modal juga
+                        loadTemplates();
                     }
                 },
                 error: function(xhr) {
@@ -2333,18 +2345,15 @@
             const template = typeof templateJson === 'string' ?
                 JSON.parse(templateJson.replace(/&#39;/g, "'").replace(/&quot;/g, '"')) : templateJson;
 
-            // Isi form edit
             $('#addTemplateForm input[name="name"]').val(template.name);
             $('#addTemplateForm textarea[name="template"]').val(template.template);
             $('#addTemplateForm #isActive').prop('checked', template.is_active);
             $('#addTemplateForm #isDefault').prop('checked', template.is_default);
 
-            // Ubah form menjadi edit mode
             $('#addTemplateForm').data('edit-mode', true);
             $('#addTemplateForm').data('edit-id', template.id);
             $('#addTemplateForm button[type="submit"]').html('<i class="fas fa-save me-1"></i> Update Template');
 
-            // Scroll ke form
             $('html, body').animate({
                 scrollTop: $('#addTemplateForm').offset().top - 100
             }, 500);
@@ -2476,7 +2485,6 @@
 
             let message = currentTemplate.template;
 
-            // Replace variables
             message = message.replace(/{guest_name}/g, guestName || 'Nama Tamu');
             message = message.replace(/{groom_name}/g, 'Vendy');
             message = message.replace(/{bride_name}/g, 'Margareth');
@@ -2492,6 +2500,7 @@
         $(document).on('click', '.share-guest-whatsapp', function() {
             const guestName = $(this).data('name');
             const event = $(this).data('event');
+            const phoneNumber = $(this).data('number');
 
             const baseUrl = '{{ url("/") }}';
             const path = event.event_key === 'rumah' ? 'r' : 'p';
@@ -2509,7 +2518,6 @@
             const eventTime = `${event.start_time} WITA - ${event.finish_time}`;
             const eventLocation = event.location;
 
-            // Simpan data event di modal untuk digunakan nanti
             $('#shareModal').data('event-data', {
                 formattedDate,
                 eventTime,
@@ -2518,8 +2526,8 @@
 
             $('#modalGuestName').val(guestName);
             $('#modalInvitationLink').val(invitationLink);
+            $('#modalWhatsappNumber').val(phoneNumber);
 
-            // Load templates dan buka modal
             loadTemplates();
             $('#shareModal').modal('show');
         });
@@ -2532,13 +2540,14 @@
             }
 
             const message = $('#modalMessageTemplate').val();
+            const phoneNumber = $('#modalWhatsappNumber').val();
             if (!message.trim()) {
                 showToast('Pesan tidak boleh kosong', 'error');
                 return;
             }
 
             const encodedMessage = encodeURIComponent(message);
-            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
             window.open(whatsappUrl, '_blank');
             $('#shareModal').modal('hide');
         });
@@ -2629,23 +2638,19 @@
                 let attendance = $(this).data('attendance');
                 const guestName = $(this).find('td:first strong').text().toLowerCase();
 
-                // Normalize attendance data
                 if (!attendance || attendance === 'null' || attendance === 'undefined') {
                     attendance = 'Belum Konfirmasi';
                 }
 
                 let showRow = true;
 
-                // Apply search filter
                 if (searchTerm !== '' && !guestName.includes(searchTerm)) {
                     showRow = false;
                 }
 
-                // Apply event filter - handle both 'gedung'/'rumah' and 'p'/'r'
                 if (eventFilter !== 'all') {
                     let normalizedEventType = eventType;
 
-                    // Convert 'p' to 'gedung' and 'r' to 'rumah' for comparison
                     if (eventType === 'p') normalizedEventType = 'gedung';
                     if (eventType === 'r') normalizedEventType = 'rumah';
 
@@ -2654,10 +2659,8 @@
                     }
                 }
 
-                // Apply status filter
                 if (statusFilter !== 'all') {
                     if (statusFilter === 'Belum Konfirmasi') {
-                        // Handle various representations of "Belum Konfirmasi"
                         if (attendance && attendance !== '' && attendance !== 'Belum Konfirmasi') {
                             showRow = false;
                         }
@@ -2670,7 +2673,6 @@
                     $(this).show();
                     visibleCount++;
 
-                    // Highlight search term jika ada
                     if (searchTerm !== '') {
                         highlightSearchTerm($(this), searchTerm);
                     } else {
@@ -2689,23 +2691,19 @@
                 let attendance = $(this).data('attendance');
                 const guestName = $(this).find('.card-title').text().toLowerCase();
 
-                // Normalize attendance data
                 if (!attendance || attendance === 'null' || attendance === 'undefined') {
                     attendance = 'Belum Konfirmasi';
                 }
 
                 let showCard = true;
 
-                // Apply search filter
                 if (searchTerm !== '' && !guestName.includes(searchTerm)) {
                     showCard = false;
                 }
 
-                // Apply event filter - handle both 'gedung'/'rumah' and 'p'/'r'
                 if (eventFilter !== 'all') {
                     let normalizedEventType = eventType;
 
-                    // Convert 'p' to 'gedung' and 'r' to 'rumah' for comparison
                     if (eventType === 'p') normalizedEventType = 'gedung';
                     if (eventType === 'r') normalizedEventType = 'rumah';
 
@@ -2714,10 +2712,8 @@
                     }
                 }
 
-                // Apply status filter
                 if (statusFilter !== 'all') {
                     if (statusFilter === 'Belum Konfirmasi') {
-                        // Handle various representations of "Belum Konfirmasi"
                         if (attendance && attendance !== '' && attendance !== 'Belum Konfirmasi') {
                             showCard = false;
                         }
@@ -2729,7 +2725,6 @@
                 if (showCard) {
                     $(this).show();
 
-                    // Highlight search term jika ada
                     if (searchTerm !== '') {
                         highlightSearchTermMobile($(this), searchTerm);
                     } else {
@@ -2741,15 +2736,12 @@
                 }
             });
 
-            // Update count display
             $('#filteredCount').text(visibleCount);
             $('#totalCount').text(totalCount);
 
-            // Update filter info
             updateFilterInfo(eventFilter, statusFilter, searchTerm);
         }
 
-        // Fungsi untuk highlight teks di desktop view
         function highlightSearchTerm($row, searchTerm) {
             const $nameCell = $row.find('td:first strong');
             const originalText = $nameCell.data('original-text') || $nameCell.text();
@@ -2771,7 +2763,6 @@
             }
         }
 
-        // Fungsi untuk highlight teks di mobile view
         function highlightSearchTermMobile($card, searchTerm) {
             const $nameElement = $card.find('.card-title');
             const originalText = $nameElement.data('original-text') || $nameElement.text();
@@ -2793,7 +2784,6 @@
             }
         }
 
-        // Update fungsi updateFilterInfo untuk menampilkan info pencarian
         function updateFilterInfo(eventFilter, statusFilter, searchTerm = '') {
             let infoText = '';
 
@@ -2818,7 +2808,6 @@
             $('#filterInfo').text(infoText);
         }
 
-        // Update counts when refreshing guests data
         function updateGuestCounts() {
             const totalCount = $('#guestsTableBody tr').length;
             const visibleCount = $('#guestsTableBody tr:visible').length;
@@ -2839,7 +2828,6 @@
 
         // Pull to refresh functionality
         document.addEventListener('touchstart', (e) => {
-            // Hanya aktif jika di dashboard tab
             if (window.scrollY === 0 && $('#dashboard').hasClass('active')) {
                 startY = e.touches[0].clientY;
                 pullToRefresh.css('display', 'block');
@@ -2847,7 +2835,6 @@
         }, { passive: true });
 
         document.addEventListener('touchmove', (e) => {
-            // Hanya aktif jika di dashboard tab
             if (!startY || !$('#dashboard').hasClass('active')) return;
 
             currentY = e.touches[0].clientY;
@@ -2866,7 +2853,6 @@
         }, { passive: false });
 
         document.addEventListener('touchend', () => {
-            // Hanya aktif jika di dashboard tab
             if (pullDelta > pullThreshold && $('#dashboard').hasClass('active')) {
                 refreshDashboardData();
             }
@@ -2911,14 +2897,12 @@
                 url: '{{ route("admin.dashboard.data") }}',
                 type: 'GET',
                 success: function(response) {
-                    // Update stats
                     $('#totalGuests').text(response.stats.total_guests);
                     $('#allGuestsCount').text(response.stats.all_guests_count);
                     $('#totalPeople').text(response.stats.total_people);
                     $('#totalMessages').text(response.stats.total_messages);
                     $('#pendingGuests').text(response.stats.pending_guests);
 
-                    // Update event stats
                     $('#gedungAllGuests').text(response.eventStats.gedung.all_guests_count);
                     $('#gedungTotalGuests').text(response.eventStats.gedung.total_guests);
                     $('#gedungGuestAttends').text(response.eventStats.gedung.guest_attends_total);
@@ -2929,7 +2913,6 @@
                     $('#rumahGuestAttends').text(response.eventStats.rumah.guest_attends_total);
                     $('#rumahTotalMessages').text(response.eventStats.rumah.total_messages);
 
-                    // Update progress bars
                     const gedungProgress = response.eventStats.gedung.all_guests_count > 0 ?
                         ((response.eventStats.gedung.attending_guests + response.eventStats.gedung.not_attending_guests) / response.eventStats.gedung.all_guests_count) * 100 : 0;
                     $('#gedungProgressBar').css('width', `${gedungProgress}%`);
@@ -2957,17 +2940,12 @@
                 url: '{{ route("admin.guests.data") }}',
                 type: 'GET',
                 success: function(response) {
-                    // Update desktop table
-                    $('#guestsTableBody').html(response.desktopView);
-
-                    // Update mobile view
-                    $('#mobileGuestsList').html(response.mobileView);
-
+                    // Update dengan data baru
+                    // Di sini Anda bisa mengimplementasikan update table dengan data response.guests
                     hideLoading();
                     lastUpdateTime = new Date();
                     isRefreshing = false;
                     showToast('Data tamu diperbarui', 'success');
-                    // Update filter counts
                     updateGuestCounts();
                 },
                 error: function() {
@@ -2987,7 +2965,7 @@
                 url: '{{ route("admin.messages.data") }}',
                 type: 'GET',
                 success: function(response) {
-                    $('#messagesTableBody').html(response.messages);
+                    // Update dengan data baru
                     hideLoading();
                     lastUpdateTime = new Date();
                     isRefreshing = false;
@@ -3081,50 +3059,36 @@
 
         // Initialize on page load
         function initializePage() {
-            // Load templates untuk siap digunakan
             loadTemplates();
-
-            // Update filter info
             updateFilterInfo('all', 'all');
-
-            // Update guest counts
             updateGuestCounts();
-
             console.log('Admin dashboard initialized successfully');
         }
 
         // ==================== ELEGANT CONFIRM SYSTEM ====================
-        let currentConfirmAction = null;
-        let currentConfirmData = null;
-
-// Fungsi confirm yang elegan
         function showElegantConfirm(message, options = {}) {
             return new Promise((resolve) => {
                 const {
                     title = 'Konfirmasi',
-                    type = 'warning', // warning, delete, info, success
+                    type = 'warning',
                     confirmText = 'Ya, Lanjutkan',
                     cancelText = 'Batal',
                     icon = 'exclamation-circle'
                 } = options;
 
-                // Set modal content
                 $('#elegantConfirmModalLabel').text(title);
                 $('#confirmMessage').html(message);
                 $('#confirmActionBtn').html(`<i class="fas fa-${icon} me-2"></i>${confirmText}`);
                 $('#elegantConfirmModal .btn-outline-secondary').html(`<i class="fas fa-times me-2"></i>${cancelText}`);
 
-                // Set icon type
                 const $confirmIcon = $('#elegantConfirmModal .confirm-icon');
                 $confirmIcon.removeClass('warning delete info success').addClass(type);
                 $confirmIcon.find('i').removeClass().addClass(`fas fa-${icon} text-${getColorByType(type)}`);
 
-                // Set button color based on type
                 const $confirmBtn = $('#confirmActionBtn');
                 $confirmBtn.removeClass('btn-primary btn-danger btn-warning btn-info btn-success')
                     .addClass(`btn-${getButtonClassByType(type)}`);
 
-                // Set gradient for primary buttons
                 if (type === 'warning' || type === 'info') {
                     $confirmBtn.css({
                         'background': `linear-gradient(135deg, var(--${type === 'warning' ? 'warning' : 'info'}), ${getLightColor(type)})`,
@@ -3139,24 +3103,20 @@
                     });
                 }
 
-                // Show modal
                 const confirmModal = new bootstrap.Modal(document.getElementById('elegantConfirmModal'));
                 confirmModal.show();
 
-                // Handle confirm action
                 $('#confirmActionBtn').off('click').on('click', function() {
                     confirmModal.hide();
                     resolve(true);
                 });
 
-                // Handle cancel action
                 $('#elegantConfirmModal').off('hidden.bs.modal').on('hidden.bs.modal', function() {
                     resolve(false);
                 });
             });
         }
 
-// Helper functions
         function getColorByType(type) {
             const colors = {
                 'warning': 'warning',
@@ -3187,13 +3147,11 @@
             return colors[type] || '#ffda6a';
         }
 
-// Fungsi untuk show success message
         function showSuccessMessage(message, duration = 2000) {
             $('#successMessage').text(message);
             const successModal = new bootstrap.Modal(document.getElementById('successToastModal'));
             successModal.show();
 
-            // Auto hide after duration
             setTimeout(() => {
                 successModal.hide();
             }, duration);
