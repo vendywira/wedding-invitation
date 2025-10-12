@@ -9,6 +9,7 @@ class MessageTemplateSeeder extends Seeder
 {
     public function run()
     {
+        MessageTemplate::truncate();
         $templates = [
             [
                 'name' => 'Template Formal',
@@ -25,7 +26,7 @@ Dengan penuh sukacita, kami mengundang Bapak/Ibu/Saudara/i untuk hadir dalam aca
 
 Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.
 
-Konfirmasi kehadiran: {invitation_link}
+Bantu kami mempersiapkan tempat terbaik untuk anda dengan konfirmasi kehadiran: {invitation_link}
 
 *Terima kasih,*
 *{groom_name} & {bride_name}*',
