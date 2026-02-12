@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Wedding Vendy & Margareth</title>
+    <title>Admin - Wedding Agus & Nyanyi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Favicon -->
@@ -1019,7 +1019,7 @@
                         <i class="fas fa-user text-white fs-5"></i>
                     </div>
                     <h6 class="mt-2 mb-0">Admin</h6>
-                    <small class="text-muted">Vendy & Margareth</small>
+                    <small class="text-muted">Agus & Nyanyi</small>
                 </div>
 
                 <ul class="nav flex-column">
@@ -2486,8 +2486,8 @@
             let message = currentTemplate.template;
 
             message = message.replace(/{guest_name}/g, guestName || 'Nama Tamu');
-            message = message.replace(/{groom_name}/g, 'Vendy');
-            message = message.replace(/{bride_name}/g, 'Margareth');
+            message = message.replace(/{groom_name}/g, 'Agus');
+            message = message.replace(/{bride_name}/g, 'Nyanyi');
             message = message.replace(/{event_date}/g, eventData.formattedDate || 'Tanggal Acara');
             message = message.replace(/{event_time}/g, eventData.eventTime || 'Waktu Acara');
             message = message.replace(/{event_location}/g, eventData.eventLocation || 'Lokasi Acara');

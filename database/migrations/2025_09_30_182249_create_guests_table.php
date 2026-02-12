@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->string('code');
             $table->foreignId('event_id')->references('id')->on('events')->onDelete('cascade');
             $table->integer('guest_attends')->default(0);
-            $table->enum('attendance', ['Hadir', 'Tidak Hadir']);
+            $table->enum('attendance', ['Hadir', 'Tidak Hadir', 'Belum Konfirmasi'])->default('Belum Konfirmasi');
             $table->boolean('is_opened')->default(false);
             $table->timestamps();
         });

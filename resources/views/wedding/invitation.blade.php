@@ -7,8 +7,8 @@
     <title>{{ $metaData['title'] }}</title>
     <meta name="description" content="{{ $metaData['description'] }}">
     <meta name="keywords"
-          content="undangan pernikahan, {{ $metaData['location'] }}, Vendy Margareth, {{ $metaData['guest_name'] }}, {{ $metaData['event_date_formatted'] }}">
-    <meta name="author" content="I Wayan Vendy Wiranatha">
+          content="undangan pernikahan, {{ $metaData['location'] }}, Agus Nyanyi, {{ $metaData['guest_name'] }}, {{ $metaData['event_date_formatted'] }}">
+    <meta name="author" content="I Gede Agus Wibawa Putra">
     <meta name="robots" content="{{ $metaData['robots_meta'] }}">
 
     <!-- Open Graph / Facebook & WhatsApp - OPTIMIZED FOR BOTH ROUTES -->
@@ -19,8 +19,8 @@
     <meta property="og:image" content="{{ $metaData['og_image'] }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Undangan {{ $metaData['location'] }} - Vendy & Margareth">
-    <meta property="og:site_name" content="Undangan Pernikahan Vendy & Margareth">
+    <meta property="og:image:alt" content="Undangan {{ $metaData['location'] }} - Agus & Nyanyi">
+    <meta property="og:site_name" content="Undangan Pernikahan Agus & Nyanyi">
     <meta property="og:locale" content="id_ID">
 
     <!-- Twitter Card -->
@@ -29,7 +29,7 @@
     <meta property="twitter:title" content="{{ $metaData['og_title'] }}">
     <meta property="twitter:description" content="{{ $metaData['og_description'] }}">
     <meta property="twitter:image" content="{{ $metaData['og_image'] }}">
-    <meta property="twitter:image:alt" content="Undangan {{ $metaData['location'] }} - Vendy & Margareth">
+    <meta property="twitter:image:alt" content="Undangan {{ $metaData['location'] }} - Agus & Nyanyi">
 
     <!-- Additional Meta Tags -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -49,10 +49,10 @@
         echo json_encode([
             '@context' => 'https://schema.org',
             '@type' => 'Event',
-            'name' => 'Pernikahan Vendy & Margareth - ' . $metaData['location'],
-            'description' => $metaData['location'] . ' - Pemberkatan pernikahan Vendy Wiranatha dan Margaretha Magdalena Br Nainggolan',
-            'startDate' => '2025-11-12T17:00:00',
-            'endDate' => '2025-11-12T21:00:00',
+            'name' => 'Pernikahan Agus & Nyanyi - ' . $metaData['location'],
+            'description' => $metaData['location'] . ' - Pemberkatan pernikahan I Gede Agus Wibawa Putra dan Komang Nyanyi Romayanti',
+            'startDate' => '2026-02-26T14:00:',
+            'endDate' => '2026-02-26T16:00:00',
             'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
             'eventStatus' => 'https://schema.org/EventScheduled',
             'location' => [
@@ -67,7 +67,7 @@
             ],
             'organizer' => [
                 '@type' => 'Person',
-                'name' => 'Vendy Wiranatha'
+                'name' => 'I Gede Agus Wibawa Putra'
             ],
             'image' => $metaData['og_image'],
             'url' => $metaData['canonical_url']
@@ -657,27 +657,33 @@
 <div id="modal" style="opacity: 1; top: 0;">
     <section class="popup">
         <!-- Video Background dengan fallback untuk iOS -->
-        <div class="video-container">
-            <video autoplay muted loop playsinline id="popupVideo" class="video-background" preload="auto"
-                   webkit-playsinline>
-                <source src="{{ asset('assets/videos/wedding-bg-2.mp4') }}" type="video/mp4">
-                <!-- Fallback image jika video tidak bisa diputar -->
-                <img src="{{ asset('assets/images/gallery/gal-2.jpg') }}" alt="Wedding Background"
-                     class="fallback-image">
-            </video>
-            <!-- Fallback button untuk iOS -->
-            <div class="ios-play-overlay" id="iosPlayOverlay" style="display: none;">
-                <button class="ios-play-btn" onclick="playVideoOnIOS()">
-                    <i class="fas fa-play-circle"></i>
-                    <span>Tap to Play Video</span>
-                </button>
-            </div>
-        </div>
+        <div style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('{{ asset('assets/images/gallery/gal-12.jpg') }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 1;
+        "></div>
+
+        <!-- Dark Overlay -->
+        <div style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        "></div>
 
         <div class="popup-content" style="margin-top: -60px;">
             <h1>THE WEDDING OF</h1>
-            <h2>Vendy & Margareth</h2>
-            <span class="h3"><strong>#loVENDYngnyaMARGARETH</strong></span>
+            <h2>Agus & Nyanyi</h2>
             <span
                 class="h3">{{ Carbon\Carbon::parse($event->event_date)->format('d / m / y') }}</span><br><br><br><br><br><br><br><br><br><br><br><br>
             <div class="yth">
@@ -713,8 +719,7 @@
 
         <div id="header">
             <h1>PERNIKAHAN</h1>
-            <h2>Vendy & Margareth</h2>
-            <h3><strong>#loVENDYngnyaMARGARETH</strong></h3>
+            <h2>Agus & Nyanyi</h2>
             <h3>{{ Carbon\Carbon::parse($event->event_date)->format('d / m / y') }}</h3>
         </div>
 
@@ -783,10 +788,10 @@
                         </div>
                     </div>
                 </div>
-                <h2 data-aos="flip-left">I Wayan Vendy Wiranatha S.Kom</h2>
+                <h2 data-aos="flip-left">I Wayan Agus Wiranatha S.Kom</h2>
                 <div data-aos="fade-up">
                     <p>Putra pertama dari pasangan<br>
-                        Bapak drh. I Made Sunastra dengan Ibu Triwik Susanti<br><br>
+                        Bapak I Wayan Sujana Yasa dengan Ibu Ida Ayu Putu Anggreini<br><br>
                         <i class="fa fa-map-marker-alt" aria-hidden="true"></i> Br. Dinas Sudimara Kaja, Ds. Sudimara,
                         Kec. Tabanan, Kab. Tabanan</p>
                 </div>
@@ -808,11 +813,11 @@
                         </div>
                     </div>
                 </div>
-                <h2 data-aos="flip-left">Margaretha Magdalena Br. Nainggolan</h2>
+                <h2 data-aos="flip-left">Komang Nyanyi Romayanti</h2>
                 <div data-aos="fade-up">
                     <p>Putri kedua dari pasangan<br>
-                        Bapak Hery Nainggolan dengan Ibu Timak Br Sianturi<br><br>
-                        <i class="fa fa-map-marker-alt" aria-hidden="true"></i> Cipayung, Jakarta Timur, DKI Jakarta</p>
+                        Bapak Nyoman Tagel (alm) dengan Ibu Luh Siki<br><br>
+                        <i class="fa fa-map-marker-alt" aria-hidden="true"></i> Br. Sari, Ds. Munduk Bestala, Kec. Seririt, Kab. Buleleng.</p>
                 </div>
             </div>
         </div>
@@ -917,7 +922,7 @@
                     <p class="gift-account-name">Nomor Rekening:</p>
                     <div class="gift-account-number" id="bca-account">1420421377</div>
                     <p class="gift-account-name">Atas Nama:</p>
-                    <p class="gift-account-holder">I Wayan Vendy Wiranatha</p>
+                    <p class="gift-account-holder"> I Gede Agus Wibawa Putra</p>
                 </div>
                 <div class="gift-actions">
                     <button class="gift-copy-btn" onclick="copyToClipboard('bca-account')">
@@ -936,7 +941,7 @@
                     <p class="gift-account-name">Nomor Rekening:</p>
                     <div class="gift-account-number" id="jago-account">109246172960</div>
                     <p class="gift-account-name">Atas Nama:</p>
-                    <p class="gift-account-holder">I Wayan Vendy Wiranatha</p>
+                    <p class="gift-account-holder">I Gede Agus Wibawa Putra</p>
                 </div>
                 <div class="gift-actions">
                     <button class="gift-copy-btn" onclick="copyToClipboard('jago-account')">
@@ -955,7 +960,7 @@
                     <p class="gift-account-name">Nomor Rekening:</p>
                     <div class="gift-account-number" id="bri-account">012401062555500</div>
                     <p class="gift-account-name">Atas Nama:</p>
-                    <p class="gift-account-holder">Margaretha Magdalena</p>
+                    <p class="gift-account-holder">Komang Nyanyi Romayanti</p>
                 </div>
                 <div class="gift-actions">
                     <button class="gift-copy-btn" onclick="copyToClipboard('bri-account')">
@@ -1147,8 +1152,7 @@
 <section id="footer" class="container">
     <div class="col-sm-12 text-center">
         <h1 data-aos="fade-down">Kami Yang Berbahagia</h1>
-        <h2 data-aos="fade-up">Vendy & Margareth</h2>
-        <h6 data-aos="fade-up">#loVENDYngnyaMARGARETH</h6>
+        <h2 data-aos="fade-up">Agus & Nyanyi</h2>
         <h3>© 2025 Wedding Invitation by <a href="https://linkedin.com/in/vendywira">I Wayan Vendy Wiranatha</a></h3>
         <div class="col-md-12 col-sm-12 social">
             <a href="https://www.facebook.com/vendy.wiranatha" target="_blank">
@@ -1867,9 +1871,9 @@
         const end = endDate.toISOString().replace(/-|:|\.\d+/g, '');
 
         const details = {
-            title: 'Pernikahan Vendy & Margareth',
+            title: 'Pernikahan Agus & Nyanyi',
             location: '{{ $event->location }}',
-            description: 'Pernikahan Vendy & Margareth. {{ $event->location }} - ' + window.location.href
+            description: 'Pernikahan Agus & Nyanyi. {{ $event->location }} - ' + window.location.href
         };
 
         const url = [
@@ -1900,17 +1904,17 @@
         const icalContent = [
             'BEGIN:VCALENDAR',
             'VERSION:2.0',
-            'PRODID:-//Wedding Invitation//VendyMargareth//ID',
+            'PRODID:-//Wedding Invitation//AgusNyanyi//ID',
             'CALSCALE:GREGORIAN',
             'BEGIN:VEVENT',
-            'UID:' + Date.now() + '@vendymargareth.wedding',
-            'SUMMARY:Pernikahan Vendy & Margareth',
-            'DESCRIPTION:Pernikahan Vendy Wiranatha dan Margaretha Magdalena Br Nainggolan. {{ $event->location }} - ' + window.location.href,
+            'UID:' + Date.now() + '@agusnyanyi.wedding',
+            'SUMMARY:Pernikahan Agus & Nyanyi',
+            'DESCRIPTION:Pernikahan I Gede Agus Wibawa Putra dan Komang Nyanyi Romayanti. {{ $event->location }} - ' + window.location.href,
             'LOCATION:{{ $event->location }}',
             'DTSTART:' + formatDate(eventDate),
             'DTEND:' + formatDate(endDate),
             'URL:' + window.location.href,
-            'ORGANIZER;CN="Vendy Wiranatha":mailto:contact@vendymargareth.wedding',
+            'ORGANIZER;CN="I Gede Agus Wibawa Putra":mailto:contact@agusnyanyi.wedding',
             'END:VEVENT',
             'END:VCALENDAR'
         ].join('\r\n');
@@ -1919,7 +1923,7 @@
         const blob = new Blob([icalContent], {type: 'text/calendar;charset=utf-8'});
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = 'Pernikahan-Vendy-Margareth.ics';
+        link.download = 'Pernikahan-Agus-Nyanyi.ics';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
