@@ -1256,8 +1256,8 @@
                                                 <div class="col-md-4 col-6">
                                                     <select class="form-control form-control-sm" id="eventFilter">
                                                         <option value="all">Semua Acara</option>
-                                                        <option value="gedung">Gedung</option>
-                                                        <option value="rumah">Rumah</option>
+                                                        <option value="gedung">Resepsi</option>
+                                                        <option value="rumah">Pemberkatan</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4 col-6">
@@ -1753,8 +1753,8 @@
                     <div class="mb-3">
                         <label class="form-label">Jenis Acara</label>
                         <select class="form-control" id="editEventType" name="event_type" required>
-                            <option value="p">Gedung</option>
-                            <option value="r">Rumah</option>
+                            <option value="p">Resepsi</option>
+                            <option value="r">Pemberkatan</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -3028,7 +3028,7 @@
 
             let filterInfo = '';
             if (eventFilter !== 'all') {
-                filterInfo += `Acara: ${eventFilter === 'gedung' ? 'Gedung' : 'Rumah'}`;
+                filterInfo += `Acara: ${eventFilter === 'gedung' ? 'Resepsi' : 'Pemberkatan'}`;
             }
             if (statusFilter !== 'all') {
                 if (filterInfo) filterInfo += ', ';
