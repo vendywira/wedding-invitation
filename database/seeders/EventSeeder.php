@@ -13,7 +13,6 @@ class EventSeeder extends Seeder
      */
     public function run(): void
     {
-        Event::truncate();
         Event::create([
             'event_key' => 'rumah',
             'location' => 'GKPB Betesda sudimara',

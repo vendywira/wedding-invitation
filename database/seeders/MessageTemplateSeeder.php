@@ -9,7 +9,6 @@ class MessageTemplateSeeder extends Seeder
 {
     public function run()
     {
-        MessageTemplate::truncate();
         $templates = [
             [
                 'name' => 'Template Formal',
