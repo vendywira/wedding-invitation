@@ -1220,8 +1220,8 @@
                                         <div class="col-md-2 col-6">
                                             <select name="event_type" class="form-control form-control-sm" required
                                                     id="eventTypeSelect">
-                                                <option value="p">Gedung</option>
-                                                <option value="r">Rumah</option>
+                                                <option value="p">Resepsi</option>
+                                                <option value="r">Pemberkatan</option>
                                             </select>
                                         </div>
                                         <div class="col-md-2 col-12">
