@@ -824,7 +824,7 @@
                 </div>
                 <h2 data-aos="flip-left">Komang Nyanyi Romayanti</h2>
                 <div data-aos="fade-up">
-                    <p>Putri kedua dari pasangan<br>
+                    <p>Putri ketiga dari pasangan<br>
                         Bapak Nyoman Tagel (alm) dengan Ibu Luh Siki<br><br>
                         <i class="fa fa-map-marker-alt" aria-hidden="true"></i> Br. Sari, Ds. Munduk Bestala, Kec. Seririt, Kab. Buleleng.</p>
                 </div>
