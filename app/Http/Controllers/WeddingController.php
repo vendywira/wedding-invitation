@@ -16,6 +16,13 @@ class WeddingController extends Controller
         $path = $request->getPathInfo();
         $eventKey = str_starts_with($path, '/r/') ? 'rumah' : 'gedung';
         $event = Event::where('event_key', $eventKey)->first();
+        
+        // Fetch all events for displaying all events in the acara section
+        $allEvents = Event::all();
+        foreach ($allEvents as $singleEvent) {
+            $singleEvent->event_date_time_start = Carbon::parse($singleEvent->event_date . ' ' . $singleEvent->start_time)
+                ->format('Y/m/d H:i:s');
+        }
 
         if ($event) {
             $event->event_date_time_start = Carbon::parse($event->event_date . ' ' . $event->start_time)
@@ -57,7 +64,7 @@ class WeddingController extends Controller
         $metaData = $this->generateMetaDataForBothRoutes($request, $event, $guestData, $eventKey);
 
         return response()
-            ->view('wedding.invitation', compact('guestData', 'messages', 'event', 'metaData'))
+            ->view('wedding.invitation', compact('guestData', 'messages', 'event', 'allEvents', 'metaData'))
             ->header('Content-Type', 'text/html; charset=utf-8')
             ->header('X-Robots-Tag', $metaData['robots_meta']);
     }

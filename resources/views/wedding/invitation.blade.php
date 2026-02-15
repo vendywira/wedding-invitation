@@ -200,6 +200,15 @@
             background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
         }
 
+        .event-type {
+            color: #e44d26;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1.2em;
+        }
+
         .gift-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -788,7 +797,7 @@
                         </div>
                     </div>
                 </div>
-                <h2 data-aos="flip-left">I Wayan Agus Wiranatha S.Kom</h2>
+                <h2 data-aos="flip-left">I Gede Agus Wibawa Putra</h2>
                 <div data-aos="fade-up">
                     <p>Putra pertama dari pasangan<br>
                         Bapak I Wayan Sujana Yasa dengan Ibu Ida Ayu Putu Anggreini<br><br>
@@ -832,31 +841,36 @@
 
 <section id="acara">
     <div class="container text-center box">
-        <div class="row">
+        @foreach($allEvents as $singleEvent)
+        <div class="row mb-4">
             <div class="col-lg-12">
                 <div data-aos="zoom-in-down">
+                    <h4 class="event-type">{{ ucfirst($singleEvent->event_type) }}</h4>
                     <p>
-                        <i class="far fa-map" aria-hidden="true"></i> {{ $event->location }}<br>
+                        <i class="far fa-map" aria-hidden="true"></i> {{ $singleEvent->location }}<br>
                         <i class="far fa-calendar-check" aria-hidden="true"></i> {{ (new \IntlDateFormatter('id_ID',
                         \IntlDateFormatter::FULL, \IntlDateFormatter::NONE, 'Asia/Jakarta',
-                        \IntlDateFormatter::GREGORIAN, 'EEEE, d MMMM y'))->format(new DateTime($event->event_date))
+                        \IntlDateFormatter::GREGORIAN, 'EEEE, d MMMM y'))->format(new DateTime($singleEvent->event_date))
                         }}<br>
-                        <i class="far fa-clock" aria-hidden="true"></i> {{ $event->start_time }} WITA - {{
-                        $event->finish_time }}<br>
+                        <i class="far fa-clock" aria-hidden="true"></i> {{ $singleEvent->start_time }} WITA - {{
+                        $singleEvent->finish_time }}<br>
                     </p>
                 </div>
                 <div data-aos="fade-up">
-                    <a href="{{ $event->google_map_link }}" target="_blank" class="btn-map">
+                    <a href="{{ $singleEvent->google_map_link }}" target="_blank" class="btn-map">
                         <i class="fas fa-map-marker-alt" aria-hidden="true"></i> Google Map
                     </a>
+                    @if($loop->first) <!-- Only show the Save the Date button for the first event -->
                     <a href="javascript:void(0)" class="btn-map btn-save-date" onclick="smartAddToCalendar()" style="margin-left: 15px">
                         <i class="far fa-calendar-plus" aria-hidden="true"></i> Save the Date
                     </a>
+                    @endif
                 </div>
                 <br>
 
-                <!-- Countdown Timer -->
-                <div class="countdown show" data-aos="zoom-in" data-date="{{$event->event_date_time_start}}"
+                <!-- Countdown Timer - Only for the current event (the one determined by the route) -->
+                @if($singleEvent->id == $event->id)
+                <div class="countdown show" data-aos="zoom-in" data-date="{{$singleEvent->event_date_time_start}}"
                      style="display: block;">
                     <div class="text"><h2>Waktu Menuju Acara</h2></div>
                     <div class="running" style="display: flex;">
@@ -873,8 +887,10 @@
                     </div>
                     <div class="break"></div>
                 </div>
+                @endif
             </div>
         </div>
+        @endforeach
     </div>
 </section>
 
@@ -920,31 +936,12 @@
                 </div>
                 <div class="gift-details">
                     <p class="gift-account-name">Nomor Rekening:</p>
-                    <div class="gift-account-number" id="bca-account">1420421377</div>
+                    <div class="gift-account-number" id="bca-account">8270764011</div>
                     <p class="gift-account-name">Atas Nama:</p>
-                    <p class="gift-account-holder"> I Gede Agus Wibawa Putra</p>
+                    <p class="gift-account-holder">Komang Nyanyi Romayanti</p>
                 </div>
                 <div class="gift-actions">
                     <button class="gift-copy-btn" onclick="copyToClipboard('bca-account')">
-                        <i class="fas fa-copy"></i> Salin Nomor
-                    </button>
-                </div>
-            </div>
-
-            <!-- Jago -->
-            <div class="gift-card" data-aos="fade-up" data-aos-delay="200">
-                <div class="gift-card-header">
-                    <img src="{{ asset('assets/images/jago.jpg') }}" alt="Jago" class="gift-logo">
-                    <h3 class="gift-bank-name">Bank Jago</h3>
-                </div>
-                <div class="gift-details">
-                    <p class="gift-account-name">Nomor Rekening:</p>
-                    <div class="gift-account-number" id="jago-account">109246172960</div>
-                    <p class="gift-account-name">Atas Nama:</p>
-                    <p class="gift-account-holder">I Gede Agus Wibawa Putra</p>
-                </div>
-                <div class="gift-actions">
-                    <button class="gift-copy-btn" onclick="copyToClipboard('jago-account')">
                         <i class="fas fa-copy"></i> Salin Nomor
                     </button>
                 </div>
@@ -958,7 +955,7 @@
                 </div>
                 <div class="gift-details">
                     <p class="gift-account-name">Nomor Rekening:</p>
-                    <div class="gift-account-number" id="bri-account">012401062555500</div>
+                    <div class="gift-account-number" id="bri-account">012401051705502</div>
                     <p class="gift-account-name">Atas Nama:</p>
                     <p class="gift-account-holder">Komang Nyanyi Romayanti</p>
                 </div>
@@ -1861,10 +1858,11 @@
         }
     }
 
-    // Fungsi untuk Google Calendar
+    // Fungsi untuk Google Calendar - menggunakan event pertama
     function addToGoogleCalendar() {
-        const eventDate = new Date('{{ $event->event_date }} {{ $event->start_time }}');
-        const endDate = new Date('{{ $event->event_date }} 21:00');
+        // Ambil event pertama dari semua events
+        const eventDate = new Date('{{ $allEvents->first()->event_date }} {{ $allEvents->first()->start_time }}');
+        const endDate = new Date('{{ $allEvents->first()->event_date }} 21:00');
 
         // Format dates untuk Google Calendar
         const start = eventDate.toISOString().replace(/-|:|\.\d+/g, '');
@@ -1872,8 +1870,8 @@
 
         const details = {
             title: 'Pernikahan Agus & Nyanyi',
-            location: '{{ $event->location }}',
-            description: 'Pernikahan Agus & Nyanyi. {{ $event->location }} - ' + window.location.href
+            location: '{{ $allEvents->first()->location }}',
+            description: 'Pernikahan Agus & Nyanyi. {{ $allEvents->first()->location }} - ' + window.location.href
         };
 
         const url = [
@@ -1891,10 +1889,11 @@
         showToast('Membuka Google Calendar...');
     }
 
-    // Fungsi untuk download iCalendar file (iOS & lainnya)
+    // Fungsi untuk download iCalendar file (iOS & lainnya) - menggunakan event pertama
     function downloadICalFile() {
-        const eventDate = new Date('{{ $event->event_date }} {{ $event->start_time }}');
-        const endDate = new Date('{{ $event->event_date }} 21:00');
+        // Ambil event pertama dari semua events
+        const eventDate = new Date('{{ $allEvents->first()->event_date }} {{ $allEvents->first()->start_time }}');
+        const endDate = new Date('{{ $allEvents->first()->event_date }} 21:00');
 
         // Format dates untuk iCal
         const formatDate = (date) => {
@@ -1909,8 +1908,8 @@
             'BEGIN:VEVENT',
             'UID:' + Date.now() + '@agusnyanyi.wedding',
             'SUMMARY:Pernikahan Agus & Nyanyi',
-            'DESCRIPTION:Pernikahan I Gede Agus Wibawa Putra dan Komang Nyanyi Romayanti. {{ $event->location }} - ' + window.location.href,
-            'LOCATION:{{ $event->location }}',
+            'DESCRIPTION:Pernikahan I Gede Agus Wibawa Putra dan Komang Nyanyi Romayanti. {{ $allEvents->first()->location }} - ' + window.location.href,
+            'LOCATION:{{ $allEvents->first()->location }}',
             'DTSTART:' + formatDate(eventDate),
             'DTEND:' + formatDate(endDate),
             'URL:' + window.location.href,
