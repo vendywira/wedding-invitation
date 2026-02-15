@@ -1840,6 +1840,16 @@
         const pullThreshold = 60;
 
         // ==================== UTILITY FUNCTIONS ====================
+        function formatDateTime(dateString) {
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
+        }
+        
         function showLoading() {
             $('#loadingOverlay').fadeIn();
         }
@@ -2940,8 +2950,9 @@
                 url: '{{ route("admin.guests.data") }}',
                 type: 'GET',
                 success: function(response) {
-                    // Update dengan data baru
-                    // Di sini Anda bisa mengimplementasikan update table dengan data response.guests
+                    // Update the guest table with new data
+                    updateGuestsTable(response.guests);
+                    
                     hideLoading();
                     lastUpdateTime = new Date();
                     isRefreshing = false;
@@ -2976,6 +2987,205 @@
                     isRefreshing = false;
                     showToast('Gagal memperbarui data ucapan', 'error');
                 }
+            });
+        }
+
+        // Function to update the guests table with new data
+        function updateGuestsTable(guests) {
+            // Update desktop table
+            const $tbody = $('#guestsTableBody');
+            $tbody.empty();
+            
+            guests.forEach(function(guest) {
+                const baseUrl = '{{ url("/") }}';
+                const eventKey = guest.event ? guest.event.event_key : 'gedung';
+                const path = eventKey === 'rumah' ? 'r' : 'p';
+                const invitationUrl = `${baseUrl}/${path}/invitation?to=` + encodeURIComponent(guest.name);
+                
+                const row = `
+                    <tr data-guest-id="${guest.id}"
+                        data-event-type="${guest.event ? guest.event.event_key : 'gedung'}"
+                        data-attendance="${guest.attendance || 'Belum Konfirmasi'}"
+                        data-whatsapp="${guest.whatsapp_number || ''}">
+                        <td>
+                            <strong>${guest.name}</strong>
+                            <br><small class="text-muted">${guest.code}</small>
+                        </td>
+                        <td>
+                            ${guest.event ? 
+                                `<span class="badge ${guest.event.event_key === 'rumah' ? 'bg-success' : 'bg-primary'} badge-custom">
+                                    ${guest.event.event_key}
+                                </span>` : 
+                                '<span class="badge bg-secondary badge-custom">-</span>'
+                            }
+                        </td>
+                        <td>
+                            ${guest.whatsapp_number ? 
+                                `<small>${guest.whatsapp_number}</small>` : 
+                                '<small class="text-muted">-</small>'
+                            }
+                        </td>
+                        <td>${guest.guest_attends} orang</td>
+                        <td>
+                            ${guest.attendance === 'Hadir' ? 
+                                '<span class="badge bg-success badge-custom">Hadir</span>' : 
+                                guest.attendance === 'Tidak Hadir' ? 
+                                    '<span class="badge bg-danger badge-custom">Tidak Hadir</span>' : 
+                                    '<span class="badge bg-warning badge-custom">Belum Konfirmasi</span>'
+                            }
+                            <br>
+                            <small class="text-muted">
+                                ${guest.is_opened ? 'Dibuka' : 'Belum dibuka'}
+                            </small>
+                        </td>
+                        <td>
+                            <small class="text-muted">${formatDateTime(guest.created_at)}</small>
+                        </td>
+                        <td>
+                            <small class="text-muted">${formatDateTime(guest.updated_at)}</small>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-sm btn-whatsapp share-guest-whatsapp"
+                                        data-name="${guest.name}"
+                                        data-event='${JSON.stringify(guest.event || {})}'
+                                        data-number="${guest.formatted_whatsapp_number || ''}"
+                                        title="Share via WhatsApp">
+                                    <i class="fab fa-whatsapp"></i>
+                                </button>
+                                <button class="btn btn-outline-primary copy-link"
+                                        data-url="${invitationUrl}"
+                                        title="Copy Link">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <a href="${invitationUrl}" target="_blank"
+                                   class="btn btn-outline-info" title="Preview">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="guest-share-actions">
+                                <button class="btn btn-sm btn-edit edit-guest"
+                                        data-id="${guest.id}"
+                                        data-name="${guest.name}"
+                                        data-guest-attends="${guest.guest_attends}"
+                                        data-event-type="${guest.event ? guest.event.event_key : 'gedung'}"
+                                        data-attendance="${guest.attendance || 'Belum Konfirmasi'}"
+                                        data-whatsapp="${guest.whatsapp_number || ''}"
+                                        title="Edit Tamu">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-guest"
+                                        data-id="${guest.id}"
+                                        data-name="${guest.name}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                $tbody.append(row);
+            });
+            
+            // Update mobile view
+            updateMobileGuestsList(guests);
+            
+            // Reapply filters if any are active
+            applyFilters();
+        }
+        
+        // Function to update the mobile guests list
+        function updateMobileGuestsList(guests) {
+            const $mobileContainer = $('#mobileGuestsList');
+            $mobileContainer.empty();
+            
+            guests.forEach(function(guest) {
+                const baseUrl = '{{ url("/") }}';
+                const eventKey = guest.event ? guest.event.event_key : 'gedung';
+                const path = eventKey === 'rumah' ? 'r' : 'p';
+                const invitationUrl = `${baseUrl}/${path}/invitation?to=` + encodeURIComponent(guest.name);
+                
+                const card = `
+                    <div class="card mb-3" data-guest-id="${guest.id}"
+                         data-event-type="${guest.event ? guest.event.event_key : 'gedung'}"
+                         data-attendance="${guest.attendance || ''}"
+                         data-whatsapp="${guest.whatsapp_number || ''}">
+                        <div class="card-body">
+                            <h6 class="card-title">${guest.name}</h6>
+                            <p class="card-text mb-1">
+                                <small class="text-muted">Kode: ${guest.code}</small>
+                            </p>
+                            <p class="card-text mb-1">
+                                <strong>Acara:</strong>
+                                ${guest.event ? 
+                                    `<span class="badge ${guest.event.event_key === 'rumah' ? 'bg-success' : 'bg-primary'} badge-custom">
+                                        ${guest.event.event_key}
+                                    </span>` : 
+                                    '<span class="badge bg-secondary badge-custom">-</span>'
+                                }
+                            </p>
+                            <p class="card-text mb-1">
+                                <strong>WhatsApp:</strong> ${guest.whatsapp_number || '-'}
+                            </p>
+                            <p class="card-text mb-1">
+                                <strong>Jumlah:</strong> ${guest.guest_attends} orang
+                            </p>
+                            <p class="card-text mb-1">
+                                <strong>Status:</strong>
+                                ${guest.attendance === 'Hadir' ? 
+                                    '<span class="badge bg-success badge-custom">Hadir</span>' : 
+                                    guest.attendance === 'Tidak Hadir' ? 
+                                        '<span class="badge bg-danger badge-custom">Tidak Hadir</span>' : 
+                                        '<span class="badge bg-warning badge-custom">Belum Konfirmasi</span>'
+                                }
+                                <small class="text-muted">(${guest.is_opened ? 'Dibuka' : 'Belum dibuka'})</small>
+                            </p>
+                            <p class="card-text mb-1">
+                                <strong>Dibuat:</strong> <small class="text-muted">${formatDateTime(guest.created_at)}</small>
+                            </p>
+                            <p class="card-text mb-1">
+                                <strong>Diupdate:</strong> <small class="text-muted">${formatDateTime(guest.updated_at)}</small>
+                            </p>
+                            <div class="btn-group w-100 mt-2">
+                                <button class="btn btn-sm btn-whatsapp share-guest-whatsapp"
+                                        data-name="${guest.name}"
+                                        data-event='${JSON.stringify(guest.event || {})}'
+                                        data-number="${guest.formatted_whatsapp_number || ''}"
+                                        title="Share via WhatsApp">
+                                    <i class="fab fa-whatsapp"></i> Share
+                                </button>
+                                <button class="btn btn-outline-primary copy-link"
+                                        data-url="${invitationUrl}"
+                                        title="Copy Link">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <a href="${invitationUrl}" target="_blank"
+                                   class="btn btn-outline-info" title="Preview">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                            </div>
+                            <div class="btn-group w-100 mt-2">
+                                <button class="btn btn-sm btn-edit edit-guest"
+                                        data-id="${guest.id}"
+                                        data-name="${guest.name}"
+                                        data-guest-attends="${guest.guest_attends}"
+                                        data-event-type="${guest.event ? guest.event.event_key : 'gedung'}"
+                                        data-attendance="${guest.attendance || ''}"
+                                        data-whatsapp="${guest.whatsapp_number || ''}"
+                                        title="Edit Tamu">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-guest"
+                                        data-id="${guest.id}"
+                                        data-name="${guest.name}">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                $mobileContainer.append(card);
             });
         }
 
