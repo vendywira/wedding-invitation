@@ -1038,6 +1038,11 @@
                             <i class="fas fa-comments"></i> Ucapan
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#wedding-templates" data-bs-toggle="tab">
+                            <i class="fas fa-palette"></i> Wedding Templates
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -1565,6 +1570,20 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Wedding Templates Tab -->
+                <div class="tab-pane fade" id="wedding-templates">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4><i class="fas fa-palette me-2"></i>Wedding Templates</h4>
+                        <button class="btn btn-primary-custom" id="refreshWeddingTemplates">
+                            <i class="fas fa-sync-alt me-1"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="row" id="weddingTemplatesContainer">
+                        <!-- Templates will be loaded here via AJAX -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1583,6 +1602,10 @@
     <a href="#messages" class="mobile-nav-item" data-bs-toggle="tab">
         <i class="fas fa-comments"></i>
         <span>Ucapan</span>
+    </a>
+    <a href="#wedding-templates" class="mobile-nav-item" data-bs-toggle="tab">
+        <i class="fas fa-palette"></i>
+        <span>Template</span>
     </a>
 </div>
 
@@ -3159,6 +3182,80 @@
 
         // Run initialization
         initializePage();
+
+        // ==================== WEDDING TEMPLATE MANAGEMENT ====================
+        function loadWeddingTemplates() {
+            $.ajax({
+                url: '{{ route("admin.wedding-templates.index") }}',
+                type: 'GET',
+                success: function(response) {
+                    let html = '';
+                    response.forEach(function(template) {
+                        const activeBadge = template.is_active
+                            ? '<span class="badge bg-success">Active</span>'
+                            : '<span class="badge bg-secondary">Inactive</span>';
+
+                        html += `
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100">
+                                    <img src="${template.thumbnail || '/assets/images/gallery/slide1.jpg'}" class="card-img-top" alt="${template.name}" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${template.name} ${activeBadge}</h5>
+                                        <p class="card-text">${template.description || ''}</p>
+                                        <p class="card-text"><small class="text-muted">Slug: ${template.slug}</small></p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="btn-group w-100" role="group">
+                                            ${!template.is_active ?
+                                                `<button class="btn btn-sm btn-success activate-wedding-template" data-id="${template.id}">
+                                                    <i class="fas fa-check me-1"></i> Activate
+                                                </button>` :
+                                                '<button class="btn btn-sm btn-secondary" disabled>Active</button>'
+                                            }
+                                            <a href="/invitation" target="_blank" class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye me-1"></i> Preview
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    $('#weddingTemplatesContainer').html(html);
+                }
+            });
+        }
+
+        // Activate wedding template
+        $(document).on('click', '.activate-wedding-template', function() {
+            const templateId = $(this).data('id');
+            showLoading();
+
+            $.ajax({
+                url: `/admin/wedding-templates/${templateId}/activate`,
+                type: 'POST',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(response) {
+                    hideLoading();
+                    if (response.success) {
+                        showSuccessMessage('Template berhasil diaktifkan!');
+                        loadWeddingTemplates();
+                    }
+                },
+                error: function() {
+                    hideLoading();
+                    showToast('Gagal mengaktifkan template', 'error');
+                }
+            });
+        });
+
+        // Refresh wedding templates
+        $('#refreshWeddingTemplates').on('click', function() {
+            loadWeddingTemplates();
+        });
+
+        // Load wedding templates on page load
+        loadWeddingTemplates();
     });
 </script>
 </body>
