@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\Guest;
 use App\Models\Message;
+use App\Models\WeddingTemplate;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -12,6 +13,12 @@ class WeddingController extends Controller
 {
     public function show(Request $request, $guest = null)
     {
+        $template = WeddingTemplate::where('is_active', true)->first();
+
+        if (!$template) {
+            abort(404, 'No active template found');
+        }
+
         $guestData = null;
         $path = $request->getPathInfo();
         $eventKey = str_starts_with($path, '/r/') ? 'rumah' : 'gedung';
@@ -56,8 +63,10 @@ class WeddingController extends Controller
         $messages = Message::orderBy('created_at', 'desc')->get();
         $metaData = $this->generateMetaDataForBothRoutes($request, $event, $guestData, $eventKey);
 
+        $viewPath = "wedding.templates.{$template->slug}.index";
+
         return response()
-            ->view('wedding.invitation', compact('guestData', 'messages', 'event', 'metaData'))
+            ->view($viewPath, compact('guestData', 'messages', 'event', 'metaData', 'template'))
             ->header('Content-Type', 'text/html; charset=utf-8')
             ->header('X-Robots-Tag', $metaData['robots_meta']);
     }
