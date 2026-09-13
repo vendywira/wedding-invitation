@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/aos.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/popup/magnific-popup.css') }}">
-    <link rel="stylesheet" href="{{ asset($template->slug . '/css/template.css') }}">
+    <link rel="stylesheet" href="{{ asset('templates/' . $template->slug . '/css/template.css') }}">
     <script src="https://kit.fontawesome.com/700f98b672.js" crossorigin="anonymous"></script>
 </head>
 <body data-aos-easing="ease" data-aos-duration="1500" data-aos-delay="500">
@@ -76,6 +76,6 @@
     <script src="{{ asset('assets/scripts/multi-countdown.js') }}"></script>
     <script src="{{ asset('assets/scripts/konfirmasi.js') }}"></script>
     <script src="{{ asset('assets/popup/jquery.magnific-popup.min.js') }}"></script>
-    <script src="{{ asset($template->slug . '/js/template.js') }}"></script>
+    <script src="{{ asset('templates/' . $template->slug . '/js/template.js') }}"></script>
 </body>
 </html>
