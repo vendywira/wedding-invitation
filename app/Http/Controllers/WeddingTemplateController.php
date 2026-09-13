@@ -1,0 +1,93 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\WeddingTemplate;
+use Illuminate\Http\Request;
+
+class WeddingTemplateController extends Controller
+{
+    public function index()
+    {
+        $templates = WeddingTemplate::all();
+        return response()->json($templates);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:wedding_templates,slug',
+            'description' => 'nullable|string',
+            'sections_config' => 'nullable|array',
+            'styling_config' => 'nullable|array',
+            'assets_config' => 'nullable|array',
+        ]);
+
+        $template = WeddingTemplate::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'template' => $template,
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $template = WeddingTemplate::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'sections_config' => 'nullable|array',
+            'styling_config' => 'nullable|array',
+            'assets_config' => 'nullable|array',
+        ]);
+
+        $template->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'template' => $template,
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $template = WeddingTemplate::findOrFail($id);
+
+        if ($template->is_active) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot delete active template',
+            ], 400);
+        }
+
+        $template->delete();
+
+        return response()->json([
+            'success' => true,
+        ]);
+    }
+
+    public function activate($id)
+    {
+        $template = WeddingTemplate::findOrFail($id);
+        $template->update(['is_active' => true]);
+
+        return response()->json([
+            'success' => true,
+            'template' => $template,
+        ]);
+    }
+
+    public function preview($id)
+    {
+        $template = WeddingTemplate::findOrFail($id);
+
+        return response()->json([
+            'template' => $template,
+            'preview_url' => url('/invitation'),
+        ]);
+    }
+}

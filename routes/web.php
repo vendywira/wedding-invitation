@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MessageTemplateController;
 use App\Http\Controllers\WeddingController;
+use App\Http\Controllers\WeddingTemplateController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -49,4 +50,12 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/templates/{id}', [MessageTemplateController::class, 'destroy'])->name('admin.templates.destroy');
     Route::post('/templates/{id}/set-default', [MessageTemplateController::class, 'setDefault'])->name('admin.templates.set-default');
     Route::get('/templates/active', [MessageTemplateController::class, 'getActiveTemplates'])->name('admin.templates.active');
+
+    // Wedding Template Management Routes
+    Route::get('/wedding-templates', [WeddingTemplateController::class, 'index'])->name('admin.wedding-templates.index');
+    Route::post('/wedding-templates', [WeddingTemplateController::class, 'store'])->name('admin.wedding-templates.store');
+    Route::put('/wedding-templates/{id}', [WeddingTemplateController::class, 'update'])->name('admin.wedding-templates.update');
+    Route::delete('/wedding-templates/{id}', [WeddingTemplateController::class, 'destroy'])->name('admin.wedding-templates.destroy');
+    Route::post('/wedding-templates/{id}/activate', [WeddingTemplateController::class, 'activate'])->name('admin.wedding-templates.activate');
+    Route::get('/wedding-templates/{id}/preview', [WeddingTemplateController::class, 'preview'])->name('admin.wedding-templates.preview');
 });
