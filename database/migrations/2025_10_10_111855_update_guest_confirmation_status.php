@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up()
     {
-        // Hanya untuk MySQL/MariaDB - langsung tambah value enum
-        DB::statement("ALTER TABLE guests MODIFY COLUMN attendance ENUM('Hadir', 'Tidak Hadir', 'Belum Konfirmasi') DEFAULT 'Belum Konfirmasi'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE guests MODIFY COLUMN attendance ENUM('Hadir', 'Tidak Hadir', 'Belum Konfirmasi') DEFAULT 'Belum Konfirmasi'");
+        }
 
-        // Update record yang null menjadi 'Belum Konfirmasi'
         DB::table('guests')
             ->whereNull('attendance')
             ->update(['attendance' => 'Belum Konfirmasi']);
@@ -25,7 +25,9 @@ return new class extends Migration
      */
     public function down()
     {
-        DB::statement("ALTER TABLE guests MODIFY COLUMN attendance ENUM('Hadir', 'Tidak Hadir') DEFAULT 'Hadir'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE guests MODIFY COLUMN attendance ENUM('Hadir', 'Tidak Hadir') DEFAULT 'Hadir'");
+        }
 
         DB::table('guests')
             ->where('attendance', 'Belum Konfirmasi')

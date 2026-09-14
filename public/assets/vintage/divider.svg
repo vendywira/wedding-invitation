@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 312" fill="none">
+  <defs>
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#d4a853;stop-opacity:0.3" />
+      <stop offset="50%" style="stop-color:#FFF1D4;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#d4a853;stop-opacity:0.3" />
+    </linearGradient>
+  </defs>
+  <!-- Base line -->
+  <line x1="0" y1="156" x2="1080" y2="156" stroke="url(#borderGrad)" stroke-width="2"/>
+  <!-- Center flower -->
+  <circle cx="540" cy="156" r="30" fill="#d4a853"/>
+  <circle cx="540" cy="156" r="20" fill="#FFF1D4"/>
+  <!-- Left flowers -->
+  <circle cx="400" cy="156" r="15" fill="#d4a853" opacity="0.7"/>
+  <circle cx="260" cy="156" r="12" fill="#d4a853" opacity="0.5"/>
+  <circle cx="120" cy="156" r="10" fill="#d4a853" opacity="0.3"/>
+  <!-- Right flowers -->
+  <circle cx="680" cy="156" r="15" fill="#d4a853" opacity="0.7"/>
+  <circle cx="820" cy="156" r="12" fill="#d4a853" opacity="0.5"/>
+  <circle cx="960" cy="156" r="10" fill="#d4a853" opacity="0.3"/>
+  <!-- Leaves -->
+  <ellipse cx="350" cy="146" rx="20" ry="8" fill="#4a7c59" opacity="0.5" transform="rotate(-20 350 146)"/>
+  <ellipse cx="730" cy="146" rx="20" ry="8" fill="#4a7c59" opacity="0.5" transform="rotate(20 730 146)"/>
+</svg>

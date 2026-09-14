@@ -76,7 +76,7 @@ class WeddingController extends Controller
         $currentUrl = url()->current();
         $hasToParam = $request->has('to');
         $guestName = $guestData->name;
-        $location = $event->location;
+        $location = $event->location ?? '';
         $eventDateFormatted = $event ?
             Carbon::parse($event->event_date)->locale('id')->translatedFormat('l, j F Y') :
             'Rabu, 12 November 2025';

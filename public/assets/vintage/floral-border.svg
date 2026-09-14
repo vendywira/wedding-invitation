@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 528" fill="none">
+  <defs>
+    <linearGradient id="floralGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4a853;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#8B6914;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d4a853;stop-opacity:0.8" />
+    </linearGradient>
+  </defs>
+  <!-- Left flower cluster -->
+  <circle cx="150" cy="264" r="40" fill="url(#floralGrad)" opacity="0.8"/>
+  <circle cx="100" cy="200" r="25" fill="url(#floralGrad)" opacity="0.6"/>
+  <circle cx="200" cy="200" r="25" fill="url(#floralGrad)" opacity="0.6"/>
+  <circle cx="100" cy="328" r="25" fill="url(#floralGrad)" opacity="0.6"/>
+  <circle cx="200" cy="328" r="25" fill="url(#floralGrad)" opacity="0.6"/>
+  <!-- Right flower cluster -->
+  <circle cx="930" cy="264" r="40" fill="url(#floralGrad)" opacity="0.8"/>
+  <circle cx="880" cy="200" r="25" fill="url(#floralGrad)" opacity="0.6"/>
+  <circle cx="980" cy="200" r="25" fill="url(#floralGrad)" opacity="0.6"/>
+  <circle cx="880" cy="328" r="25" fill="url(#floralGrad)" opacity="0.6"/>
+  <circle cx="980" cy="328" r="25" fill="url(#floralGrad)" opacity="0.6"/>
+  <!-- Connecting vine -->
+  <path d="M250,264 Q400,200 540,264 Q680,328 830,264" fill="none" stroke="url(#floralGrad)" stroke-width="3" opacity="0.5"/>
+  <!-- Center decoration -->
+  <circle cx="540" cy="264" r="20" fill="#FFF1D4"/>
+  <circle cx="540" cy="264" r="10" fill="url(#floralGrad)"/>
+  <!-- Leaves -->
+  <ellipse cx="350" cy="244" rx="30" ry="12" fill="#4a7c59" opacity="0.4" transform="rotate(-15 350 244)"/>
+  <ellipse cx="730" cy="244" rx="30" ry="12" fill="#4a7c59" opacity="0.4" transform="rotate(15 730 244)"/>
+</svg>

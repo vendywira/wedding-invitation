@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 345" fill="none">
+  <defs>
+    <linearGradient id="dressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFF1D4;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#d4a853;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8B6914;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#4a3c0a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a1a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Color swatches -->
+  <rect x="50" y="50" width="120" height="120" rx="10" fill="#FFF1D4"/>
+  <rect x="200" y="50" width="120" height="120" rx="10" fill="#d4a853"/>
+  <rect x="350" y="50" width="120" height="120" rx="10" fill="#8B6914"/>
+  <rect x="500" y="50" width="120" height="120" rx="10" fill="#4a3c0a"/>
+  <rect x="650" y="50" width="120" height="120" rx="10" fill="#1a1a1a"/>
+  <!-- Labels -->
+  <text x="110" y="210" text-anchor="middle" fill="#FFF1D4" font-family="Catamaran" font-size="12">Cream</text>
+  <text x="260" y="210" text-anchor="middle" fill="#FFF1D4" font-family="Catamaran" font-size="12">Gold</text>
+  <text x="410" y="210" text-anchor="middle" fill="#FFF1D4" font-family="Catamaran" font-size="12">Dark Gold</text>
+  <text x="560" y="210" text-anchor="middle" fill="#FFF1D4" font-family="Catamaran" font-size="12">Brown</text>
+  <text x="710" y="210" text-anchor="middle" fill="#FFF1D4" font-family="Catamaran" font-size="12">Dark</text>
+  <!-- Title -->
+  <text x="400" y="280" text-anchor="middle" fill="#d4a853" font-family="Cormorant Garamond" font-size="24">Vintage Romance Color Palette</text>
+</svg>
