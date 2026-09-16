@@ -1,10 +1,15 @@
+@php
+    $giftTitle = $template->getSetting('gift_title', 'Wedding Gift');
+    $giftSubtitle = $template->getSetting('gift_subtitle', 'Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Namun jika Bapak/Ibu ingin memberikan tanda kasih, kami telah menyediakan fitur berikut:');
+@endphp
+
 <section id="gift" class="gift-section">
     <div class="gift-container muncul">
         <div class="gift-icon">
             <i class="fas fa-gift"></i>
         </div>
-        <h2 class="gift-title">Wedding Gift</h2>
-        <p class="gift-subtitle">Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Namun jika Bapak/Ibu ingin memberikan tanda kasih, kami telah menyediakan fitur berikut:</p>
+        <h2 class="gift-title">{{ $giftTitle }}</h2>
+        <p class="gift-subtitle">{{ $giftSubtitle }}</p>
 
         <div class="gift-accordion">
             @if($template->getAsset('bank_bni_number'))

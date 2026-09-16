@@ -10,974 +10,7 @@
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/images/apple-touch-icon.png') }}">
 
-    <style>
-        {{-- CSS yang sama seperti sebelumnya --}}
-        :root {
-            --primary: #e44d26;
-            --primary-light: #f26161;
-            --dark: #2d3748;
-            --light: #f8f9fa;
-            --success: #10b981;
-            --info: #3b82f6;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-        }
-
-        body {
-            background: #f5f7f9;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding-bottom: 60px;
-        }
-
-        .navbar {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1020;
-        }
-
-        .sidebar {
-            background: white;
-            min-height: calc(100vh - 76px);
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .nav-link {
-            color: var(--dark);
-            padding: 12px 20px;
-            margin: 4px 0;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .nav-link i {
-            width: 20px;
-            text-align: center;
-            margin-right: 10px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid var(--primary);
-            transition: transform 0.3s ease;
-            height: 100%;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-            line-height: 1.2;
-        }
-
-        .stat-label {
-            color: #6b7280;
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-
-        .event-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            margin-bottom: 15px;
-        }
-
-        .event-header {
-            padding: 20px;
-            color: white;
-        }
-
-        .event-header.gedung {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-        }
-
-        .event-header.rumah {
-            background: linear-gradient(135deg, #10b981, #047857);
-        }
-
-        .event-stats {
-            padding: 20px;
-        }
-
-        .event-stat {
-            text-align: center;
-            padding: 15px;
-        }
-
-        .event-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .event-label {
-            color: #6b7280;
-            font-size: 0.8rem;
-        }
-
-        .progress-custom {
-            height: 8px;
-            border-radius: 10px;
-            background: #e5e7eb;
-        }
-
-        .btn-primary-custom {
-            background: var(--primary);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary-custom:hover {
-            background: var(--primary-light);
-            transform: translateY(-1px);
-        }
-
-        .btn-whatsapp {
-            background: #25D366;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .btn-whatsapp:hover {
-            background: #128C7E;
-            transform: translateY(-1px);
-            color: white;
-        }
-
-        .table-custom {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .table-custom th {
-            background: #f8f9fa;
-            border: none;
-            padding: 15px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .table-custom td {
-            padding: 15px;
-            border-color: #f1f5f9;
-        }
-
-        .badge-custom {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .share-btn-group {
-            display: flex;
-            gap: 5px;
-        }
-
-        .template-message {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 10px 0;
-            border-left: 4px solid var(--primary);
-        }
-
-        .modal-custom .modal-header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-        }
-
-        .guest-share-actions {
-            display: flex;
-            gap: 5px;
-            justify-content: flex-end;
-        }
-
-        .add-guest-card {
-            margin-bottom: 20px;
-        }
-
-        /* Mobile Bottom Navigation */
-        .mobile-bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            display: none;
-            padding: 8px 0;
-        }
-
-        .mobile-nav-item {
-            flex: 1;
-            text-align: center;
-            padding: 10px 5px;
-            color: var(--dark);
-            text-decoration: none;
-            font-size: 0.75rem;
-            transition: all 0.3s ease;
-        }
-
-        .mobile-nav-item.active {
-            color: var(--primary);
-        }
-
-        .mobile-nav-item i {
-            display: block;
-            font-size: 1.2rem;
-            margin-bottom: 4px;
-        }
-
-        /* Loading indicator */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            display: none;
-        }
-
-        .spinner-border {
-            width: 3rem;
-            height: 3rem;
-        }
-
-        /* Toast notifications */
-        .toast-container {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            z-index: 1050;
-        }
-
-        /* Pull to refresh */
-        .pull-to-refresh {
-            text-align: center;
-            padding: 10px;
-            color: #6c757d;
-            display: none;
-        }
-
-        /* Action buttons styling */
-        .btn-edit {
-            background: #3b82f6;
-            border: none;
-            color: white;
-        }
-
-        .btn-edit:hover {
-            background: #2563eb;
-            color: white;
-        }
-
-        /* ============================ */
-        /* RESPONSIVE DESIGN - MOBILE */
-        /* ============================ */
-
-        @media (max-width: 768px) {
-            .sidebar {
-                display: none;
-            }
-
-            .mobile-menu-btn {
-                display: none !important;
-            }
-
-            .mobile-bottom-nav {
-                display: flex;
-            }
-
-            body {
-                padding-bottom: 70px;
-            }
-
-            .container-fluid {
-                padding-left: 15px;
-                padding-right: 15px;
-            }
-
-            .col-lg-10.p-4 {
-                padding: 15px !important;
-            }
-
-            .stat-card {
-                padding: 18px 15px;
-                margin-bottom: 15px;
-                border-radius: 10px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            }
-
-            .stat-number {
-                font-size: 1.7rem;
-            }
-
-            .stat-label {
-                font-size: 0.85rem;
-            }
-
-            .row.mobile-stats {
-                margin-left: -10px;
-                margin-right: -10px;
-                margin-bottom: 10px;
-            }
-
-            .row.mobile-stats > [class*="col-"] {
-                padding-left: 10px;
-                padding-right: 10px;
-                margin-bottom: 8px;
-            }
-
-            .event-card {
-                margin-bottom: 20px;
-                border-radius: 10px;
-            }
-
-            .event-header {
-                padding: 15px;
-            }
-
-            .event-header h5 {
-                font-size: 1.1rem;
-                margin-bottom: 5px;
-            }
-
-            .event-header small {
-                font-size: 0.8rem;
-            }
-
-            .event-stats {
-                padding: 15px;
-            }
-
-            .event-stat {
-                padding: 10px 5px;
-                margin-bottom: 5px;
-            }
-
-            .event-number {
-                font-size: 1.1rem;
-                margin-bottom: 5px;
-            }
-
-            .event-label {
-                font-size: 0.75rem;
-            }
-
-            .progress-custom {
-                height: 6px;
-            }
-
-            .table-responsive {
-                font-size: 0.8rem;
-            }
-
-            .btn-group-sm .btn {
-                padding: 0.25rem 0.5rem;
-                font-size: 0.775rem;
-            }
-
-            .guest-share-actions {
-                flex-direction: column;
-                gap: 2px;
-            }
-
-            .nav-link {
-                padding: 10px 15px;
-                font-size: 0.9rem;
-            }
-
-            .table-mobile-view {
-                display: block;
-            }
-
-            .table-mobile-view thead {
-                display: none;
-            }
-
-            .table-mobile-view tbody,
-            .table-mobile-view tr,
-            .table-mobile-view td {
-                display: block;
-                width: 100%;
-            }
-
-            .table-mobile-view tr {
-                margin-bottom: 15px;
-                border: 1px solid #dee2e6;
-                border-radius: 8px;
-                padding: 10px;
-                background: white;
-            }
-
-            .table-mobile-view td {
-                border: none;
-                padding: 8px 12px;
-                position: relative;
-                padding-left: 50%;
-            }
-
-            .table-mobile-view td:before {
-                content: attr(data-label);
-                position: absolute;
-                left: 12px;
-                width: 45%;
-                padding-right: 10px;
-                font-weight: 600;
-                color: var(--dark);
-                font-size: 0.8rem;
-            }
-
-            .toast-container {
-                top: 70px;
-                right: 10px;
-                left: 10px;
-            }
-
-            .pull-to-refresh {
-                display: block;
-            }
-
-            .btn-primary-custom, .btn-whatsapp {
-                padding: 8px 15px;
-                font-size: 0.875rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .container-fluid {
-                padding-left: 12px;
-                padding-right: 12px;
-            }
-
-            .col-lg-10.p-4 {
-                padding: 12px !important;
-            }
-
-            .stat-card {
-                padding: 16px 12px;
-                margin-bottom: 12px;
-                border-radius: 8px;
-            }
-
-            .stat-number {
-                font-size: 1.5rem;
-                margin-bottom: 4px;
-            }
-
-            .stat-label {
-                font-size: 0.8rem;
-                margin-bottom: 3px;
-            }
-
-            .stat-card small.text-muted {
-                font-size: 0.75rem;
-            }
-
-            .row.mobile-stats {
-                margin-left: -8px;
-                margin-right: -8px;
-                margin-bottom: 8px;
-            }
-
-            .row.mobile-stats > [class*="col-"] {
-                padding-left: 8px;
-                padding-right: 8px;
-                margin-bottom: 6px;
-            }
-
-            .event-card {
-                margin-bottom: 15px;
-            }
-
-            .event-header {
-                padding: 12px 15px;
-            }
-
-            .event-header h5 {
-                font-size: 1rem;
-            }
-
-            .event-stats {
-                padding: 12px 15px;
-            }
-
-            .event-stat {
-                padding: 8px 4px;
-            }
-
-            .event-number {
-                font-size: 1rem;
-            }
-
-            .event-label {
-                font-size: 0.7rem;
-            }
-
-            .btn-primary-custom, .btn-whatsapp {
-                padding: 8px 12px;
-                font-size: 0.85rem;
-            }
-
-            .mobile-nav-item {
-                font-size: 0.7rem;
-                padding: 8px 3px;
-            }
-
-            .mobile-nav-item i {
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 375px) {
-            .stat-card {
-                padding: 14px 10px;
-                margin-bottom: 10px;
-            }
-
-            .stat-number {
-                font-size: 1.4rem;
-            }
-
-            .stat-label {
-                font-size: 0.78rem;
-            }
-
-            .row.mobile-stats {
-                margin-left: -6px;
-                margin-right: -6px;
-            }
-
-            .row.mobile-stats > [class*="col-"] {
-                padding-left: 6px;
-                padding-right: 6px;
-                margin-bottom: 5px;
-            }
-
-            .container-fluid {
-                padding-left: 10px;
-                padding-right: 10px;
-            }
-
-            .col-lg-10.p-4 {
-                padding: 10px !important;
-            }
-        }
-
-        .is-invalid {
-            border-color: #dc3545 !important;
-        }
-
-        .invalid-feedback {
-            display: none;
-            width: 100%;
-            margin-top: 0.25rem;
-            font-size: 0.875em;
-            color: #dc3545;
-        }
-
-        .was-validated .form-control:invalid ~ .invalid-feedback {
-            display: block;
-        }
-
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-light);
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
-        }
-
-        @keyframes pullRefresh {
-            0% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(10px);
-            }
-            100% {
-                transform: translateY(0);
-            }
-        }
-
-        .pull-to-refresh.refreshing {
-            animation: pullRefresh 1s ease-in-out infinite;
-        }
-
-        .btn-primary-custom:active,
-        .btn-whatsapp:active {
-            transform: translateY(0);
-        }
-
-        .btn-primary-custom:focus,
-        .btn-whatsapp:focus,
-        .form-control:focus {
-            box-shadow: 0 0 0 0.2rem rgba(228, 77, 38, 0.25);
-            border-color: var(--primary);
-        }
-
-        @media print {
-            .mobile-bottom-nav,
-            .navbar,
-            .btn-primary-custom,
-            .btn-whatsapp {
-                display: none !important;
-            }
-
-            .stat-card,
-            .event-card {
-                box-shadow: none;
-                border: 1px solid #ddd;
-            }
-        }
-
-        .filter-section {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
-
-        .filter-info {
-            background: #e3f2fd;
-            border-radius: 8px;
-            padding: 10px 15px;
-            font-size: 0.875rem;
-        }
-
-        @media (max-width: 768px) {
-            .filter-section {
-                padding: 15px;
-            }
-
-            .filter-info {
-                padding: 8px 12px;
-                font-size: 0.8rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .input-group-sm .input-group-text {
-                padding: 0.375rem 0.5rem;
-                font-size: 0.775rem;
-            }
-
-            #searchFilter {
-                font-size: 0.875rem;
-            }
-        }
-
-        .highlight {
-            background-color: #fff3cd;
-            font-weight: bold;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        .template-management {
-            max-height: 70vh;
-            overflow-y: auto;
-        }
-
-        .template-form-container {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .template-list-container {
-            background: white;
-            border-radius: 10px;
-            padding: 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        #templatesTable {
-            margin-bottom: 0;
-        }
-
-        #templatesTable th {
-            background: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        #templatesTable td {
-            vertical-align: middle;
-            padding: 12px 15px;
-        }
-
-        .template-actions {
-            white-space: nowrap;
-        }
-
-        .template-variables-hint {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-
-        .template-variables-hint code {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.85em;
-            margin: 0 2px;
-        }
-
-        @media (max-width: 768px) {
-            .template-management {
-                max-height: 60vh;
-            }
-
-            .template-form-container {
-                padding: 15px;
-            }
-
-            #templatesTable td {
-                padding: 8px 10px;
-                font-size: 0.9rem;
-            }
-
-            .template-actions .btn-group {
-                display: flex;
-                flex-direction: column;
-                gap: 2px;
-            }
-
-            .template-actions .btn {
-                padding: 4px 8px;
-                font-size: 0.8rem;
-            }
-        }
-
-        .template-loading {
-            text-align: center;
-            padding: 40px;
-            color: #6c757d;
-        }
-
-        .template-empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #6c757d;
-        }
-
-        .template-empty-state i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-
-        #addTemplateForm .form-check {
-            margin-bottom: 10px;
-        }
-
-        #addTemplateForm .form-check-label {
-            font-weight: 500;
-        }
-
-        #addTemplateForm textarea {
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-
-        #elegantConfirmModal .modal-content {
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-        }
-
-        #elegantConfirmModal .modal-header {
-            padding: 1.5rem 1.5rem 0;
-        }
-
-        #elegantConfirmModal .modal-body {
-            padding: 0 1.5rem 1.5rem;
-        }
-
-        .confirm-icon {
-            font-size: 4rem;
-            animation: pulse 2s infinite;
-        }
-
-        .confirm-icon .fa-exclamation-circle {
-            color: #ffc107;
-            filter: drop-shadow(0 4px 8px rgba(255, 193, 7, 0.3));
-        }
-
-        .success-icon .fa-check-circle {
-            filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.3));
-        }
-
-        #elegantConfirmModal .btn {
-            border-radius: 12px;
-            padding: 12px 24px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        #elegantConfirmModal .btn-outline-secondary {
-            border-color: #6c757d;
-            color: #6c757d;
-        }
-
-        #elegantConfirmModal .btn-outline-secondary:hover {
-            background-color: #6c757d;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        #elegantConfirmModal .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            border: none;
-            box-shadow: 0 4px 15px rgba(228, 77, 38, 0.3);
-        }
-
-        #elegantConfirmModal .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(228, 77, 38, 0.4);
-        }
-
-        #successToastModal .modal-content {
-            border-radius: 16px;
-            border: none;
-            animation: slideInUp 0.5s ease;
-        }
-
-        #successToastModal .modal-body {
-            border-radius: 16px;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        @keyframes slideInUp {
-            from {
-                transform: translateY(50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes bounceIn {
-            0% {
-                transform: scale(0.3);
-                opacity: 0;
-            }
-            50% {
-                transform: scale(1.05);
-            }
-            70% {
-                transform: scale(0.9);
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .confirm-icon.delete .fa-exclamation-circle {
-            color: #dc3545;
-            filter: drop-shadow(0 4px 8px rgba(220, 53, 69, 0.3));
-        }
-
-        .confirm-icon.warning .fa-exclamation-circle {
-            color: #fd7e14;
-            filter: drop-shadow(0 4px 8px rgba(253, 126, 20, 0.3));
-        }
-
-        .confirm-icon.info .fa-exclamation-circle {
-            color: #0dcaf0;
-            filter: drop-shadow(0 4px 8px rgba(13, 202, 240, 0.3));
-        }
-
-        .confirm-icon.success .fa-exclamation-circle {
-            color: #198754;
-            filter: drop-shadow(0 4px 8px rgba(25, 135, 84, 0.3));
-        }
-
-        @media (max-width: 576px) {
-            #elegantConfirmModal .modal-dialog {
-                margin: 20px;
-            }
-
-            #elegantConfirmModal .modal-body {
-                padding: 0 1rem 1rem;
-            }
-
-            #elegantConfirmModal .btn {
-                padding: 10px 16px;
-                font-size: 0.9rem;
-            }
-
-            .confirm-icon {
-                font-size: 3rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/admin-dashboard.css') }}">
 </head>
 <body>
 <!-- Loading Overlay -->
@@ -997,11 +30,11 @@
             <i class="fas fa-grip me-2"></i>Dashboard
         </a>
         <div class="navbar-nav ms-auto">
-            <a href="/logout" class="nav-link text-white"
+            <a href="{{ route('logout') }}" class="nav-link text-white"
                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                 <i class="fas fa-sign-out-alt me-1"></i>Logout
             </a>
-            <form id="logout-form" action="/logout" method="POST" class="d-none">
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                 @csrf
             </form>
         </div>
@@ -1024,23 +57,28 @@
 
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
+                        <a class="nav-link active" href="#dashboard" onclick="event.preventDefault(); event.stopPropagation(); switchTab('#dashboard');">
                             <i class="fas fa-chart-pie"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#guests" data-bs-toggle="tab">
-                            <i class="fas fa-users"></i> Manage Tamu
+                        <a class="nav-link" href="#guests" onclick="event.preventDefault(); event.stopPropagation(); switchTab('#guests');">
+                            <i class="fas fa-users"></i> Tamu
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#messages" data-bs-toggle="tab">
+                        <a class="nav-link" href="#messages" onclick="event.preventDefault(); event.stopPropagation(); switchTab('#messages');">
                             <i class="fas fa-comments"></i> Ucapan
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#wedding-templates" data-bs-toggle="tab">
-                            <i class="fas fa-palette"></i> Wedding Templates
+                        <a class="nav-link" href="#settings" onclick="event.preventDefault(); event.stopPropagation(); switchTab('#settings');">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#wedding-templates" onclick="event.preventDefault(); event.stopPropagation(); switchTab('#wedding-templates');">
+                            <i class="fas fa-palette"></i> Template
                         </a>
                     </li>
                 </ul>
@@ -1191,6 +229,14 @@
                             </div>
                         </div>
                     </div>
+                </div> <!-- /dashboard tab-pane -->
+
+                <!-- Settings Tab -->
+                <div class="tab-pane fade" id="settings">
+                    <div id="settingsContent" class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2 text-muted">Memuat pengaturan...</p>
+                    </div>
                 </div>
 
                 <!-- Guests Tab -->
@@ -1290,13 +336,13 @@
                         <h4><i class="fas fa-users me-2"></i>Manage Tamu</h4>
                         <div>
                             <button class="btn btn-primary-custom me-2" id="manageTemplate">
-                                <i class="fas fa-envelope me-1"></i>
+                                <i class="fas fa-envelope me-1"></i> Template
                             </button>
                             <button class="btn btn-primary-custom me-2" id="refreshGuests">
-                                <i class="fas fa-sync-alt me-1"></i>
+                                <i class="fas fa-sync-alt me-1"></i> Refresh
                             </button>
                             <button class="btn btn-primary-custom me-2" id="exportFiltered">
-                                <i class="fas fa-download me-1"></i>
+                                <i class="fas fa-download me-1"></i> Export
                             </button>
                         </div>
                     </div>
@@ -1437,7 +483,7 @@
                                 @endphp
                                 <div class="card mb-3" data-guest-id="{{ $guest->id }}"
                                      data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
-                                     data-attendance="{{ $guest->attendance }}"
+                                     data-attendance="{{ $guest->attendance ?? 'Belum Konfirmasi' }}"
                                      data-whatsapp="{{ $guest->whatsapp_number }}">
                                     <div class="card-body">
                                         <h6 class="card-title">{{ $guest->name }}</h6>
@@ -1501,7 +547,7 @@
                                                     data-name="{{ $guest->name }}"
                                                     data-guest-attends="{{ $guest->guest_attends }}"
                                                     data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
-                                                    data-attendance="{{ $guest->attendance ?? '' }}"
+                                                    data-attendance="{{ $guest->attendance ?? 'Belum Konfirmasi' }}"
                                                     data-whatsapp="{{ $guest->whatsapp_number }}"
                                                     title="Edit Tamu">
                                                 <i class="fas fa-edit"></i> Edit
@@ -1575,13 +621,94 @@
                 <div class="tab-pane fade" id="wedding-templates">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4><i class="fas fa-palette me-2"></i>Wedding Templates</h4>
-                        <button class="btn btn-primary-custom" id="refreshWeddingTemplates">
-                            <i class="fas fa-sync-alt me-1"></i> Refresh
-                        </button>
+                        <div>
+                            <a href="#settings" class="btn btn-warning me-2" style="color:white;" onclick="event.preventDefault(); switchTab('#settings');">
+                                <i class="fas fa-cog me-1"></i> Pengaturan Template
+                            </a>
+                            <button class="btn btn-primary-custom" onclick="location.reload();">
+                                <i class="fas fa-sync-alt me-1"></i> Refresh
+                            </button>
+                        </div>
                     </div>
 
+                    <!-- Active Template Banner -->
+                    @if($activeTemplate)
+                    <div class="alert alert-success d-flex align-items-center justify-content-between mb-3 alert-limited" role="alert">
+                        <div>
+                            <strong><i class="fas fa-check-circle me-1"></i> Template Aktif:</strong> {{ $activeTemplate->name }}
+                            <span class="badge bg-success ms-2">{{ $activeTemplate->slug }}</span>
+                        </div>
+                        <div>
+                            <a href="{{ route('wedding.public') }}" target="_blank" class="btn btn-sm btn-outline-success me-2">
+                                <i class="fas fa-eye me-1"></i> Lihat Undangan
+                            </a>
+                            <a href="#settings" class="btn btn-sm btn-success" onclick="event.preventDefault(); switchTab('#settings');">
+                                <i class="fas fa-edit me-1"></i> Edit Pengaturan
+                            </a>
+                        </div>
+                    </div>
+                    @else
+                    <div class="alert alert-warning d-flex align-items-center justify-content-between mb-3 alert-limited" role="alert">
+                        <div>
+                            <strong><i class="fas fa-exclamation-triangle me-1"></i> Belum ada template aktif.</strong> Aktifkan salah satu template di bawah ini.
+                        </div>
+                    </div>
+                    @endif
+
                     <div class="row" id="weddingTemplatesContainer">
-                        <!-- Templates will be loaded here via AJAX -->
+                        @forelse($templates as $tpl)
+                        @php
+                            $isActive = $tpl->is_active;
+                            $cardBorder = $isActive ? 'border-success border-2' : '';
+                            $cardShadow = $isActive ? 'box-shadow: 0 4px 15px rgba(16,185,129,0.2);' : '';
+                        @endphp
+                        <div class="col-md-4 mb-4" data-template-id="{{ $tpl->id }}">
+                            <div class="card h-100 {{ $cardBorder }} tpl-card" @if($cardShadow) style="{{ $cardShadow }}" @endif>
+                                <div class="tpl-thumb-wrap">
+                                    <img src="{{ $tpl->thumbnail ?: '/assets/images/gallery/slide1.jpg' }}" class="card-img-top tpl-thumb" alt="{{ $tpl->name }}">
+                                    @if($isActive)
+                                    <div style="position:absolute;top:10px;right:10px;">
+                                        <span class="badge bg-success tpl-badge-active"><i class="fas fa-check-circle me-1"></i> Template Aktif</span>
+                                    </div>
+                                    @endif
+                                </div>
+                                <div class="card-body tpl-card-body">
+                                    <h5 class="card-title tpl-card-title">
+                                        {{ $tpl->name }}
+                                        @if($isActive)
+                                        <span class="badge bg-success ms-2"><i class="fas fa-check-circle me-1"></i> Aktif</span>
+                                        @endif
+                                    </h5>
+                                    <p class="card-text tpl-card-desc">{{ $tpl->description ?: 'Tidak ada deskripsi' }}</p>
+                                    <p class="card-text"><small class="text-muted"><i class="fas fa-link me-1"></i>{{ $tpl->slug }}</small></p>
+                                </div>
+                                <div class="card-footer tpl-card-footer">
+                                    <div class="d-flex gap-2">
+                                        @if(!$isActive)
+                                        <button class="btn btn-sm btn-success flex-grow-1 activate-wedding-template tpl-btn" data-id="{{ $tpl->id }}">
+                                            <i class="fas fa-check me-1"></i> Aktifkan
+                                        </button>
+                                        @else
+                                        <span class="btn btn-sm btn-success flex-grow-1 tpl-btn" disabled style="opacity:0.8;">
+                                            <i class="fas fa-check-circle me-1"></i> Sedang Aktif
+                                        </span>
+                                        @endif
+                                        <a href="{{ route('wedding.public') }}" target="_blank" class="btn btn-sm btn-outline-info tpl-btn" title="Preview Undangan">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="#settings" class="btn btn-sm btn-outline-warning tpl-btn" title="Pengaturan Template" onclick="event.preventDefault(); switchTab('#settings');">
+                                            <i class="fas fa-cog"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="col-12 text-center py-5">
+                            <i class="fas fa-layer-group fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Belum ada template. Buat template baru untuk memulai.</p>
+                        </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -1591,19 +718,23 @@
 
 <!-- Mobile Bottom Navigation -->
 <div class="mobile-bottom-nav">
-    <a href="#dashboard" class="mobile-nav-item active" data-bs-toggle="tab">
+    <a href="#dashboard" class="mobile-nav-item active" onclick="event.preventDefault(); event.stopPropagation(); switchTab('#dashboard');">
         <i class="fas fa-chart-pie"></i>
         <span>Dashboard</span>
     </a>
-    <a href="#guests" class="mobile-nav-item" data-bs-toggle="tab">
+    <a href="#guests" class="mobile-nav-item" onclick="event.preventDefault(); event.stopPropagation(); switchTab('#guests');">
         <i class="fas fa-users"></i>
         <span>Tamu</span>
     </a>
-    <a href="#messages" class="mobile-nav-item" data-bs-toggle="tab">
+    <a href="#messages" class="mobile-nav-item" onclick="event.preventDefault(); event.stopPropagation(); switchTab('#messages');">
         <i class="fas fa-comments"></i>
         <span>Ucapan</span>
     </a>
-    <a href="#wedding-templates" class="mobile-nav-item" data-bs-toggle="tab">
+    <a href="#settings" class="mobile-nav-item" onclick="event.preventDefault(); event.stopPropagation(); switchTab('#settings');">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+    </a>
+    <a href="#wedding-templates" class="mobile-nav-item" onclick="event.preventDefault(); event.stopPropagation(); switchTab('#wedding-templates');">
         <i class="fas fa-palette"></i>
         <span>Template</span>
     </a>
@@ -1850,6 +981,605 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Global toast helper. It must live outside $(document).ready() because the
+    // settings-embed handlers below (window.saveSettingsForm, window.uploadAsset,
+    // window.uploadGallery, ...) and switchTab() all call it from top-level scope.
+    function showToast(message, type = 'info', delay = null) {
+        var container = document.getElementById('toastContainer');
+        if (!container) return;
+        var bgClass = type === 'success' ? 'bg-success' :
+            type === 'error' ? 'bg-danger' :
+                type === 'warning' ? 'bg-warning' : 'bg-info';
+        var safe = String(message)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/\n/g, '<br>');
+        var el = document.createElement('div');
+        el.className = 'toast align-items-center text-white ' + bgClass + ' border-0';
+        el.setAttribute('role', 'alert');
+        el.innerHTML = '<div class="d-flex"><div class="toast-body">' + safe +
+            '</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>';
+        container.appendChild(el);
+        new bootstrap.Toast(el, { delay: delay || (type === 'error' ? 8000 : 3000) }).show();
+        el.addEventListener('hidden.bs.toast', function() { el.remove(); });
+    }
+    window.showToast = showToast;
+
+    function switchTab(target) {
+        if (!target || !target.startsWith('#')) return;
+        // Only touch the dashboard's own nav/tabs — the embedded template settings
+        // has its own .nav-link/.tab-pane and must keep its active tab state.
+        var inSettings = function(el) { return el.closest('#settingsContent') !== null; };
+        document.querySelectorAll('.nav-link').forEach(function(el) { if (!inSettings(el)) el.classList.remove('active'); });
+        document.querySelectorAll('.mobile-nav-item').forEach(function(el) { el.classList.remove('active'); });
+        document.querySelectorAll('.nav-link[href="' + target + '"]').forEach(function(el) { if (!inSettings(el)) el.classList.add('active'); });
+        document.querySelectorAll('.mobile-nav-item[href="' + target + '"]').forEach(function(el) { el.classList.add('active'); });
+        document.querySelectorAll('.tab-pane').forEach(function(el) { if (!inSettings(el)) el.classList.remove('show', 'active'); });
+        var pane = document.querySelector(target);
+        if (pane) { pane.classList.add('show', 'active'); }
+
+        // Load settings content on first visit
+        if (target === '#settings' && !document.getElementById('settingsContent').dataset.loaded) {
+            fetch('{{ route("admin.template-settings.embed") }}')
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('settingsContent').innerHTML = html;
+                    document.getElementById('settingsContent').dataset.loaded = '1';
+                    initSettingsGallerySort();
+                    initSettingsEvents();
+                })
+                .catch(() => {
+                    document.getElementById('settingsContent').innerHTML = '<div class="text-center py-5 text-danger"><i class="fas fa-exclamation-triangle fa-2x mb-2"></i><p>Gagal memuat pengaturan</p></div>';
+                });
+        }
+
+    }
+
+    // ==================== SETTINGS EMBED JS ====================
+    function settingsTab(btn) {
+        var target = btn.getAttribute('data-bs-target');
+        // Remove active from all tabs and panes within settingsContent
+        var container = document.getElementById('settingsContent');
+        if (!container) return;
+        container.querySelectorAll('.nav-link').forEach(function(t) { t.classList.remove('active'); });
+        container.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('show', 'active'); });
+        btn.classList.add('active');
+        var pane = container.querySelector(target);
+        if (pane) pane.classList.add('show', 'active');
+    }
+    window.settingsTab = settingsTab;
+
+    // ==================== IN-PLACE PANE REFRESH ====================
+    // Uploads/deletes used to call location.reload(), which sent the admin back
+    // to the Dashboard home tab instead of staying in Settings. Now the embed
+    // HTML is re-fetched, swapped in, and the tab that was open is restored.
+    function activeSettingsTabTarget() {
+        var container = document.getElementById('settingsContent');
+        if (!container) return null;
+        var link = container.querySelector('.nav-link.active[data-bs-target]');
+        return link ? link.getAttribute('data-bs-target') : null;
+    }
+
+    function activateSettingsTab(target) {
+        var container = document.getElementById('settingsContent');
+        if (!container || !target) return;
+        var btn = container.querySelector('.nav-link[data-bs-target="' + target + '"]');
+        if (btn) settingsTab(btn);
+    }
+
+    function refreshSettingsPane(target) {
+        var container = document.getElementById('settingsContent');
+        if (!container) { setTimeout(function() { location.reload(); }, 600); return; }
+
+        var keep = target ? ('#' + String(target).replace(/^#/, '')) : activeSettingsTabTarget();
+
+        fetch('{{ route("admin.template-settings.embed") }}')
+            .then(function(r) { return r.text(); })
+            .then(function(html) {
+                container.innerHTML = html;
+                container.dataset.loaded = '1';
+                activateSettingsTab(keep);
+                initSettingsGallerySort();
+                initSettingsEvents();
+            })
+            .catch(function() { setTimeout(function() { location.reload(); }, 600); });
+    }
+    window.refreshSettingsPane = refreshSettingsPane;
+
+    // ==================== MULTI-ACARA (EXTRA CEREMONIES) ====================
+    function ceremonyRows(containerId) {
+        var container = document.getElementById(containerId);
+        return container ? Array.prototype.slice.call(container.querySelectorAll('[data-ceremony-row]')) : [];
+    }
+
+    function paintCeremonyNumbers(containerId) {
+        ceremonyRows(containerId).forEach(function(row, position) {
+            var label = row.querySelector('[data-ceremony-number]');
+            if (label) label.textContent = position + 1;
+        });
+    }
+
+    function initSettingsEvents() {
+        paintCeremonyNumbers('tsCeremonyRowsGedung');
+        paintCeremonyNumbers('tsCeremonyRowsRumah');
+    }
+    window.initSettingsEvents = initSettingsEvents;
+
+    window.addCeremonyRow = function(containerId) {
+        var container = document.getElementById(containerId);
+        var tpl = document.getElementById('tsCeremonyRowTemplate');
+        if (!container || !tpl) return;
+        container.appendChild(tpl.content.cloneNode(true));
+        paintCeremonyNumbers(containerId);
+        var rows = ceremonyRows(containerId);
+        var last = rows[rows.length - 1];
+        if (!last) return;
+        var firstField = last.querySelector('[data-field="title"]');
+        if (firstField) firstField.focus();
+        if (last.scrollIntoView) last.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    };
+
+    window.removeCeremonyRow = function(btn) {
+        var row = btn.closest ? btn.closest('[data-ceremony-row]') : null;
+        if (!row) return;
+        var container = row.parentNode;
+        row.remove();
+        if (container && container.id) paintCeremonyNumbers(container.id);
+    };
+
+    // Names are (re)assigned from the DOM order right before submit, so removing
+    // a middle ceremony can never leave a gap or a duplicate details[] index.
+    function reindexCeremonyRows(form) {
+        var index = 0;
+        form.querySelectorAll('[data-ceremony-row]').forEach(function(row) {
+            row.querySelectorAll('[data-field]').forEach(function(field) {
+                field.name = 'details[' + index + '][' + field.getAttribute('data-field') + ']';
+            });
+            index++;
+        });
+    }
+
+    // ==================== UPLOAD HELPERS ====================
+    // Phone photos are routinely 4-12MB while the server only accepts ~8MB, so
+    // every image is downscaled/re-encoded in the browser first. GIFs are sent
+    // untouched to preserve their animation.
+    var UPLOAD_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+    var UPLOAD_MAX_DIMENSION = 2400;
+    var UPLOAD_QUALITY = 0.82;
+
+    function isSupportedImage(file) {
+        return UPLOAD_TYPES.indexOf((file.type || '').toLowerCase()) !== -1;
+    }
+
+    function compressForUpload(file, maxDimension, quality) {
+        maxDimension = maxDimension || UPLOAD_MAX_DIMENSION;
+        quality = quality || UPLOAD_QUALITY;
+
+        return new Promise(function(resolve) {
+            // Never re-encode GIF (would lose the animation).
+            if (!/^image\/(jpeg|jpg|png|webp)$/.test((file.type || '').toLowerCase())) {
+                return resolve(file);
+            }
+
+            var objectUrl = URL.createObjectURL(file);
+            var img = new Image();
+
+            img.onload = function() {
+                URL.revokeObjectURL(objectUrl);
+                var w = img.naturalWidth, h = img.naturalHeight;
+                var scale = Math.min(1, maxDimension / Math.max(w, h));
+
+                // Nothing to gain: already small enough
+                if (scale === 1 && file.size <= 1200 * 1024) return resolve(file);
+
+                var canvas = document.createElement('canvas');
+                canvas.width = Math.max(1, Math.round(w * scale));
+                canvas.height = Math.max(1, Math.round(h * scale));
+                var ctx = canvas.getContext('2d');
+
+                var outputType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+                if (outputType === 'image/jpeg') {
+                    // JPEG has no alpha channel — paint a white background first
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                canvas.toBlob(function(blob) {
+                    if (!blob || blob.size >= file.size) return resolve(file);
+                    var extension = outputType === 'image/png' ? '.png' : '.jpg';
+                    var name = file.name.replace(/\.[^.]+$/, '') + extension;
+                    resolve(new File([blob], name, { type: outputType, lastModified: Date.now() }));
+                }, outputType, outputType === 'image/png' ? 1 : quality);
+            };
+
+            img.onerror = function() { URL.revokeObjectURL(objectUrl); resolve(file); };
+            img.src = objectUrl;
+        });
+    }
+
+    function readJsonResponse(r) {
+        return r.text().then(function(text) {
+            var data = null;
+            try { data = JSON.parse(text); } catch (e) { data = null; }
+
+            if (data) return { ok: r.ok, status: r.status, data: data };
+
+            var snippet = text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200);
+            var hint = r.status === 419 ? 'Sesi login berakhir — muat ulang halaman lalu coba lagi.'
+                : r.status === 413 ? 'File terlalu besar untuk dikirim ke server.'
+                : r.status === 401 || r.status === 403 ? 'Tidak punya akses — login ulang.'
+                : r.status >= 500 ? 'Terjadi error di server. Cek storage/logs/laravel.log.'
+                : 'Coba lagi atau perkecil fotonya.';
+
+            // Surface the raw server message so a failure can be diagnosed from
+            // the toast alone (e.g. "Maximum execution time exceeded").
+            if (snippet) hint += '\nPesan server: ' + snippet;
+
+            return { ok: false, status: r.status, data: null, hint: hint };
+        });
+    }
+
+    function uploadHint(result) {
+        if (result && result.data) {
+            var err = result.data.message || 'Gagal upload';
+            var errors = result.data.errors;
+            if (errors) {
+                err += '\n' + (Array.isArray(errors) ? errors.join('\n') : Object.values(errors).flat().join('\n'));
+            }
+            return err;
+        }
+        return 'Gagal upload (HTTP ' + (result ? result.status : '?') + '). ' + ((result && result.hint) || '');
+    }
+
+    window.uploadAsset = async function(input, assetKey) {
+        var file = input.files[0];
+        input.value = '';
+        if (!file) return;
+
+        if (!isSupportedImage(file)) {
+            showToast('Format "' + (file.type || 'tidak dikenal') + '" tidak didukung.\nGunakan JPG, PNG, WebP, atau GIF (HEIC dari iPhone harus dikonversi dulu).', 'error');
+            return;
+        }
+
+        try {
+            var prepared = await compressForUpload(file);
+            if (prepared !== file) {
+                showToast('Foto diperkecil otomatis: ' + formatFileSizeShort(file.size) + ' → ' + formatFileSizeShort(prepared.size), 'info');
+            }
+
+            var fd = new FormData();
+            fd.append('asset_key', assetKey);
+            fd.append('file', prepared);
+
+            var r = await fetch('{{ route("admin.template-settings.upload-asset") }}', {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                body: fd
+            });
+
+            var result = await readJsonResponse(r);
+
+            if (result.data && result.data.success) {
+                var m = 'Foto berhasil diupload!';
+                if (result.data.width && result.data.height) m += ' (' + result.data.width + 'x' + result.data.height + 'px)';
+                if (result.data.warnings && result.data.warnings.length) { m += '\n' + result.data.warnings.join('\n'); showToast(m, 'warning'); }
+                else showToast(m);
+                // Stay in Settings — refresh only the pane, keeping the open tab.
+                refreshSettingsPane();
+            } else {
+                showToast(uploadHint(result), 'error');
+            }
+        } catch (e) {
+            showToast('Upload gagal: ' + (e && e.message ? e.message : 'kesalahan tidak diketahui'), 'error');
+        }
+    };
+
+    function formatFileSizeShort(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1048576) return (bytes / 1024).toFixed(0) + ' KB';
+        return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+    window.compressForUpload = compressForUpload;
+    window.isSupportedImage = isSupportedImage;
+
+    window.deleteAsset = async function(ak) {
+        if (!confirm('Yakin ingin menghapus asset ini?')) return;
+        try {
+            var r = await fetch('{{ route("admin.template-settings.delete-asset") }}', {
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ asset_key: ak })
+            });
+            var j = await r.json();
+            if (j.success) {
+                showToast('Asset berhasil dihapus!');
+                refreshSettingsPane();
+            } else {
+                showToast(j.message || 'Gagal hapus', 'error');
+            }
+        } catch(e) {
+            showToast('Error menghapus asset', 'error');
+        }
+    };
+
+    // NOTE: the endpoint expects `files[]` (see TemplateSettingController@uploadGallery),
+    // not `gallery[]` — sending the wrong key made every dashboard upload fail with 422.
+    // Each photo is compressed in the browser first (same reason as uploadAsset).
+    window.uploadGallery = async function(input) {
+        var selected = Array.prototype.slice.call(input.files || []);
+        input.value = '';
+        if (!selected.length) return;
+
+        var unsupported = selected.filter(function(f) { return !isSupportedImage(f); });
+        var files = selected.filter(isSupportedImage);
+
+        if (unsupported.length) {
+            showToast(unsupported.length + ' file dilewati (format tidak didukung):\n' + unsupported.map(function(f) { return f.name; }).join('\n'), 'warning');
+        }
+        if (!files.length) return;
+
+        try {
+            showToast('Memproses ' + files.length + ' foto...', 'info', 2000);
+
+            var prepared = [];
+            for (var i = 0; i < files.length; i++) {
+                prepared.push(await compressForUpload(files[i]));
+            }
+
+            var totalBefore = files.reduce(function(a, f) { return a + f.size; }, 0);
+            var totalAfter = prepared.reduce(function(a, f) { return a + f.size; }, 0);
+
+            // Send in batches: one huge request can exceed the server's
+            // post_max_size (25M) and fail with 413 "no file received".
+            var MAX_BATCH_BYTES = 12 * 1024 * 1024;
+            var batches = [];
+            var batch = [];
+            var batchSize = 0;
+            prepared.forEach(function(f) {
+                if (batchSize + f.size > MAX_BATCH_BYTES && batch.length) {
+                    batches.push(batch);
+                    batch = [];
+                    batchSize = 0;
+                }
+                batch.push(f);
+                batchSize += f.size;
+            });
+            if (batch.length) batches.push(batch);
+
+            var uploaded = 0;
+            var failed = 0;
+            var notes = [];
+
+            for (var b = 0; b < batches.length; b++) {
+                if (batches.length > 1) {
+                    showToast('Mengupload batch ' + (b + 1) + ' dari ' + batches.length + ' (' + formatFileSizeShort(totalAfter) + ' total)...', 'info', 2500);
+                } else {
+                    showToast('Mengupload ' + prepared.length + ' foto (' + formatFileSizeShort(totalBefore) + ' → ' + formatFileSizeShort(totalAfter) + ')...', 'info', 2500);
+                }
+
+                var fd = new FormData();
+                batches[b].forEach(function(f) {
+                    fd.append('files[]', f);
+                    fd.append('caption[]', '');
+                });
+
+                var result = await readJsonResponse(await fetch('{{ route("admin.template-settings.upload-gallery") }}', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                    body: fd
+                }));
+
+                if (result.data && result.data.success) {
+                    uploaded += (result.data.images || []).length || batches[b].length;
+                    if (result.data.warnings && result.data.warnings.length) {
+                        notes = notes.concat(result.data.warnings);
+                    }
+                } else {
+                    failed += batches[b].length;
+                    notes.push(uploadHint(result));
+                }
+            }
+
+            if (uploaded > 0) {
+                var summary = uploaded + ' foto berhasil diupload' + (failed ? ', ' + failed + ' gagal' : '');
+                if (notes.length) summary += '\n' + notes.slice(0, 6).join('\n');
+                showToast(summary, failed || notes.length ? 'warning' : 'success');
+                refreshSettingsPane('#ts-gallery');
+            } else {
+                showToast(notes.length ? notes.join('\n') : 'Upload gallery gagal', 'error');
+            }
+        } catch (e) {
+            showToast('Upload gallery gagal: ' + (e && e.message ? e.message : 'kesalahan tidak diketahui'), 'error');
+        }
+    };
+
+    // Gallery items are addressed by their storage path, not their position:
+    // after a drag-and-drop reorder the numeric index in the page is stale, so
+    // delete and caption always send `path`.
+    window.deleteGallery = function(path) {
+        if (!confirm('Hapus foto ini?')) return;
+        fetch('{{ route("admin.template-settings.gallery.delete") }}', {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ path: path || null })
+        }).then(function(r) { return r.json(); }).then(function(d) {
+            if (!d.success) { showToast(d.message || 'Gagal hapus', 'error'); return; }
+            showToast('Foto dihapus');
+
+            // Remove the tile in place. Reload only for the empty state, which
+            // is rendered server side.
+            var grid = document.getElementById('tsGalleryGrid');
+            var item = (path && grid)
+                ? grid.querySelector('.gallery-item[data-path="' + CSS.escape(path) + '"]')
+                : null;
+
+            if (!item) { refreshSettingsPane('#ts-gallery'); return; }
+
+            item.remove();
+            paintSettingsGalleryOrder(grid);
+            var remaining = grid.querySelectorAll('.gallery-item').length;
+            var countBadge = document.getElementById('tsGalleryCount');
+            var tabCount = document.getElementById('tsGalleryTabCount');
+            if (countBadge) countBadge.textContent = remaining + ' foto';
+            if (tabCount) tabCount.textContent = remaining;
+            if (remaining === 0) refreshSettingsPane('#ts-gallery');
+        }).catch(function() { showToast('Gagal menghapus foto', 'error'); });
+    };
+
+    window.editGalleryCaption = function(current, path) {
+        var caption = prompt('Caption foto:', current || '');
+        if (caption === null) return;
+        fetch('{{ route("admin.template-settings.gallery.caption") }}', {
+            method: 'PUT',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ caption: caption, path: path || null })
+        }).then(function(r) { return r.json(); }).then(function(d) {
+            if (d.success) {
+                var item = document.querySelector('#tsGalleryGrid .gallery-item[data-path="' + CSS.escape(path) + '"] .gallery-item-caption');
+                if (item) item.textContent = caption;
+                showToast('Caption disimpan');
+            } else {
+                showToast(d.message || 'Gagal menyimpan caption', 'error');
+            }
+        }).catch(function() { showToast('Gagal menyimpan caption', 'error'); });
+    };
+
+    // ==================== GALLERY DRAG-AND-DROP REORDER ====================
+    // Pointer events are used instead of the HTML5 drag API so that reordering
+    // also works on phones/tablets (touch), not just with a mouse.
+    function settingsGalleryItems(grid) {
+        return Array.prototype.slice.call(grid.querySelectorAll('.gallery-item'));
+    }
+
+    function paintSettingsGalleryOrder(grid) {
+        settingsGalleryItems(grid).forEach(function(item, position) {
+            var badge = item.querySelector('.order-badge');
+            if (badge) badge.textContent = position + 1;
+        });
+    }
+
+    function flashSettingsGallerySaved() {
+        var el = document.getElementById('tsGallerySaved');
+        if (!el) return;
+        el.style.opacity = '1';
+        clearTimeout(el._timer);
+        el._timer = setTimeout(function() { el.style.opacity = '0'; }, 2000);
+    }
+
+    function saveSettingsGalleryOrder() {
+        var grid = document.getElementById('tsGalleryGrid');
+        if (!grid) return;
+        var order = settingsGalleryItems(grid).map(function(item) { return item.dataset.path; });
+        fetch('{{ route("admin.template-settings.gallery.reorder") }}', {
+            method: 'PUT',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ order: order })
+        }).then(function(r) { return r.json(); }).then(function(d) {
+            if (d.success) { flashSettingsGallerySaved(); showToast('Urutan gallery disimpan'); }
+            else showToast(d.message || 'Gagal menyimpan urutan', 'error');
+        }).catch(function() { showToast('Gagal menyimpan urutan gallery', 'error'); });
+    }
+
+    function initSettingsGallerySort() {
+        var grid = document.getElementById('tsGalleryGrid');
+        if (!grid) return;
+        if (grid.dataset.sortReady === '1') { paintSettingsGalleryOrder(grid); return; }
+        grid.dataset.sortReady = '1';
+        paintSettingsGalleryOrder(grid);
+
+        var dragged = null;
+
+        function finishDrag() {
+            if (!dragged) return;
+            dragged.classList.remove('dragging');
+            dragged = null;
+            document.body.style.userSelect = '';
+            saveSettingsGalleryOrder();
+        }
+
+        // Insert `dragged` next to `target` depending on where the pointer is.
+        function moveOver(target, clientX, clientY) {
+            if (!target || target === dragged || target.parentNode !== grid) return;
+            var rect = target.getBoundingClientRect();
+            var centerY = rect.top + rect.height / 2;
+            var after = Math.abs(clientY - centerY) > rect.height / 4
+                ? clientY > centerY
+                : clientX > rect.left + rect.width / 2;
+            grid.insertBefore(dragged, after ? target.nextSibling : target);
+            paintSettingsGalleryOrder(grid);
+        }
+
+        settingsGalleryItems(grid).forEach(function(item) {
+            var handle = item.querySelector('.drag-handle');
+            if (!handle) return;
+
+            handle.addEventListener('pointerdown', function(e) {
+                e.preventDefault();
+                dragged = item;
+                item.classList.add('dragging');
+                document.body.style.userSelect = 'none';
+                handle.setPointerCapture(e.pointerId);
+            });
+
+            handle.addEventListener('pointermove', function(e) {
+                if (!dragged || dragged !== item) return;
+                e.preventDefault();
+                var under = document.elementFromPoint(e.clientX, e.clientY);
+                var target = under && under.closest ? under.closest('#tsGalleryGrid .gallery-item') : null;
+                if (target) moveOver(target, e.clientX, e.clientY);
+            });
+
+            handle.addEventListener('pointerup', finishDrag);
+            handle.addEventListener('pointercancel', finishDrag);
+            handle.addEventListener('lostpointercapture', finishDrag);
+        });
+    }
+    window.initSettingsGallerySort = initSettingsGallerySort;
+
+    // Save one of the event forms (Acara Gedung / Acara Rumah).
+    window.saveEventForm = function(formId) {
+        var form = document.getElementById(formId);
+        if (!form) return;
+        reindexCeremonyRows(form);
+        var fd = new FormData(form);
+        fd.append('_method', 'PUT');
+        fetch('{{ route("admin.template-settings.events.update") }}', {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+            body: fd
+        }).then(function(r) { return r.json(); }).then(function(d) {
+            if (d.success) {
+                showToast(d.message || 'Data acara disimpan');
+                refreshSettingsPane('#ts-events');
+            } else {
+                var err = d.message || 'Gagal menyimpan';
+                if (d.errors) err += '\n' + Object.values(d.errors).flat().join('\n');
+                showToast(err, 'error');
+            }
+        }).catch(function() { showToast('Terjadi kesalahan', 'error'); });
+    };
+
+    window.saveSettingsForm = function(formId) {
+        var form = document.getElementById(formId);
+        if (!form) return;
+        var formData = new FormData(form);
+        formData.append('_method', 'PUT');
+        fetch('{{ route("admin.template-settings.update") }}', {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+            body: formData
+        }).then(function(r) { return r.json(); }).then(function(d) {
+            if (d.success) {
+                showToast('Berhasil disimpan!');
+            } else {
+                var err = d.message || 'Error';
+                if (d.errors) err += '\n' + Object.values(d.errors).flat().join('\n');
+                showToast(err, 'error');
+            }
+        }).catch(function() { showToast('Terjadi kesalahan', 'error'); });
+    };
     $(document).ready(function() {
         // Global variables
         let templates = [];
@@ -1864,58 +1594,14 @@
 
         // ==================== UTILITY FUNCTIONS ====================
         function showLoading() {
-            $('#loadingOverlay').fadeIn();
+            $('#loadingOverlay').css('display', 'flex').hide().fadeIn();
         }
-
         function hideLoading() {
             $('#loadingOverlay').fadeOut();
         }
 
-        function showToast(message, type = 'info') {
-            const toastId = 'toast-' + Date.now();
-            const bgClass = type === 'success' ? 'bg-success' :
-                type === 'error' ? 'bg-danger' :
-                    type === 'warning' ? 'bg-warning' : 'bg-info';
-
-            const toastHtml = `
-                <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            ${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                    </div>
-                </div>
-            `;
-
-            $('#toastContainer').append(toastHtml);
-            const toastElement = document.getElementById(toastId);
-            const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
-            toast.show();
-
-            toastElement.addEventListener('hidden.bs.toast', function() {
-                $(this).remove();
-            });
-        }
-
-        // ==================== TAB FUNCTIONALITY ====================
-        $('.nav-link, .mobile-nav-item').on('click', function(e) {
-            e.preventDefault();
-            const target = $(this).attr('href');
-
-            $('.nav-link').removeClass('active');
-            $('.mobile-nav-item').removeClass('active');
-            $(this).addClass('active');
-
-            if ($(this).hasClass('mobile-nav-item')) {
-                $(`.nav-link[href="${target}"]`).addClass('active');
-            } else {
-                $(`.mobile-nav-item[href="${target}"]`).addClass('active');
-            }
-
-            $('.tab-pane').removeClass('show active');
-            $(target).addClass('show active');
-        });
+        // showToast() is defined once at the top level so both the dashboard and
+        // the embedded template-settings handlers can use it (see above).
 
         // ==================== GUEST MANAGEMENT ====================
         // Add guest form
@@ -1994,7 +1680,7 @@
                 if (confirmed) {
                     showLoading();
                     $.ajax({
-                        url: `/admin/guests/${guestId}`,
+                        url: '{{ url("/admin/guests") }}/${guestId}',
                         type: 'DELETE',
                         data: { _token: '{{ csrf_token() }}' },
                         success: function(response) {
@@ -2063,7 +1749,7 @@
             showLoading();
 
             $.ajax({
-                url: `/admin/guests/${guestId}`,
+                url: '{{ url("/admin/guests") }}/${guestId}',
                 type: 'PUT',
                 data: formData,
                 success: function(response) {
@@ -2153,7 +1839,7 @@
                 if (confirmed) {
                     showLoading();
                     $.ajax({
-                        url: `/admin/messages/${messageId}`,
+                        url: '{{ url("/admin/messages") }}/${messageId}',
                         type: 'DELETE',
                         data: { _token: '{{ csrf_token() }}' },
                         success: function(response) {
@@ -2306,9 +1992,12 @@
             });
         }
 
-        // Add template form
+        // Add/Edit template form
         $('#addTemplateForm').on('submit', function(e) {
             e.preventDefault();
+
+            const isEditMode = $(this).data('edit-mode');
+            const editId = $(this).data('edit-id');
 
             const formData = {
                 _token: '{{ csrf_token() }}',
@@ -2331,14 +2020,14 @@
             showLoading();
 
             $.ajax({
-                url: '{{ route("admin.templates.store") }}',
-                type: 'POST',
+                url: isEditMode ? `{{ url('/admin/templates') }}/${editId}` : '{{ route("admin.templates.store") }}',
+                type: isEditMode ? 'PUT' : 'POST',
                 data: formData,
                 success: function(response) {
                     hideLoading();
                     if (response.success) {
-                        showToast('Template berhasil ditambahkan', 'success');
-                        $('#addTemplateForm')[0].reset();
+                        showToast(isEditMode ? 'Template berhasil diperbarui' : 'Template berhasil ditambahkan', 'success');
+                        resetTemplateForm();
                         loadAllTemplates();
                         loadTemplates();
                     }
@@ -2355,9 +2044,9 @@
                             showToast('Terjadi kesalahan validasi', 'error');
                         }
                     } else {
-                        showToast('Error menambahkan template', 'error');
+                        showToast('Error menyimpan template', 'error');
                     }
-                    console.error('Error adding template:', xhr);
+                    console.error('Error saving template:', xhr);
                 }
             });
         });
@@ -2399,7 +2088,7 @@
                 if (confirmed) {
                     showLoading();
                     $.ajax({
-                        url: `/templates/${templateId}/set-default`,
+                        url: '{{ url("/templates") }}/${templateId}/set-default',
                         type: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}'
@@ -2438,7 +2127,7 @@
                 if (confirmed) {
                     showLoading();
                     $.ajax({
-                        url: `/templates/${templateId}`,
+                        url: '{{ url("/templates") }}/${templateId}',
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
@@ -2525,6 +2214,11 @@
             const event = $(this).data('event');
             const phoneNumber = $(this).data('number');
 
+            if (!event || typeof event !== 'object') {
+                showToast('Data event tidak tersedia untuk tamu ini', 'error');
+                return;
+            }
+
             const baseUrl = '{{ url("/") }}';
             const path = event.event_key === 'rumah' ? 'r' : 'p';
             const invitationLink = `${baseUrl}/${path}/invitation?to=${encodeURIComponent(guestName)}`;
@@ -2537,9 +2231,9 @@
             };
 
             const formatter = new Intl.DateTimeFormat('id-ID', options);
-            const formattedDate = formatter.format(new Date(event.event_date));
-            const eventTime = `${event.start_time} WITA - ${event.finish_time}`;
-            const eventLocation = event.location;
+            const formattedDate = event.event_date ? formatter.format(new Date(event.event_date)) : 'Tanggal belum ditentukan';
+            const eventTime = event.start_time && event.finish_time ? `${event.start_time} WITA - ${event.finish_time}` : 'Waktu belum ditentukan';
+            const eventLocation = event.location || 'Lokasi belum ditentukan';
 
             $('#shareModal').data('event-data', {
                 formattedDate,
@@ -2551,7 +2245,6 @@
             $('#modalInvitationLink').val(invitationLink);
             $('#modalWhatsappNumber').val(phoneNumber);
 
-            loadTemplates();
             $('#shareModal').modal('show');
         });
 
@@ -2655,108 +2348,56 @@
             let visibleCount = 0;
             let totalCount = 0;
 
-            // Filter desktop table
-            $('#guestsTableBody tr').each(function() {
-                const eventType = $(this).data('event-type');
-                let attendance = $(this).data('attendance');
-                const guestName = $(this).find('td:first strong').text().toLowerCase();
+            function matchesFilters($el) {
+                const eventType = $el.data('event-type');
+                let attendance = $el.data('attendance');
+                const nameSelector = $el.hasClass('card') ? '.card-title' : 'td:first strong';
+                const guestName = $el.find(nameSelector).text().toLowerCase();
 
                 if (!attendance || attendance === 'null' || attendance === 'undefined') {
                     attendance = 'Belum Konfirmasi';
                 }
 
-                let showRow = true;
-
-                if (searchTerm !== '' && !guestName.includes(searchTerm)) {
-                    showRow = false;
-                }
+                if (searchTerm !== '' && !guestName.includes(searchTerm)) return false;
 
                 if (eventFilter !== 'all') {
                     let normalizedEventType = eventType;
-
                     if (eventType === 'p') normalizedEventType = 'gedung';
                     if (eventType === 'r') normalizedEventType = 'rumah';
-
-                    if (normalizedEventType !== eventFilter) {
-                        showRow = false;
-                    }
+                    if (normalizedEventType !== eventFilter) return false;
                 }
 
                 if (statusFilter !== 'all') {
                     if (statusFilter === 'Belum Konfirmasi') {
-                        if (attendance && attendance !== '' && attendance !== 'Belum Konfirmasi') {
-                            showRow = false;
-                        }
+                        if (attendance && attendance !== '' && attendance !== 'Belum Konfirmasi') return false;
                     } else if (attendance !== statusFilter) {
-                        showRow = false;
+                        return false;
                     }
                 }
+                return true;
+            }
 
-                if (showRow) {
-                    $(this).show();
-                    visibleCount++;
+            function toggleHighlight($el, show) {
+                const nameSelector = $el.hasClass('card') ? '.card-title' : 'td:first strong';
+                const $nameEl = $el.find(nameSelector);
+                const originalText = $nameEl.data('original-text') || $nameEl.text();
+                $nameEl.data('original-text', originalText);
 
-                    if (searchTerm !== '') {
-                        highlightSearchTerm($(this), searchTerm);
-                    } else {
-                        removeHighlight($(this));
-                    }
+                if (show && searchTerm !== '') {
+                    const escaped = escapeRegex(searchTerm);
+                    $nameEl.html(originalText.replace(new RegExp(escaped, 'gi'), m => '<span class="highlight">' + m + '</span>'));
                 } else {
-                    $(this).hide();
-                    removeHighlight($(this));
+                    $nameEl.text(originalText);
+                    $nameEl.removeData('original-text');
                 }
-                totalCount++;
-            });
+            }
 
-            // Filter mobile view
-            $('#mobileGuestsList .card').each(function() {
-                const eventType = $(this).data('event-type');
-                let attendance = $(this).data('attendance');
-                const guestName = $(this).find('.card-title').text().toLowerCase();
-
-                if (!attendance || attendance === 'null' || attendance === 'undefined') {
-                    attendance = 'Belum Konfirmasi';
-                }
-
-                let showCard = true;
-
-                if (searchTerm !== '' && !guestName.includes(searchTerm)) {
-                    showCard = false;
-                }
-
-                if (eventFilter !== 'all') {
-                    let normalizedEventType = eventType;
-
-                    if (eventType === 'p') normalizedEventType = 'gedung';
-                    if (eventType === 'r') normalizedEventType = 'rumah';
-
-                    if (normalizedEventType !== eventFilter) {
-                        showCard = false;
-                    }
-                }
-
-                if (statusFilter !== 'all') {
-                    if (statusFilter === 'Belum Konfirmasi') {
-                        if (attendance && attendance !== '' && attendance !== 'Belum Konfirmasi') {
-                            showCard = false;
-                        }
-                    } else if (attendance !== statusFilter) {
-                        showCard = false;
-                    }
-                }
-
-                if (showCard) {
-                    $(this).show();
-
-                    if (searchTerm !== '') {
-                        highlightSearchTermMobile($(this), searchTerm);
-                    } else {
-                        removeHighlightMobile($(this));
-                    }
-                } else {
-                    $(this).hide();
-                    removeHighlightMobile($(this));
-                }
+            $('#guestsTableBody tr, #mobileGuestsList .card').each(function() {
+                const show = matchesFilters($(this));
+                $(this).toggle(show);
+                toggleHighlight($(this), show);
+                if ($(this).is('tr')) totalCount++;
+                if (show && $(this).is('tr')) visibleCount++;
             });
 
             $('#filteredCount').text(visibleCount);
@@ -2765,47 +2406,15 @@
             updateFilterInfo(eventFilter, statusFilter, searchTerm);
         }
 
-        function highlightSearchTerm($row, searchTerm) {
-            const $nameCell = $row.find('td:first strong');
-            const originalText = $nameCell.data('original-text') || $nameCell.text();
-            $nameCell.data('original-text', originalText);
-
-            const highlightedText = originalText.replace(
-                new RegExp(searchTerm, 'gi'),
-                match => `<span class="highlight">${match}</span>`
-            );
-            $nameCell.html(highlightedText);
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
         }
 
-        function removeHighlight($row) {
-            const $nameCell = $row.find('td:first strong');
-            const originalText = $nameCell.data('original-text');
-            if (originalText) {
-                $nameCell.text(originalText);
-                $nameCell.removeData('original-text');
-            }
+        function escapeRegex(str) {
+            return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
 
-        function highlightSearchTermMobile($card, searchTerm) {
-            const $nameElement = $card.find('.card-title');
-            const originalText = $nameElement.data('original-text') || $nameElement.text();
-            $nameElement.data('original-text', originalText);
-
-            const highlightedText = originalText.replace(
-                new RegExp(searchTerm, 'gi'),
-                match => `<span class="highlight">${match}</span>`
-            );
-            $nameElement.html(highlightedText);
-        }
-
-        function removeHighlightMobile($card) {
-            const $nameElement = $card.find('.card-title');
-            const originalText = $nameElement.data('original-text');
-            if (originalText) {
-                $nameElement.text(originalText);
-                $nameElement.removeData('original-text');
-            }
-        }
 
         function updateFilterInfo(eventFilter, statusFilter, searchTerm = '') {
             let infoText = '';
@@ -2896,22 +2505,6 @@
             pullDelta = 0;
         });
 
-        function refreshCurrentTab() {
-            const activeTab = $('.tab-pane.active').attr('id');
-
-            switch(activeTab) {
-                case 'dashboard':
-                    refreshDashboardData();
-                    break;
-                case 'guests':
-                    refreshGuestsData();
-                    break;
-                case 'messages':
-                    refreshMessagesData();
-                    break;
-            }
-        }
-
         function refreshDashboardData() {
             if (isRefreshing) return;
             isRefreshing = true;
@@ -2958,14 +2551,83 @@
             if (isRefreshing) return;
             isRefreshing = true;
             showLoading();
-
             $.ajax({
                 url: '{{ route("admin.guests.data") }}',
                 type: 'GET',
+                dataType: 'json',
                 success: function(response) {
-                    // Update dengan data baru
-                    // Di sini Anda bisa mengimplementasikan update table dengan data response.guests
                     hideLoading();
+                    if (!response.success || !response.guests) {
+                        isRefreshing = false;
+                        showToast('Format data tidak valid', 'error');
+                        return;
+                    }
+                    const guests = response.guests;
+                    const baseUrl = '{{ url("/") }}';
+
+                    function getAttendanceBadge(attendance) {
+                        if (attendance === 'Hadir') return '<span class="badge bg-success badge-custom">Hadir</span>';
+                        if (attendance === 'Tidak Hadir') return '<span class="badge bg-danger badge-custom">Tidak Hadir</span>';
+                        return '<span class="badge bg-warning badge-custom">Belum Konfirmasi</span>';
+                    }
+
+                    function getEventBadge(event) {
+                        if (!event) return '<span class="badge bg-secondary badge-custom">-</span>';
+                        return '<span class="badge ' + (event.event_key === 'rumah' ? 'bg-success' : 'bg-primary') + ' badge-custom">' + event.event_key + '</span>';
+                    }
+
+                    let tableHtml = '';
+                    guests.forEach(function(g) {
+                        const eventKey = g.event ? g.event.event_key : 'gedung';
+                        const path = eventKey === 'rumah' ? 'r' : 'p';
+                        const inviteUrl = baseUrl + '/' + path + '/invitation?to=' + encodeURIComponent(g.name);
+                        const eventData = g.event ? JSON.stringify(g.event).replace(/'/g, '&#39;').replace(/"/g, '&quot;') : 'null';
+                        tableHtml += '<tr data-guest-id="' + g.id + '" data-event-type="' + eventKey + '" data-attendance="' + (g.attendance || 'Belum Konfirmasi') + '" data-whatsapp="' + (g.whatsapp_number || '') + '">';
+                        tableHtml += '<td><strong>' + escapeHtml(g.name) + '</strong><br><small class="text-muted">' + escapeHtml(g.code) + '</small></td>';
+                        tableHtml += '<td>' + getEventBadge(g.event) + '</td>';
+                        tableHtml += '<td><small>' + (g.whatsapp_number || '<span class="text-muted">-</span>') + '</small></td>';
+                        tableHtml += '<td>' + (g.guest_attends || 0) + ' orang</td>';
+                        tableHtml += '<td>' + getAttendanceBadge(g.attendance) + '<br><small class="text-muted">' + (g.is_opened ? 'Dibuka' : 'Belum dibuka') + '</small></td>';
+                        tableHtml += '<td><small class="text-muted">' + (g.created_at || '') + '</small></td>';
+                        tableHtml += '<td><small class="text-muted">' + (g.updated_at || '') + '</small></td>';
+                        tableHtml += '<td><div class="btn-group btn-group-sm">';
+                        tableHtml += '<button class="btn btn-sm btn-whatsapp share-guest-whatsapp" data-name="' + escapeHtml(g.name) + '" data-event=\'' + eventData + '\' data-number="' + (g.formatted_whatsapp_number || '') + '" title="Share via WhatsApp"><i class="fab fa-whatsapp"></i></button>';
+                        tableHtml += '<button class="btn btn-outline-primary copy-link" data-url="' + inviteUrl + '" title="Copy Link"><i class="fas fa-copy"></i></button>';
+                        tableHtml += '<a href="' + inviteUrl + '" target="_blank" class="btn btn-outline-info" title="Preview"><i class="fas fa-eye"></i></a>';
+                        tableHtml += '</div></td>';
+                        tableHtml += '<td><div class="guest-share-actions">';
+                        tableHtml += '<button class="btn btn-sm btn-edit edit-guest" data-id="' + g.id + '" data-name="' + escapeHtml(g.name) + '" data-guest-attends="' + (g.guest_attends || 1) + '" data-event-type="' + eventKey + '" data-attendance="' + (g.attendance || '') + '" data-whatsapp="' + (g.whatsapp_number || '') + '" title="Edit Tamu"><i class="fas fa-edit"></i></button>';
+                        tableHtml += '<button class="btn btn-sm btn-outline-danger delete-guest" data-id="' + g.id + '" data-name="' + escapeHtml(g.name) + '" title="Hapus Tamu"><i class="fas fa-trash"></i></button>';
+                        tableHtml += '</div></td></tr>';
+                    });
+                    $('#guestsTableBody').html(tableHtml);
+
+                    let mobileHtml = '';
+                    guests.forEach(function(g) {
+                        const eventKey = g.event ? g.event.event_key : 'gedung';
+                        const path = eventKey === 'rumah' ? 'r' : 'p';
+                        const inviteUrl = baseUrl + '/' + path + '/invitation?to=' + encodeURIComponent(g.name);
+                        const eventData = g.event ? JSON.stringify(g.event).replace(/'/g, '&#39;').replace(/"/g, '&quot;') : 'null';
+                        mobileHtml += '<div class="card mb-3" data-guest-id="' + g.id + '" data-event-type="' + eventKey + '" data-attendance="' + (g.attendance || 'Belum Konfirmasi') + '" data-whatsapp="' + (g.whatsapp_number || '') + '">';
+                        mobileHtml += '<div class="card-body">';
+                        mobileHtml += '<h6 class="card-title">' + escapeHtml(g.name) + '</h6>';
+                        mobileHtml += '<p class="card-text mb-1"><small class="text-muted">Kode: ' + escapeHtml(g.code) + '</small></p>';
+                        mobileHtml += '<p class="card-text mb-1"><strong>Acara:</strong> ' + getEventBadge(g.event) + '</p>';
+                        mobileHtml += '<p class="card-text mb-1"><strong>WhatsApp:</strong> ' + (g.whatsapp_number || '-') + '</p>';
+                        mobileHtml += '<p class="card-text mb-1"><strong>Jumlah:</strong> ' + (g.guest_attends || 0) + ' orang</p>';
+                        mobileHtml += '<p class="card-text mb-1"><strong>Status:</strong> ' + getAttendanceBadge(g.attendance) + ' <small class="text-muted">(' + (g.is_opened ? 'Dibuka' : 'Belum dibuka') + ')</small></p>';
+                        mobileHtml += '<div class="btn-group w-100 mt-2">';
+                        mobileHtml += '<button class="btn btn-sm btn-whatsapp share-guest-whatsapp" data-name="' + escapeHtml(g.name) + '" data-event=\'' + eventData + '\' data-number="' + (g.formatted_whatsapp_number || '') + '"><i class="fab fa-whatsapp"></i> Share</button>';
+                        mobileHtml += '<button class="btn btn-sm btn-outline-primary copy-link" data-url="' + inviteUrl + '"><i class="fas fa-copy"></i> Copy</button>';
+                        mobileHtml += '<a href="' + inviteUrl + '" target="_blank" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i> View</a>';
+                        mobileHtml += '</div>';
+                        mobileHtml += '<div class="btn-group w-100 mt-2">';
+                        mobileHtml += '<button class="btn btn-sm btn-outline-primary edit-guest" data-id="' + g.id + '" data-name="' + escapeHtml(g.name) + '" data-guest-attends="' + (g.guest_attends || 1) + '" data-event-type="' + eventKey + '" data-attendance="' + (g.attendance || '') + '" data-whatsapp="' + (g.whatsapp_number || '') + '"><i class="fas fa-edit"></i> Edit</button>';
+                        mobileHtml += '<button class="btn btn-sm btn-outline-danger delete-guest" data-id="' + g.id + '" data-name="' + escapeHtml(g.name) + '"><i class="fas fa-trash"></i> Hapus</button>';
+                        mobileHtml += '</div></div></div>';
+                    });
+                    $('#mobileGuestsList').html(mobileHtml);
+
                     lastUpdateTime = new Date();
                     isRefreshing = false;
                     showToast('Data tamu diperbarui', 'success');
@@ -2983,13 +2645,35 @@
             if (isRefreshing) return;
             isRefreshing = true;
             showLoading();
-
             $.ajax({
                 url: '{{ route("admin.messages.data") }}',
                 type: 'GET',
+                dataType: 'json',
                 success: function(response) {
-                    // Update dengan data baru
                     hideLoading();
+                    if (!response.success || !response.messages) {
+                        isRefreshing = false;
+                        showToast('Format data tidak valid', 'error');
+                        return;
+                    }
+                    const messages = response.messages;
+                    let tableHtml = '';
+                    messages.forEach(function(m) {
+                        const name = m.guest ? escapeHtml(m.guest.name) : 'Anonymous';
+                        const attendance = m.guest ? (m.guest.attendance || 'Belum Konfirmasi') : 'Belum Konfirmasi';
+                        const attendanceBadge = attendance === 'Hadir' ? '<span class="badge bg-success">Hadir</span>' : (attendance === 'Tidak Hadir' ? '<span class="badge bg-danger">Tidak Hadir</span>' : '<span class="badge bg-warning">Belum Konfirmasi</span>');
+                        tableHtml += '<tr>';
+                        tableHtml += '<td><strong>' + name + '</strong></td>';
+                        tableHtml += '<td>' + attendanceBadge + '</td>';
+                        tableHtml += '<td><small>' + (m.message || '') + '</small></td>';
+                        tableHtml += '<td><small class="text-muted">' + (m.created_at || '') + '</small></td>';
+                        tableHtml += '<td><button class="btn btn-sm btn-outline-danger delete-message" data-id="' + m.id + '" title="Hapus"><i class="fas fa-trash"></i></button></td>';
+                        tableHtml += '</tr>';
+                    });
+                    if (messages.length === 0) {
+                        tableHtml = '<tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x mb-2"></i><br>Belum ada ucapan</td></tr>';
+                    }
+                    $('#messagesTableBody').html(tableHtml);
                     lastUpdateTime = new Date();
                     isRefreshing = false;
                     showToast('Data ucapan diperbarui', 'success');
@@ -3082,7 +2766,6 @@
 
         // Initialize on page load
         function initializePage() {
-            loadTemplates();
             updateFilterInfo('all', 'all');
             updateGuestCounts();
             console.log('Admin dashboard initialized successfully');
@@ -3184,78 +2867,39 @@
         initializePage();
 
         // ==================== WEDDING TEMPLATE MANAGEMENT ====================
-        function loadWeddingTemplates() {
-            $.ajax({
-                url: '{{ route("admin.wedding-templates.index") }}',
-                type: 'GET',
-                success: function(response) {
-                    let html = '';
-                    response.forEach(function(template) {
-                        const activeBadge = template.is_active
-                            ? '<span class="badge bg-success">Active</span>'
-                            : '<span class="badge bg-secondary">Inactive</span>';
-
-                        html += `
-                            <div class="col-md-4 mb-4">
-                                <div class="card h-100">
-                                    <img src="${template.thumbnail || '/assets/images/gallery/slide1.jpg'}" class="card-img-top" alt="${template.name}" style="height: 200px; object-fit: cover;">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${template.name} ${activeBadge}</h5>
-                                        <p class="card-text">${template.description || ''}</p>
-                                        <p class="card-text"><small class="text-muted">Slug: ${template.slug}</small></p>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="btn-group w-100" role="group">
-                                            ${!template.is_active ?
-                                                `<button class="btn btn-sm btn-success activate-wedding-template" data-id="${template.id}">
-                                                    <i class="fas fa-check me-1"></i> Activate
-                                                </button>` :
-                                                '<button class="btn btn-sm btn-secondary" disabled>Active</button>'
-                                            }
-                                            <a href="/invitation" target="_blank" class="btn btn-sm btn-info">
-                                                <i class="fas fa-eye me-1"></i> Preview
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    $('#weddingTemplatesContainer').html(html);
-                }
-            });
-        }
-
         // Activate wedding template
         $(document).on('click', '.activate-wedding-template', function() {
-            const templateId = $(this).data('id');
-            showLoading();
+            const btn = $(this);
+            const templateId = btn.data('id');
+            const originalHtml = btn.html();
+
+            // Show loading state on button
+            btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Mengaktifkan...');
 
             $.ajax({
-                url: `/admin/wedding-templates/${templateId}/activate`,
+                url: '{{ route("admin.wedding-templates.activate", "__ID__") }}'.replace('__ID__', templateId),
                 type: 'POST',
                 data: { _token: '{{ csrf_token() }}' },
                 success: function(response) {
-                    hideLoading();
                     if (response.success) {
-                        showSuccessMessage('Template berhasil diaktifkan!');
-                        loadWeddingTemplates();
+                        showToast(response.message || 'Template berhasil diaktifkan!', 'success');
+                        // Reload page to update active template banner and cards
+                        setTimeout(() => { location.reload(); }, 800);
+                    } else {
+                        btn.prop('disabled', false).html(originalHtml);
+                        showToast(response.message || 'Gagal mengaktifkan template', 'error');
                     }
                 },
-                error: function() {
-                    hideLoading();
-                    showToast('Gagal mengaktifkan template', 'error');
+                error: function(xhr) {
+                    btn.prop('disabled', false).html(originalHtml);
+                    const msg = xhr.responseJSON?.message || 'Gagal mengaktifkan template';
+                    showToast(msg, 'error');
                 }
             });
         });
 
-        // Refresh wedding templates
-        $('#refreshWeddingTemplates').on('click', function() {
-            loadWeddingTemplates();
-        });
-
-        // Load wedding templates on page load
-        loadWeddingTemplates();
+        // Note: Wedding templates are rendered server-side.
+        // Activate button is handled above via delegated event.
     });
 </script>
 </body>

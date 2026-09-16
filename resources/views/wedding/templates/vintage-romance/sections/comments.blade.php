@@ -1,6 +1,6 @@
 <section id="comments" class="comments-section">
     <div class="comments-container">
-        <img src="{{ $template->getAsset('logo_image', asset('assets/vintage/logo.svg')) }}" alt="Logo" class="comments-logo muncul">
+        <img src="{{ $template->getAssetUrl('logo_image', 'assets/vintage/logo.svg') }}" alt="Logo" class="comments-logo muncul">
         <h2 class="comments-title muncul">Best Wishes</h2>
         <p class="comments-subtitle muncul">Happily ever after notes for the newly weds</p>
 

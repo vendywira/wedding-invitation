@@ -1,12 +1,41 @@
 @php
-$coupleName = $guestData->couple_name ?? "Isabel & Jefry";
+$brideName = $template->getSetting('bride_name', 'Isabel');
+$groomName = $template->getSetting('groom_name', 'Jefry');
+$coupleName = $brideName . ' & ' . $groomName;
 $parts = explode("&", $coupleName);
-$brideFirstName = trim($parts[0] ?? "Isabel");
-$groomFirstName = trim(str_replace("&", "", $parts[1] ?? "Jefry"));
+$brideFirstName = trim($parts[0] ?? $brideName);
+$groomFirstName = trim(str_replace("&", "", $parts[1] ?? $groomName));
 $eventDateFormatted = isset($event->event_date) ? \Carbon\Carbon::parse($event->event_date)->format("d . m . Y") : "24 . 05 . 2026";
 $eventDayName = isset($event->event_date) ? \Carbon\Carbon::parse($event->event_date)->translatedFormat("l") : "Minggu";
 $eventDateFull = isset($event->event_date) ? \Carbon\Carbon::parse($event->event_date)->translatedFormat("d F Y") : "24 Agustus 2026";
 $countdownDate = isset($event->event_date) ? \Carbon\Carbon::parse($event->event_date)->format("M d Y 10:00:00") : "Oct 28 2026 10:00:00";
+$brideFullName = $template->getSetting('bride_full_name', $brideName);
+$groomFullName = $template->getSetting('groom_full_name', $groomName);
+$brideFather = $template->getSetting('bride_father', '');
+$brideMother = $template->getSetting('bride_mother', '');
+$groomFather = $template->getSetting('groom_father', '');
+$groomMother = $template->getSetting('groom_mother', '');
+$bridePhotoUrl = $template->getAssetUrl('bride_photo', 'assets/vintage/vendor/cewek.jpg');
+$groomPhotoUrl = $template->getAssetUrl('groom_photo', 'assets/vintage/vendor/cowok.jpg');
+// The hero ("a journey of love begins") has its own upload slot; until one is
+// uploaded it mirrors the bride photo, which is what the template shipped with.
+$heroPhotoUrl = $template->getAssetUrl('hero_photo') ?: $bridePhotoUrl;
+$galleryImages = $template->getGalleryImages();
+// Gallery photos are shown twice — as a swipeable slide and as a clickable
+// grid (with lightbox). Build the list once so both views stay in sync.
+$galleryItems = [];
+foreach ($galleryImages as $galleryImage) {
+    $galleryItemUrl = $template->getGalleryImageUrl($galleryImage);
+    if ($galleryItemUrl) {
+        $galleryItems[] = ['url' => $galleryItemUrl, 'caption' => $galleryImage['caption'] ?? ''];
+    }
+}
+$showBridePhoto = $template->getSetting('show_bride_photo', '1');
+$showGroomPhoto = $template->getSetting('show_groom_photo', '1');
+$showStoryImage = $template->getSetting('show_story_image', '1');
+$showGallery = $template->getSetting('show_gallery', '1');
+$showCountdown = $template->getSetting('show_countdown', '1');
+$showGift = $template->getSetting('show_gift', '1');
 @endphp
 <!DOCTYPE html>
 <html lang="en-US" prefix="og: https://ogp.me/ns#">
@@ -215,7 +244,7 @@ function jltmaNS(n){for(var e=n.split("."),a=window,i="",r=e.length,t=0;r>t;t++)
 
 /* Ensure background slideshow in countdown section is visible */
 .elementor-element-79047782 {
-    background-image: url('/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg') !important;
+    background-image: url('{{ $template->getAssetUrl('bg_slide_1', 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg') }}') !important;
     background-size: cover !important;
     background-position: center top !important;
     position: relative !important;
@@ -254,6 +283,158 @@ function jltmaNS(n){for(var e=n.split("."),a=window,i="",r=e.length,t=0;r>t;t++)
     cursor: pointer;
     user-select: none;
 }
+
+/* Configurable section backgrounds (defaults keep the original artwork) */
+.elementor-element-14b9e42d,
+.elementor-element-3bf6678f,
+.elementor-element-3cda51a5 { background-image: url('{{ $template->getAssetUrl('bg_cover', 'assets/vintage/vendor/BG-COVER-VIN-2-FIX.jpg') }}') !important; }
+/* Front cover shown on desktop (the fixed left column, "THE WEDDING OF") */
+.elementor-element-3c9f4603 { background-image: url('{{ $template->getAssetUrl('desktop_cover', 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM.jpg') }}') !important; background-size: cover !important; background-position: center center !important; }
+.elementor-element-239ae875,
+.elementor-element-4a08c6be,
+.elementor-element-6a4cb199,
+.elementor-element-9d26140 { background-image: url('{{ $template->getAssetUrl('bg_paper', 'assets/vintage/vendor/PAPER-BG-FLORAL-Q.jpg') }}') !important; }
+.elementor-element-26965d50,
+.elementor-element-501b5057,
+.elementor-element-54904115,
+.elementor-element-68e309a1 { background-image: url('{{ $template->getAssetUrl('bg_section', 'assets/vintage/vendor/BG-VIIN-2.jpg') }}') !important; }
+.elementor-element-30eabcb4,
+.elementor-element-3f17830a,
+.elementor-element-62e96db2 { background-image: url('{{ $template->getAssetUrl('gift_card_bg', 'assets/vintage/vendor/ATC-CARD-1.jpg') }}') !important; }
+.elementor-element-3ca3dd75 .overlayy { background-image: url('{{ $template->getAssetUrl('modal_overlay', 'assets/vintage/vendor/CB-VIN-2-FIX-RE.jpg') }}') !important; }
+/* Foto sampul pembuka ("BUKA UNDANGAN"). Script bawaan template mengisi
+   data-sampul yang kosong, jadi background-nya ditetapkan di sini. */
+.elementor-element-3ca3dd75 .modalx { background-image: url('{{ $template->getAssetUrl('cover_photo', 'assets/vintage/vendor/CB-VIN-2-FIX-RE.jpg') }}') !important; background-size: cover !important; background-position: center center !important; background-repeat: no-repeat !important; }
+@if(!empty($template->assets_config['cover_photo'] ?? null))
+/* Foto sampul ada: lapisan atas dibuat hanya peredup supaya fotonya terlihat */
+.elementor-element-3ca3dd75 .overlayy { background-image: none !important; opacity: .35 !important; }
+@endif
+.elementor-element-79bcddc0::before { background-image: url('{{ $template->getAssetUrl('bg_all', 'assets/vintage/vendor/BG-ALL-VIN-2.jpg') }}') !important; }
+.elementor-element-4f93adc7 > .elementor-widget-wrap { background-image: url('{{ $template->getAssetUrl('bg_plain_paper', 'assets/vintage/vendor/paper-plos-p-1.jpg') }}') !important; }
+
+/* ============ Gallery: Slide / Grid + Lightbox ============ */
+.wdp-gallery-switch {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 16px auto 10px;
+    position: relative;
+    z-index: 5;
+}
+.wdp-gallery-switch button {
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    border-radius: 999px;
+    padding: 6px 20px;
+    font-size: 13px;
+    letter-spacing: .6px;
+    line-height: 1.4;
+    cursor: pointer;
+    opacity: .5;
+    transition: opacity .25s ease, background-color .25s ease;
+}
+.wdp-gallery-switch button:hover { opacity: .8; }
+.wdp-gallery-switch button.is-active {
+    opacity: 1;
+    font-weight: 600;
+    background: rgba(0, 0, 0, .08);
+}
+.wdp-gallery-panel[hidden] { display: none !important; }
+.wdp-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 6px;
+}
+@media (max-width: 480px) {
+    .wdp-gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+}
+.wdp-gallery-thumb {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, .08);
+    cursor: zoom-in;
+    position: relative;
+}
+.wdp-gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .4s ease;
+}
+.wdp-gallery-thumb:hover img,
+.wdp-gallery-thumb:focus-visible img { transform: scale(1.07); }
+.wdp-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    background: rgba(0, 0, 0, .93);
+}
+.wdp-lightbox.is-open { display: flex; flex-direction: column; }
+.wdp-lightbox__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 16px;
+    color: #fff;
+    font-size: 13px;
+}
+.wdp-lightbox__caption { flex: 1; text-align: center; opacity: .85; }
+.wdp-lightbox__stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 0;
+    padding: 0 12px 12px;
+    overflow: hidden;
+}
+.wdp-lightbox__stage img {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .5);
+}
+.wdp-lightbox__counter { opacity: .8; font-variant-numeric: tabular-nums; }
+.wdp-lightbox button {
+    border: 1px solid rgba(255, 255, 255, .45);
+    background: rgba(255, 255, 255, .12);
+    color: #fff;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
+}
+.wdp-lightbox button:hover { background: rgba(255, 255, 255, .25); }
+
+/* Section visibility toggles controlled from Dashboard > Settings > Teks */
+@if(($showBridePhoto ?? '1') === '0') .elementor-element-4acbe1ca { display: none !important; } @endif
+@if(($showGroomPhoto ?? '1') === '0') .elementor-element-1775694c { display: none !important; } @endif
+@if(($showStoryImage ?? '1') === '0') .elementor-element-4ce5666c { display: none !important; } @endif
+@if(($showGallery ?? '1') === '0') .elementor-element-501b5057 { display: none !important; } @endif
+@if(($showCountdown ?? '1') === '0') .elementor-element-5236da65 { display: none !important; } @endif
+@if(($showGift ?? '1') === '0') .elementor-element-7f6eb8cc { display: none !important; } @endif
 </style>
 
 </head>
@@ -449,7 +630,7 @@ function jltmaNS(n){for(var e=n.split("."),a=window,i="",r=e.length,t=0;r>t;t++)
 				</div>
 				<div class="elementor-element elementor-element-31a1cdee jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="31a1cdee" data-element_type="widget" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img decoding="async" width="150" height="150" src="/assets/vintage/vendor/Animation-174404519592-scroll.gif" class="attachment-full size-full wp-image-154" alt="" />															</div>
+															<img decoding="async" width="150" height="150" src="{{ $template->getAssetUrl('scroll_gif', 'assets/vintage/vendor/Animation-174404519592-scroll.gif') }}" class="attachment-full size-full wp-image-154" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-7c23ebb animated-slow jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-spacer" data-id="7c23ebb" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInDown&quot;,&quot;_animation_delay&quot;:700}" data-widget_type="spacer.default">
 				<div class="elementor-widget-container">
@@ -462,35 +643,35 @@ function jltmaNS(n){for(var e=n.split("."),a=window,i="",r=e.length,t=0;r>t;t++)
 				</div>
 				<div class="elementor-element elementor-element-22d063e elementor-absolute jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="22d063e" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img fetchpriority="high" decoding="async" width="1080" height="528" src="/assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B.webp" class="attachment-full size-full wp-image-31321" alt="" srcset="/assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B.webp 1080w, /assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B-300x147.webp 300w, /assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B-1024x501.webp 1024w, /assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B-768x375.webp 768w" sizes="(max-width: 1080px) 100vw, 1080px" />															</div>
+															<img fetchpriority="high" decoding="async" width="1080" height="528" src="{{ $template->getAssetUrl('floral_border', 'assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B.webp') }}" class="attachment-full size-full wp-image-31321" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-a3de37c elementor-widget__width-initial elementor-absolute jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="a3de37c" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img decoding="async" width="293" height="1427" src="/assets/vintage/vendor/HORDENG-VIN-2.png" class="attachment-full size-full wp-image-31319" alt="" srcset="/assets/vintage/vendor/HORDENG-VIN-2.png 293w, /assets/vintage/vendor/HORDENG-VIN-2-210x1024.png 210w" sizes="(max-width: 293px) 100vw, 293px" />															</div>
+															<img decoding="async" width="293" height="1427" src="{{ $template->getAssetUrl('curtain_decoration', 'assets/vintage/vendor/HORDENG-VIN-2.png') }}" class="attachment-full size-full wp-image-31319" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-9a377ec elementor-widget__width-initial elementor-absolute e-transform jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="9a377ec" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_transform_flipX_effect&quot;:&quot;transform&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img decoding="async" width="293" height="1427" src="/assets/vintage/vendor/HORDENG-VIN-2.png" class="attachment-full size-full wp-image-31319" alt="" srcset="/assets/vintage/vendor/HORDENG-VIN-2.png 293w, /assets/vintage/vendor/HORDENG-VIN-2-210x1024.png 210w" sizes="(max-width: 293px) 100vw, 293px" />															</div>
+															<img decoding="async" width="293" height="1427" src="{{ $template->getAssetUrl('curtain_decoration', 'assets/vintage/vendor/HORDENG-VIN-2.png') }}" class="attachment-full size-full wp-image-31319" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-200f1c1 elementor-widget__width-inherit elementor-absolute goyang-2 jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="200f1c1" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="362" height="430" src="/assets/vintage/vendor/LAMPU-VIN-2.png" class="attachment-full size-full wp-image-31320" alt="" srcset="/assets/vintage/vendor/LAMPU-VIN-2.png 362w, /assets/vintage/vendor/LAMPU-VIN-2-253x300.png 253w" sizes="auto, (max-width: 362px) 100vw, 362px" />															</div>
+															<img loading="lazy" decoding="async" width="362" height="430" src="{{ $template->getAssetUrl('lamp_decoration', 'assets/vintage/vendor/LAMPU-VIN-2.png') }}" class="attachment-full size-full wp-image-31320" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-19ec7dc elementor-widget__width-initial elementor-absolute goyang-2 jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="19ec7dc" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="594" height="684" src="/assets/vintage/vendor/BUNGA-VIN-2.png" class="attachment-full size-full wp-image-31318" alt="" srcset="/assets/vintage/vendor/BUNGA-VIN-2.png 594w, /assets/vintage/vendor/BUNGA-VIN-2-261x300.png 261w" sizes="auto, (max-width: 594px) 100vw, 594px" />															</div>
+															<img loading="lazy" decoding="async" width="594" height="684" src="{{ $template->getAssetUrl('flower_decoration', 'assets/vintage/vendor/BUNGA-VIN-2.png') }}" class="attachment-full size-full wp-image-31318" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-0bf39cc elementor-widget__width-initial elementor-absolute goyang-2 e-transform jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="0bf39cc" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_transform_flipY_effect&quot;:&quot;transform&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="594" height="684" src="/assets/vintage/vendor/BUNGA-VIN-2.png" class="attachment-full size-full wp-image-31318" alt="" srcset="/assets/vintage/vendor/BUNGA-VIN-2.png 594w, /assets/vintage/vendor/BUNGA-VIN-2-261x300.png 261w" sizes="auto, (max-width: 594px) 100vw, 594px" />															</div>
+															<img loading="lazy" decoding="async" width="594" height="684" src="{{ $template->getAssetUrl('flower_decoration', 'assets/vintage/vendor/BUNGA-VIN-2.png') }}" class="attachment-full size-full wp-image-31318" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-06c7452 elementor-widget__width-initial elementor-absolute goyang-2 e-transform jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="06c7452" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_transform_flipX_effect&quot;:&quot;transform&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="594" height="684" src="/assets/vintage/vendor/BUNGA-VIN-2.png" class="attachment-full size-full wp-image-31318" alt="" srcset="/assets/vintage/vendor/BUNGA-VIN-2.png 594w, /assets/vintage/vendor/BUNGA-VIN-2-261x300.png 261w" sizes="auto, (max-width: 594px) 100vw, 594px" />															</div>
+															<img loading="lazy" decoding="async" width="594" height="684" src="{{ $template->getAssetUrl('flower_decoration', 'assets/vintage/vendor/BUNGA-VIN-2.png') }}" class="attachment-full size-full wp-image-31318" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-e3d17c0 elementor-widget__width-initial elementor-absolute goyang-2 e-transform e-transform jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="e3d17c0" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_transform_flipX_effect&quot;:&quot;transform&quot;,&quot;_transform_flipY_effect&quot;:&quot;transform&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="594" height="684" src="/assets/vintage/vendor/BUNGA-VIN-2.png" class="attachment-full size-full wp-image-31318" alt="" srcset="/assets/vintage/vendor/BUNGA-VIN-2.png 594w, /assets/vintage/vendor/BUNGA-VIN-2-261x300.png 261w" sizes="auto, (max-width: 594px) 100vw, 594px" />															</div>
+															<img loading="lazy" decoding="async" width="594" height="684" src="{{ $template->getAssetUrl('flower_decoration', 'assets/vintage/vendor/BUNGA-VIN-2.png') }}" class="attachment-full size-full wp-image-31318" alt="" />															</div>
 				</div>
 					</div>
 				</div>
@@ -499,21 +680,21 @@ function jltmaNS(n){for(var e=n.split("."),a=window,i="",r=e.length,t=0;r>t;t++)
 					<div class="e-con-inner">
 				<div class="elementor-element elementor-element-337a0d19 muncul jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="337a0d19" data-element_type="widget" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="900" height="1352" src="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg" class="attachment-full size-full wp-image-31411" alt="" srcset="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg 900w, /assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM-200x300.jpg 200w, /assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM-682x1024.jpg 682w, /assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM-768x1154.jpg 768w" sizes="auto, (max-width: 900px) 100vw, 900px" />															</div>
+															<img loading="lazy" decoding="async" src="{{ $heroPhotoUrl }}" class="attachment-full size-full wp-image-31411" alt="{{ $brideFullName }}">															</div>
 				</div>
 					</div>
 				</div>
 				<div class="elementor-element elementor-element-57933628 zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="57933628" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">a journey of love begins</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">{{ $template->getSetting('hero_subtitle', 'a journey of love begins') }}</p>				</div>
 				</div>
 				<div class="elementor-element elementor-element-2c8c86f4 zoom jltma-glass-effect-no elementor-widget elementor-widget-text-editor" data-id="2c8c86f4" data-element_type="widget" data-widget_type="text-editor.default">
 				<div class="elementor-widget-container">
-									<p>&#8220;Di antara tanda-tanda (kebesaran)-Nya ialah bahwa Dia menciptakan pasangan-pasangan untukmu dari (jenis) dirimu sendiri agar kamu merasa tenteram kepadanya. Dia menjadikan di antaramu rasa cinta dan kasih sayang. Sesungguhnya pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir.&#8221;</p><p>(Q.S Ar-rum 21)</p>								</div>
+									<p>{{ $template->getSetting('hero_verse', '"Di antara tanda-tanda (kebesaran)-Nya ialah bahwa Dia menciptakan pasangan-pasangan untukmu dari (jenis) dirimu sendiri agar kamu merasa tenteram kepadanya. Dia menjadikan di antaramu rasa cinta dan kasih sayang. Sesungguhnya pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir."') }}</p><p>{{ $template->getSetting('hero_verse_source', '(Q.S Ar-rum 21)') }}</p>								</div>
 				</div>
 				<div class="elementor-element elementor-element-f3e1884 zoom jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="f3e1884" data-element_type="widget" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="1080" height="312" src="/assets/vintage/vendor/DIVIDER-VIN-2.png" class="attachment-full size-full wp-image-31469" alt="" srcset="/assets/vintage/vendor/DIVIDER-VIN-2.png 1080w, /assets/vintage/vendor/DIVIDER-VIN-2-300x87.png 300w, /assets/vintage/vendor/DIVIDER-VIN-2-1024x296.png 1024w, /assets/vintage/vendor/DIVIDER-VIN-2-768x222.png 768w" sizes="auto, (max-width: 1080px) 100vw, 1080px" />															</div>
+															<img loading="lazy" decoding="async" width="1080" height="312" src="{{ $template->getAssetUrl('divider_image', 'assets/vintage/vendor/DIVIDER-VIN-2.png') }}" class="attachment-full size-full wp-image-31469" alt="" />															</div>
 				</div>
 				</div>
 		<div class="elementor-element elementor-element-263c2d28 jltma-particle-yes e-flex e-con-boxed e-con e-child" data-id="263c2d28" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;,&quot;ma_el_particle_area_zindex&quot;:0}">
@@ -522,11 +703,11 @@ function jltmaNS(n){for(var e=n.split("."),a=window,i="",r=e.length,t=0;r>t;t++)
 					<div class="e-con-inner">
 				<div class="elementor-element elementor-element-3cfaa4e9 zoom jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="3cfaa4e9" data-element_type="widget" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="819" height="543" src="/assets/vintage/vendor/LOGO-VIN-2.png" class="attachment-full size-full wp-image-31271" alt="" srcset="/assets/vintage/vendor/LOGO-VIN-2.png 819w, /assets/vintage/vendor/LOGO-VIN-2-300x199.png 300w, /assets/vintage/vendor/LOGO-VIN-2-768x509.png 768w" sizes="auto, (max-width: 819px) 100vw, 819px" />															</div>
+															<img loading="lazy" decoding="async" width="819" height="543" src="{{ $template->getAssetUrl('logo_image', 'assets/vintage/vendor/LOGO-VIN-2.png') }}" class="attachment-full size-full wp-image-31271" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-2bc4167c zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="2bc4167c" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">Bride &amp; Groom</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">{{ $template->getSetting('couple_subtitle', 'Bride & Groom') }}</p>				</div>
 				</div>
 				<div class="elementor-element elementor-element-921dae7 zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="921dae7" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
@@ -538,20 +719,20 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 		<div class="elementor-element elementor-element-5976164a e-con-full e-flex e-con e-child" data-id="5976164a" data-element_type="container">
 				<div class="elementor-element elementor-element-4acbe1ca animated-slow jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-image" data-id="4acbe1ca" data-element_type="widget" data-settings="{&quot;_animation_delay&quot;:100,&quot;_animation_mobile&quot;:&quot;zoomIn&quot;,&quot;_animation&quot;:&quot;zoomIn&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="682" height="937" src="/assets/vintage/vendor/cewek.jpg" class="attachment-full size-full wp-image-31420" alt="" srcset="/assets/vintage/vendor/cewek.jpg 682w, /assets/vintage/vendor/cewek-218x300.jpg 218w" sizes="auto, (max-width: 682px) 100vw, 682px" />															</div>
+															<img loading="lazy" decoding="async" width="682" height="937" src="{{ $bridePhotoUrl }}" class="attachment-full size-full wp-image-31420" alt="{{ $brideFullName }}" sizes="auto, (max-width: 682px) 100vw, 682px" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-6fefca18 elementor-widget__width-initial goyang-1 elementor-absolute e-transform jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-image" data-id="6fefca18" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_transform_flipX_effect&quot;:&quot;transform&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="594" height="684" src="/assets/vintage/vendor/BUNGA-VIN-2.png" class="attachment-full size-full wp-image-31318" alt="" srcset="/assets/vintage/vendor/BUNGA-VIN-2.png 594w, /assets/vintage/vendor/BUNGA-VIN-2-261x300.png 261w" sizes="auto, (max-width: 594px) 100vw, 594px" />															</div>
+															<img loading="lazy" decoding="async" width="594" height="684" src="{{ $template->getAssetUrl('flower_decoration', 'assets/vintage/vendor/BUNGA-VIN-2.png') }}" class="attachment-full size-full wp-image-31318" alt="" />															</div>
 				</div>
 				</div>
 				<div class="elementor-element elementor-element-66bad551 zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="66bad551" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">{{ $guestData->bride_name ?? 'Isabela Sofia, S.T.' }}</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">{{ $brideFullName }}</p>				</div>
 				</div>
 				<div class="elementor-element elementor-element-615d00b muncul jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="615d00b" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">Putri dari<br>Bapak {{ $guestData->bride_father ?? 'Abdul Kabir' }} &amp; Ibu {{ $guestData->bride_mother ?? 'Masniawati' }}</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">Putri dari<br>Bapak {{ $brideFather }} &amp; Ibu {{ $brideMother }}</p>				</div>
 				</div>
 				<div class="elementor-element elementor-element-2e448cb7 elementor-shape-circle zoom elementor-grid-0 e-grid-align-center jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-social-icons" data-id="2e448cb7" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:400}" data-widget_type="social-icons.default">
 				<div class="elementor-widget-container">
@@ -571,20 +752,20 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 		<div class="elementor-element elementor-element-17bd1bf3 e-con-full e-flex e-con e-child" data-id="17bd1bf3" data-element_type="container">
 				<div class="elementor-element elementor-element-1775694c animated-slow jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-image" data-id="1775694c" data-element_type="widget" data-settings="{&quot;_animation_delay&quot;:100,&quot;_animation_mobile&quot;:&quot;zoomIn&quot;,&quot;_animation&quot;:&quot;zoomIn&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="682" height="937" src="/assets/vintage/vendor/cowok.jpg" class="attachment-full size-full wp-image-31421" alt="" srcset="/assets/vintage/vendor/cowok.jpg 682w, /assets/vintage/vendor/cowok-218x300.jpg 218w" sizes="auto, (max-width: 682px) 100vw, 682px" />															</div>
+															<img loading="lazy" decoding="async" width="682" height="937" src="{{ $groomPhotoUrl }}" class="attachment-full size-full wp-image-31421" alt="{{ $groomFullName }}" sizes="auto, (max-width: 682px) 100vw, 682px" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-24df5666 elementor-widget__width-initial goyang-1 elementor-absolute e-transform jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-image" data-id="24df5666" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_transform_flipX_effect&quot;:&quot;transform&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="594" height="684" src="/assets/vintage/vendor/BUNGA-VIN-2.png" class="attachment-full size-full wp-image-31318" alt="" srcset="/assets/vintage/vendor/BUNGA-VIN-2.png 594w, /assets/vintage/vendor/BUNGA-VIN-2-261x300.png 261w" sizes="auto, (max-width: 594px) 100vw, 594px" />															</div>
+															<img loading="lazy" decoding="async" width="594" height="684" src="{{ $template->getAssetUrl('flower_decoration', 'assets/vintage/vendor/BUNGA-VIN-2.png') }}" class="attachment-full size-full wp-image-31318" alt="" />															</div>
 				</div>
 				</div>
 				<div class="elementor-element elementor-element-101b9fc3 zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="101b9fc3" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">{{ $guestData->groom_name ?? 'Jefry Alatas, S.T' }}</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">{{ $groomFullName }}</p>				</div>
 				</div>
 				<div class="elementor-element elementor-element-2c9e35ea muncul jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="2c9e35ea" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">Putra dari<br>Bapak {{ $guestData->groom_father ?? "Ba'dulu Alatas" }} &amp; Ibu {{ $guestData->groom_mother ?? 'Halisah Herawati' }}</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">Putra dari<br>Bapak {{ $groomFather }} &amp; Ibu {{ $groomMother }}</p>				</div>
 				</div>
 				<div class="elementor-element elementor-element-68d487d7 elementor-shape-circle zoom elementor-grid-0 e-grid-align-center jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-social-icons" data-id="68d487d7" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:400}" data-widget_type="social-icons.default">
 				<div class="elementor-widget-container">
@@ -609,7 +790,7 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 					</div>
 				</div>
 		<div class="elementor-element elementor-element-5236da65 e-con-full e-flex e-con e-child" data-id="5236da65" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;}">
-		<div class="elementor-element elementor-element-79047782 e-con-full e-flex e-con e-child" data-id="79047782" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;slideshow&quot;,&quot;background_slideshow_gallery&quot;:[{&quot;id&quot;:31411,&quot;url&quot;:&quot;/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg&quot;},{&quot;id&quot;:31412,&quot;url&quot;:&quot;/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_36_39-AM.jpg&quot;}],&quot;background_slideshow_transition_duration&quot;:2000,&quot;background_slideshow_ken_burns&quot;:&quot;yes&quot;,&quot;background_slideshow_loop&quot;:&quot;yes&quot;,&quot;background_slideshow_slide_duration&quot;:5000,&quot;background_slideshow_slide_transition&quot;:&quot;fade&quot;,&quot;background_slideshow_ken_burns_zoom_direction&quot;:&quot;in&quot;}">
+		<div class="elementor-element elementor-element-79047782 e-con-full e-flex e-con e-child" data-id="79047782" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;slideshow&quot;,&quot;background_slideshow_gallery&quot;:[{&quot;id&quot;:31411,&quot;url&quot;:&quot;{{ $template->getAssetUrl('bg_slide_1', 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg') }}&quot;},{&quot;id&quot;:31412,&quot;url&quot;:&quot;{{ $template->getAssetUrl('bg_slide_2', 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_36_39-AM.jpg') }}&quot;}],&quot;background_slideshow_transition_duration&quot;:2000,&quot;background_slideshow_ken_burns&quot;:&quot;yes&quot;,&quot;background_slideshow_loop&quot;:&quot;yes&quot;,&quot;background_slideshow_slide_duration&quot;:5000,&quot;background_slideshow_slide_transition&quot;:&quot;fade&quot;,&quot;background_slideshow_ken_burns_zoom_direction&quot;:&quot;in&quot;}">
 				<div class="elementor-element elementor-element-17e9d95e jltma-glass-effect-no elementor-widget elementor-widget-spacer" data-id="17e9d95e" data-element_type="widget" data-widget_type="spacer.default">
 				<div class="elementor-widget-container">
 							<div class="elementor-spacer">
@@ -619,7 +800,7 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 				</div>
 				<div class="elementor-element elementor-element-7f1c7633 muncul jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="7f1c7633" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">Counting The Days
+					<p class="elementor-heading-title elementor-size-default">{{ $template->getSetting('countdown_title', 'Counting The Days') }}
 </p>				</div>
 				</div>
 				<div class="elementor-element elementor-element-1dab6fd2 zoom jltma-glass-effect-no elementor-widget elementor-widget-weddingpress-countdown" data-id="1dab6fd2" data-element_type="widget" data-widget_type="weddingpress-countdown.default">
@@ -676,11 +857,11 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 				</div>
 				<div class="elementor-element elementor-element-338eacc5 muncul jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="338eacc5" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">Wedding Day</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">{{ $template->getSetting('wedding_day_title', 'Wedding Day') }}</p>				</div>
 				</div>
 				<div class="elementor-element elementor-element-3553537d zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="3553537d" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">InsyaAllah akan dilaksanakan pada:</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">{{ $template->getSetting('wedding_day_subtitle', 'InsyaAllah akan dilaksanakan pada:') }}</p>				</div>
 				</div>
 				<div class="elementor-element elementor-element-136d0ec4 zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="136d0ec4" data-element_type="widget" data-settings="{&quot;_animation_mobile&quot;:&quot;zoomIn&quot;}" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
@@ -688,29 +869,40 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 				</div>
 				<div class="elementor-element elementor-element-00f32ab zoom jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="00f32ab" data-element_type="widget" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="1080" height="312" src="/assets/vintage/vendor/DIVIDER-VIN-2.png" class="attachment-full size-full wp-image-31469" alt="" srcset="/assets/vintage/vendor/DIVIDER-VIN-2.png 1080w, /assets/vintage/vendor/DIVIDER-VIN-2-300x87.png 300w, /assets/vintage/vendor/DIVIDER-VIN-2-1024x296.png 1024w, /assets/vintage/vendor/DIVIDER-VIN-2-768x222.png 768w" sizes="auto, (max-width: 1080px) 100vw, 1080px" />															</div>
-				</div>
-				<div class="elementor-element elementor-element-27718ef zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="27718ef" data-element_type="widget" data-settings="{&quot;_animation_mobile&quot;:&quot;zoomIn&quot;}" data-widget_type="heading.default">
+															<img loading="lazy" decoding="async" width="1080" height="312" src="{{ $template->getAssetUrl('divider_image', 'assets/vintage/vendor/DIVIDER-VIN-2.png') }}" class="attachment-full size-full wp-image-31469" alt="" />															</div>
+				</div>				{{-- Semua acara (utama + tambahan) dari dashboard Settings > Acara --}}
+				@php
+					$ceremonies = $event->allCeremonies($template->getSetting('event_akad_title', 'Akad Nikah'));
+				@endphp
+				@foreach($ceremonies as $ceremony)
+				@php
+					$cTitle = trim((string) ($ceremony['title'] ?? ''));
+					$cStart = trim((string) ($ceremony['start_time'] ?? ''));
+					$cFinish = trim((string) ($ceremony['finish_time'] ?? ''));
+					$cTime = ($cStart !== '' && $cFinish !== '') ? $cStart.' - '.$cFinish : ($cStart !== '' ? $cStart : $cFinish);
+					$cDate = $ceremony['event_date'] ?? null;
+					$cDateLabel = $cDate ? \Carbon\Carbon::parse($cDate)->translatedFormat('j F Y') : null;
+					$isFirst = $loop->first;
+				@endphp
+				<div class="elementor-element elementor-element-463876b2 e-con-full e-flex e-con e-child" data-element_type="container" style="display:flex;flex-direction:column;align-items:center;width:100%;gap:2px;{{ $isFirst ? '' : 'margin-top:14px;padding-top:14px;' }}">
+				<div class="elementor-element elementor-element-27718ef zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="27718ef-{{ $loop->index }}" data-element_type="widget" data-settings="{&quot;_animation_mobile&quot;:&quot;zoomIn&quot;}" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">Akad Nikah</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">{{ $cTitle !== '' ? $cTitle : ($isFirst ? $template->getSetting('event_akad_title', 'Akad Nikah') : 'Acara') }}</p>				</div>
 				</div>
-				<div class="elementor-element elementor-element-3eeeaa4 zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="3eeeaa4" data-element_type="widget" data-widget_type="heading.default">
+				@if($cTime !== '')
+				<div class="elementor-element elementor-element-3eeeaa4 zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="3eeeaa4-{{ $loop->index }}" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">{{ $event->start_time ?? '10.00 WITA' }}</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">{{ $cTime }}</p>				</div>
 				</div>
-				<div class="elementor-element elementor-element-3082e1a4 zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="3082e1a4" data-element_type="widget" data-settings="{&quot;_animation_mobile&quot;:&quot;zoomIn&quot;}" data-widget_type="heading.default">
+				@endif
+				@if($cDateLabel)
+				<div class="elementor-element elementor-element-2ca8e2f2 zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="2ca8e2f2-{{ $loop->index }}" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">|</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">{{ $cDateLabel }}</p>				</div>
 				</div>
-				<div class="elementor-element elementor-element-2ca8e2f2 zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="2ca8e2f2" data-element_type="widget" data-settings="{&quot;_animation_mobile&quot;:&quot;zoomIn&quot;}" data-widget_type="heading.default">
-				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">Resepsi<br>Pernikahan</p>				</div>
-				</div>
-				<div class="elementor-element elementor-element-7fa80671 zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="7fa80671" data-element_type="widget" data-widget_type="heading.default">
-				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">{{ $event->end_time ?? '10.00 WITA' }}</p>				</div>
-				</div>
-				<div class="elementor-element elementor-element-22f88233 zoom elementor-view-default jltma-glass-effect-no elementor-widget elementor-widget-icon" data-id="22f88233" data-element_type="widget" data-widget_type="icon.default">
+				@endif
+				@if(!empty($ceremony['location']) || !empty($ceremony['address']))
+				<div class="elementor-element elementor-element-22f88233 zoom elementor-view-default jltma-glass-effect-no elementor-widget elementor-widget-icon" data-id="22f88233-{{ $loop->index }}" data-element_type="widget" data-widget_type="icon.default">
 				<div class="elementor-widget-container">
 							<div class="elementor-icon-wrapper">
 			<div class="elementor-icon">
@@ -718,74 +910,83 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 		</div>
 						</div>
 				</div>
-				<div class="elementor-element elementor-element-387cd4a8 muncul jltma-glass-effect-no elementor-widget elementor-widget-text-editor" data-id="387cd4a8" data-element_type="widget" data-widget_type="text-editor.default">
+				@endif
+				@if(!empty($ceremony['location']))
+				<div class="elementor-element elementor-element-387cd4a8 muncul jltma-glass-effect-no elementor-widget elementor-widget-text-editor" data-id="387cd4a8-{{ $loop->index }}" data-element_type="widget" data-widget_type="text-editor.default">
 				<div class="elementor-widget-container">
-									<p>{{ $event->location ?? 'Kediaman Mempelai Wanita' }}</p>								</div>
+									<p>{{ $ceremony['location'] }}</p>								</div>
 				</div>
-				<div class="elementor-element elementor-element-454c17b1 zoom jltma-glass-effect-no elementor-widget elementor-widget-text-editor" data-id="454c17b1" data-element_type="widget" data-widget_type="text-editor.default">
+				@endif
+				@if(!empty($ceremony['address']))
+				<div class="elementor-element elementor-element-454c17b1 zoom jltma-glass-effect-no elementor-widget elementor-widget-text-editor" data-id="454c17b1-{{ $loop->index }}" data-element_type="widget" data-widget_type="text-editor.default">
 				<div class="elementor-widget-container">
-									<p>Jalan Poros Tobadak 50, RT 25/RW 45<br />Kec. Tobadak, Kab. Mamuju Tengah</p>								</div>
+									<p>{!! nl2br(e($ceremony['address'])) !!}</p>								</div>
 				</div>
-				<div class="elementor-element elementor-element-6dbbf95c elementor-align-center zoom jltma-glass-effect-no elementor-widget elementor-widget-button" data-id="6dbbf95c" data-element_type="widget" data-widget_type="button.default">
+				@endif
+				@if(!empty($ceremony['google_map_link']))
+				<div class="elementor-element elementor-element-6dbbf95c elementor-align-center zoom jltma-glass-effect-no elementor-widget elementor-widget-button" data-id="6dbbf95c-{{ $loop->index }}" data-element_type="widget" data-widget_type="button.default">
 				<div class="elementor-widget-container">
 									<div class="elementor-button-wrapper">
-					<a class="elementor-button elementor-size-xs" role="button">
+					<a href="{{ $ceremony['google_map_link'] }}" target="_blank" rel="noopener" class="elementor-button elementor-size-xs" role="button">
 						<span class="elementor-button-content-wrapper">
 						<span class="elementor-button-icon">
-				<svg aria-hidden="true" class="e-font-icon-svg e-fas-location-arrow" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M444.52 3.52L28.74 195.42c-47.97 22.39-31.98 92.75 19.19 92.75h175.91v175.91c0 51.17 70.36 67.17 92.75 19.19l191.9-415.78c15.99-38.39-25.59-79.97-63.97-63.97z"></path></svg>			</span>
+						<svg aria-hidden="true" class="e-font-icon-svg e-fas-location-arrow" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M444.52 3.52L28.74 195.42c-47.97 22.39-31.98 92.75 19.19 92.75h175.91v175.91c0 51.17 70.36 67.17 92.75 19.19l191.9-415.78c15.99-38.39-25.59-79.97-63.97-63.97z"></path></svg>			</span>
 									<span class="elementor-button-text">Google Maps</span>
 					</span>
 					</a>
 				</div>
 								</div>
 				</div>
+				@endif
+				</div>
+				@endforeach
 				</div>
 				<div class="elementor-element elementor-element-6c2e8a00 elementor-widget-mobile__width-inherit elementor-absolute animated-slow jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-image" data-id="6c2e8a00" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img fetchpriority="high" decoding="async" width="1080" height="528" src="/assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B.webp" class="attachment-full size-full wp-image-31321" alt="" srcset="/assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B.webp 1080w, /assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B-300x147.webp 300w, /assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B-1024x501.webp 1024w, /assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B-768x375.webp 768w" sizes="(max-width: 1080px) 100vw, 1080px" />															</div>
+															<img fetchpriority="high" decoding="async" width="1080" height="528" src="{{ $template->getAssetUrl('floral_border', 'assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B.webp') }}" class="attachment-full size-full wp-image-31321" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-b42308c elementor-widget__width-initial elementor-absolute goyang-2 animated-slow e-transform jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-image" data-id="b42308c" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:600,&quot;_transform_flipY_effect&quot;:&quot;transform&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="594" height="684" src="/assets/vintage/vendor/BUNGA-VIN-2.png" class="attachment-full size-full wp-image-31318" alt="" srcset="/assets/vintage/vendor/BUNGA-VIN-2.png 594w, /assets/vintage/vendor/BUNGA-VIN-2-261x300.png 261w" sizes="auto, (max-width: 594px) 100vw, 594px" />															</div>
+															<img loading="lazy" decoding="async" width="594" height="684" src="{{ $template->getAssetUrl('flower_decoration', 'assets/vintage/vendor/BUNGA-VIN-2.png') }}" class="attachment-full size-full wp-image-31318" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-573f035 elementor-widget__width-initial elementor-absolute goyang-2 animated-slow e-transform e-transform jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-image" data-id="573f035" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:600,&quot;_transform_flipX_effect&quot;:&quot;transform&quot;,&quot;_transform_flipY_effect&quot;:&quot;transform&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="594" height="684" src="/assets/vintage/vendor/BUNGA-VIN-2.png" class="attachment-full size-full wp-image-31318" alt="" srcset="/assets/vintage/vendor/BUNGA-VIN-2.png 594w, /assets/vintage/vendor/BUNGA-VIN-2-261x300.png 261w" sizes="auto, (max-width: 594px) 100vw, 594px" />															</div>
+															<img loading="lazy" decoding="async" width="594" height="684" src="{{ $template->getAssetUrl('flower_decoration', 'assets/vintage/vendor/BUNGA-VIN-2.png') }}" class="attachment-full size-full wp-image-31318" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-3b16e3c elementor-widget__width-initial elementor-absolute animated-slow e-transform jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-image" data-id="3b16e3c" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_animation&quot;:&quot;fadeInLeft&quot;,&quot;_animation_delay&quot;:300,&quot;_transform_flipX_effect&quot;:&quot;transform&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img decoding="async" width="293" height="1427" src="/assets/vintage/vendor/HORDENG-VIN-2.png" class="attachment-full size-full wp-image-31319" alt="" srcset="/assets/vintage/vendor/HORDENG-VIN-2.png 293w, /assets/vintage/vendor/HORDENG-VIN-2-210x1024.png 210w" sizes="(max-width: 293px) 100vw, 293px" />															</div>
+															<img decoding="async" width="293" height="1427" src="{{ $template->getAssetUrl('curtain_decoration', 'assets/vintage/vendor/HORDENG-VIN-2.png') }}" class="attachment-full size-full wp-image-31319" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-9d7febf elementor-widget__width-initial elementor-absolute animated-slow jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-image" data-id="9d7febf" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_animation&quot;:&quot;fadeInRight&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img decoding="async" width="293" height="1427" src="/assets/vintage/vendor/HORDENG-VIN-2.png" class="attachment-full size-full wp-image-31319" alt="" srcset="/assets/vintage/vendor/HORDENG-VIN-2.png 293w, /assets/vintage/vendor/HORDENG-VIN-2-210x1024.png 210w" sizes="(max-width: 293px) 100vw, 293px" />															</div>
+															<img decoding="async" width="293" height="1427" src="{{ $template->getAssetUrl('curtain_decoration', 'assets/vintage/vendor/HORDENG-VIN-2.png') }}" class="attachment-full size-full wp-image-31319" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-62ee7f4 elementor-widget__width-inherit elementor-absolute goyang-2 animated-slow jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-image" data-id="62ee7f4" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_animation&quot;:&quot;fadeInDown&quot;,&quot;_animation_delay&quot;:200}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="362" height="430" src="/assets/vintage/vendor/LAMPU-VIN-2.png" class="attachment-full size-full wp-image-31320" alt="" srcset="/assets/vintage/vendor/LAMPU-VIN-2.png 362w, /assets/vintage/vendor/LAMPU-VIN-2-253x300.png 253w" sizes="auto, (max-width: 362px) 100vw, 362px" />															</div>
+															<img loading="lazy" decoding="async" width="362" height="430" src="{{ $template->getAssetUrl('lamp_decoration', 'assets/vintage/vendor/LAMPU-VIN-2.png') }}" class="attachment-full size-full wp-image-31320" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-95c77a5 elementor-widget__width-initial elementor-absolute goyang-2 animated-slow jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-image" data-id="95c77a5" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_animation&quot;:&quot;fadeInDown&quot;,&quot;_animation_delay&quot;:600}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="594" height="684" src="/assets/vintage/vendor/BUNGA-VIN-2.png" class="attachment-full size-full wp-image-31318" alt="" srcset="/assets/vintage/vendor/BUNGA-VIN-2.png 594w, /assets/vintage/vendor/BUNGA-VIN-2-261x300.png 261w" sizes="auto, (max-width: 594px) 100vw, 594px" />															</div>
+															<img loading="lazy" decoding="async" width="594" height="684" src="{{ $template->getAssetUrl('flower_decoration', 'assets/vintage/vendor/BUNGA-VIN-2.png') }}" class="attachment-full size-full wp-image-31318" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-21db0bb elementor-widget__width-initial elementor-absolute goyang-2 animated-slow e-transform jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-image" data-id="21db0bb" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_animation&quot;:&quot;fadeInDown&quot;,&quot;_animation_delay&quot;:600,&quot;_transform_flipX_effect&quot;:&quot;transform&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="594" height="684" src="/assets/vintage/vendor/BUNGA-VIN-2.png" class="attachment-full size-full wp-image-31318" alt="" srcset="/assets/vintage/vendor/BUNGA-VIN-2.png 594w, /assets/vintage/vendor/BUNGA-VIN-2-261x300.png 261w" sizes="auto, (max-width: 594px) 100vw, 594px" />															</div>
+															<img loading="lazy" decoding="async" width="594" height="684" src="{{ $template->getAssetUrl('flower_decoration', 'assets/vintage/vendor/BUNGA-VIN-2.png') }}" class="attachment-full size-full wp-image-31318" alt="" />															</div>
 				</div>
 				</div>
 		<div class="elementor-element elementor-element-3cda51a5 e-con-full e-flex e-con e-child" data-id="3cda51a5" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;}">
 		<div class="elementor-element elementor-element-36ab7874 e-con-full e-flex e-con e-child" data-id="36ab7874" data-element_type="container">
 				<div class="elementor-element elementor-element-2b81c7f4 muncul jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="2b81c7f4" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">Our Story</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">{{ $template->getSetting('story_title', 'Our Story') }}</p>				</div>
 				</div>
 				<div class="elementor-element elementor-element-35145a0a zoom jltma-glass-effect-no elementor-widget elementor-widget-text-editor" data-id="35145a0a" data-element_type="widget" data-widget_type="text-editor.default">
 				<div class="elementor-widget-container">
-									<p>Every love story is beautiful but ours is my favorite</p>								</div>
+									<p>{{ $template->getSetting('story_subtitle', 'Every love story is beautiful but ours is my favorite') }}</p>								</div>
 				</div>
 				<div class="elementor-element elementor-element-4ce5666c muncul jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="4ce5666c" data-element_type="widget" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="682" height="1024" src="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM-682x1024.jpg" class="attachment-large size-large wp-image-31414" alt="" srcset="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM-682x1024.jpg 682w, /assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM-200x300.jpg 200w, /assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM-768x1154.jpg 768w, /assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM.jpg 900w" sizes="auto, (max-width: 682px) 100vw, 682px" />															</div>
+															<img loading="lazy" decoding="async" src="{{ $template->getAssetUrl('story_image', 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM.jpg') }}" class="attachment-large size-large wp-image-31414" alt="{{ $coupleName }}">															</div>
 				</div>
 				<div class="elementor-element elementor-element-5dd005a6 zoom jltma-glass-effect-no elementor-widget elementor-widget-text-editor" data-id="5dd005a6" data-element_type="widget" data-widget_type="text-editor.default">
 				<div class="elementor-widget-container">
@@ -816,7 +1017,7 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 		<div class="elementor-element elementor-element-501b5057 e-con-full e-flex e-con e-child" data-id="501b5057" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;}">
 				<div class="elementor-element elementor-element-3345fcc8 zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="3345fcc8" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">the Moments of</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">{{ $template->getSetting('gallery_title', 'the Moments of') }}</p>				</div>
 				</div>
 				<div class="elementor-element elementor-element-9e6764 muncul jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="9e6764" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
@@ -828,35 +1029,44 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 			<div class="elementor-video"></div>		</div>
 						</div>
 				</div>
-				<div class="elementor-element elementor-element-46be85fa elementor-pagination-position-outside jltma-glass-effect-no elementor-widget elementor-widget-image-carousel" data-id="46be85fa" data-element_type="widget" data-settings="{&quot;slides_to_show_mobile&quot;:&quot;2&quot;,&quot;navigation&quot;:&quot;dots&quot;,&quot;autoplay_speed&quot;:3000,&quot;speed&quot;:2000,&quot;image_spacing_custom_mobile&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:10,&quot;sizes&quot;:[]},&quot;autoplay&quot;:&quot;yes&quot;,&quot;pause_on_hover&quot;:&quot;yes&quot;,&quot;pause_on_interaction&quot;:&quot;yes&quot;,&quot;infinite&quot;:&quot;yes&quot;,&quot;image_spacing_custom&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:20,&quot;sizes&quot;:[]},&quot;image_spacing_custom_tablet&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:&quot;&quot;,&quot;sizes&quot;:[]}}" data-widget_type="image-carousel.default">
+				{{-- Pilihan tampilan galeri: Slide (swiper) atau Grid (bisa diklik) --}}
+				<div class="wdp-gallery-switch" data-gallery-switch role="tablist" aria-label="Tampilan galeri">
+					<button type="button" role="tab" aria-selected="true" class="is-active" data-gallery-view="slide">Slide</button>
+					<button type="button" role="tab" aria-selected="false" data-gallery-view="grid">Grid</button>
+				</div>
+				<div class="elementor-element elementor-element-46be85fa elementor-pagination-position-outside jltma-glass-effect-no elementor-widget elementor-widget-image-carousel" data-id="46be85fa" data-gallery-panel="slide" data-element_type="widget" data-settings="{&quot;slides_to_show_mobile&quot;:&quot;2&quot;,&quot;navigation&quot;:&quot;dots&quot;,&quot;autoplay_speed&quot;:3000,&quot;speed&quot;:2000,&quot;image_spacing_custom_mobile&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:10,&quot;sizes&quot;:[]},&quot;autoplay&quot;:&quot;yes&quot;,&quot;pause_on_hover&quot;:&quot;yes&quot;,&quot;pause_on_interaction&quot;:&quot;yes&quot;,&quot;infinite&quot;:&quot;yes&quot;,&quot;image_spacing_custom&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:20,&quot;sizes&quot;:[]},&quot;image_spacing_custom_tablet&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:&quot;&quot;,&quot;sizes&quot;:[]}}" data-widget_type="image-carousel.default">
 				<div class="elementor-widget-container">
 							<div class="elementor-image-carousel-wrapper swiper" role="region" aria-roledescription="carousel" aria-label="Image Carousel" dir="ltr">
 			<div class="elementor-image-carousel swiper-wrapper" aria-live="off">
-								<div class="swiper-slide" role="group" aria-roledescription="slide" aria-label="1 of 5"><figure class="swiper-slide-inner"><img decoding="async" class="swiper-slide-image" src="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_42_15-AM.jpg" alt="" /></figure></div><div class="swiper-slide" role="group" aria-roledescription="slide" aria-label="2 of 5"><figure class="swiper-slide-inner"><img decoding="async" class="swiper-slide-image" src="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM.jpg" alt="" /></figure></div><div class="swiper-slide" role="group" aria-roledescription="slide" aria-label="3 of 5"><figure class="swiper-slide-inner"><img decoding="async" class="swiper-slide-image" src="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_38_09-AM.jpg" alt="" /></figure></div><div class="swiper-slide" role="group" aria-roledescription="slide" aria-label="4 of 5"><figure class="swiper-slide-inner"><img decoding="async" class="swiper-slide-image" src="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_36_39-AM.jpg" alt="" /></figure></div><div class="swiper-slide" role="group" aria-roledescription="slide" aria-label="5 of 5"><figure class="swiper-slide-inner"><img decoding="async" class="swiper-slide-image" src="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg" alt="" /></figure></div>			</div>
+                @forelse($galleryImages as $index => $image)
+                    @if($template->getGalleryImageUrl($image))
+                    <div class="swiper-slide" role="group" aria-roledescription="slide" aria-label="{{ $index + 1 }} of {{ count($galleryImages) }}"><figure class="swiper-slide-inner"><img decoding="async" class="swiper-slide-image" src="{{ $template->getGalleryImageUrl($image) }}" alt="{{ $image['caption'] ?? '' }}" /></figure></div>
+                    @endif
+                @empty
+                    <div class="swiper-slide" role="group" aria-roledescription="slide" aria-label="1 of 2"><figure class="swiper-slide-inner"><img decoding="async" class="swiper-slide-image" src="{{ $bridePhotoUrl }}" alt="{{ $brideFullName }}" /></figure></div>
+                    <div class="swiper-slide" role="group" aria-roledescription="slide" aria-label="2 of 2"><figure class="swiper-slide-inner"><img decoding="async" class="swiper-slide-image" src="{{ $groomPhotoUrl }}" alt="{{ $groomFullName }}" /></figure></div>
+                @endforelse
+            </div>
 							
 									<div class="swiper-pagination"></div>
 									</div>
 						</div>
 				</div>
-				<div class="elementor-element elementor-element-5cc28ef1 jltma-glass-effect-no elementor-widget elementor-widget-gallery" data-id="5cc28ef1" data-element_type="widget" data-settings="{&quot;gallery_layout&quot;:&quot;justified&quot;,&quot;ideal_row_height&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:281,&quot;sizes&quot;:[]},&quot;ideal_row_height_mobile&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:225,&quot;sizes&quot;:[]},&quot;lazyload&quot;:&quot;yes&quot;,&quot;ideal_row_height_tablet&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:150,&quot;sizes&quot;:[]},&quot;gap&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:10,&quot;sizes&quot;:[]},&quot;gap_tablet&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:10,&quot;sizes&quot;:[]},&quot;gap_mobile&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:10,&quot;sizes&quot;:[]},&quot;link_to&quot;:&quot;file&quot;,&quot;overlay_background&quot;:&quot;yes&quot;,&quot;content_hover_animation&quot;:&quot;fade-in&quot;}" data-widget_type="gallery.default">
+				<div class="elementor-element elementor-element-5cc28ef1 wdp-gallery-panel jltma-glass-effect-no elementor-widget elementor-widget-gallery" data-gallery-panel="grid" hidden data-id="5cc28ef1" data-element_type="widget" data-settings="{&quot;gallery_layout&quot;:&quot;justified&quot;,&quot;ideal_row_height&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:281,&quot;sizes&quot;:[]},&quot;ideal_row_height_mobile&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:225,&quot;sizes&quot;:[]},&quot;lazyload&quot;:&quot;yes&quot;,&quot;ideal_row_height_tablet&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:150,&quot;sizes&quot;:[]},&quot;gap&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:10,&quot;sizes&quot;:[]},&quot;gap_tablet&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:10,&quot;sizes&quot;:[]},&quot;gap_mobile&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:10,&quot;sizes&quot;:[]},&quot;link_to&quot;:&quot;file&quot;,&quot;overlay_background&quot;:&quot;yes&quot;,&quot;content_hover_animation&quot;:&quot;fade-in&quot;}" data-widget_type="">
 				<div class="elementor-widget-container">
-							<div class="elementor-gallery__container">
-							<a class="e-gallery-item elementor-gallery-item elementor-animated-content" href="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_42_15-AM.jpg" data-elementor-open-lightbox="yes" data-elementor-lightbox-slideshow="5cc28ef1" data-e-action-hash="#elementor-action%3Aaction%3Dlightbox%26settings%3DeyJpZCI6MzE0MTUsInVybCI6Imh0dHBzOlwvXC9vdXJpbnZpZGlnaS5jb21cL3dwLWNvbnRlbnRcL3VwbG9hZHNcLzIwMjZcLzA3XC9DaGF0R1BULUltYWdlLUp1bC0yMy0yMDI2LTA4XzQyXzE1LUFNLmpwZyIsInNsaWRlc2hvdyI6IjVjYzI4ZWYxIn0%3D">
-					<div class="e-gallery-image elementor-gallery-item__image" data-thumbnail="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_42_15-AM.jpg" data-width="900" data-height="1350" aria-label="" role="img" ></div>
-											<div class="elementor-gallery-item__overlay"></div>
-														</a>
-							<a class="e-gallery-item elementor-gallery-item elementor-animated-content" href="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_38_09-AM.jpg" data-elementor-open-lightbox="yes" data-elementor-lightbox-slideshow="5cc28ef1" data-e-action-hash="#elementor-action%3Aaction%3Dlightbox%26settings%3DeyJpZCI6MzE0MTMsInVybCI6Imh0dHBzOlwvXC9vdXJpbnZpZGlnaS5jb21cL3dwLWNvbnRlbnRcL3VwbG9hZHNcLzIwMjZcLzA3XC9DaGF0R1BULUltYWdlLUp1bC0yMy0yMDI2LTA4XzM4XzA5LUFNLmpwZyIsInNsaWRlc2hvdyI6IjVjYzI4ZWYxIn0%3D">
-					<div class="e-gallery-image elementor-gallery-item__image" data-thumbnail="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_38_09-AM.jpg" data-width="900" data-height="1352" aria-label="" role="img" ></div>
-											<div class="elementor-gallery-item__overlay"></div>
-														</a>
-							<a class="e-gallery-item elementor-gallery-item elementor-animated-content" href="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_36_39-AM.jpg" data-elementor-open-lightbox="yes" data-elementor-lightbox-slideshow="5cc28ef1" data-e-action-hash="#elementor-action%3Aaction%3Dlightbox%26settings%3DeyJpZCI6MzE0MTIsInVybCI6Imh0dHBzOlwvXC9vdXJpbnZpZGlnaS5jb21cL3dwLWNvbnRlbnRcL3VwbG9hZHNcLzIwMjZcLzA3XC9DaGF0R1BULUltYWdlLUp1bC0yMy0yMDI2LTA4XzM2XzM5LUFNLmpwZyIsInNsaWRlc2hvdyI6IjVjYzI4ZWYxIn0%3D">
-					<div class="e-gallery-image elementor-gallery-item__image" data-thumbnail="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_36_39-AM.jpg" data-width="900" data-height="1352" aria-label="" role="img" ></div>
-											<div class="elementor-gallery-item__overlay"></div>
-														</a>
-							<a class="e-gallery-item elementor-gallery-item elementor-animated-content" href="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg" data-elementor-open-lightbox="yes" data-elementor-lightbox-slideshow="5cc28ef1" data-e-action-hash="#elementor-action%3Aaction%3Dlightbox%26settings%3DeyJpZCI6MzE0MTEsInVybCI6Imh0dHBzOlwvXC9vdXJpbnZpZGlnaS5jb21cL3dwLWNvbnRlbnRcL3VwbG9hZHNcLzIwMjZcLzA3XC9DaGF0R1BULUltYWdlLUp1bC0yMy0yMDI2LTA4XzM1XzI2LUFNLmpwZyIsInNsaWRlc2hvdyI6IjVjYzI4ZWYxIn0%3D">
-					<div class="e-gallery-image elementor-gallery-item__image" data-thumbnail="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg" data-width="900" data-height="1352" aria-label="" role="img" ></div>
-											<div class="elementor-gallery-item__overlay"></div>
-														</a>
+							<div class="wdp-gallery-grid">
+                @forelse($galleryItems as $index => $item)
+                    <button type="button" class="wdp-gallery-thumb" data-gallery-index="{{ $index }}" data-gallery-src="{{ $item['url'] }}" data-gallery-caption="{{ $item['caption'] }}" aria-label="Buka foto {{ $index + 1 }} dari {{ count($galleryItems) }}">
+                        <img loading="lazy" decoding="async" src="{{ $item['url'] }}" alt="{{ $item['caption'] }}">
+                    </button>
+                @empty
+                    <button type="button" class="wdp-gallery-thumb" data-gallery-index="0" data-gallery-src="{{ $bridePhotoUrl }}" data-gallery-caption="{{ $brideFullName }}" aria-label="Buka foto 1 dari 2">
+                        <img loading="lazy" decoding="async" src="{{ $bridePhotoUrl }}" alt="{{ $brideFullName }}">
+                    </button>
+                    <button type="button" class="wdp-gallery-thumb" data-gallery-index="1" data-gallery-src="{{ $groomPhotoUrl }}" data-gallery-caption="{{ $groomFullName }}" aria-label="Buka foto 2 dari 2">
+                        <img loading="lazy" decoding="async" src="{{ $groomPhotoUrl }}" alt="{{ $groomFullName }}">
+                    </button>
+                @endforelse
 					</div>
 					</div>
 				</div>
@@ -873,11 +1083,11 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 				</div>
 				<div class="elementor-element elementor-element-174a7c72 muncul jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="174a7c72" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">Wedding Gift</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">{{ $template->getSetting('gift_title', 'Wedding Gift') }}</p>				</div>
 				</div>
 				<div class="elementor-element elementor-element-18c384d7 jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-heading" data-id="18c384d7" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
-					<p class="elementor-heading-title elementor-size-default">Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Dan jika memberi adalah ungkapan tanda kasih Anda, Anda dapat memberi kado secara cashless.</p>				</div>
+					<p class="elementor-heading-title elementor-size-default">{{ $template->getSetting('gift_subtitle', 'Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Dan jika memberi adalah ungkapan tanda kasih Anda, Anda dapat memberi kado secara cashless.') }}</p>				</div>
 				</div>
 				<div class="elementor-element elementor-element-749ac5c jltma-glass-effect-no elementor-widget elementor-widget-n-accordion" data-id="749ac5c" data-element_type="widget" data-settings="{&quot;default_state&quot;:&quot;all_collapsed&quot;,&quot;max_items_expended&quot;:&quot;one&quot;,&quot;n_accordion_animation_duration&quot;:{&quot;unit&quot;:&quot;ms&quot;,&quot;size&quot;:400,&quot;sizes&quot;:[]}}" data-widget_type="nested-accordion.default">
 				<div class="elementor-widget-container">
@@ -895,11 +1105,11 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 		<div role="region" aria-labelledby="e-n-accordion-item-1220" class="elementor-element elementor-element-62e96db2 e-con-full animated-slow e-flex elementor-invisible e-con e-child" data-id="62e96db2" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;,&quot;animation&quot;:&quot;fadeInUp&quot;,&quot;animation_delay&quot;:100}">
 				<div class="elementor-element elementor-element-7332c195 jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="7332c195" data-element_type="widget" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="800" height="245" src="/assets/vintage/vendor/bni-1024x313.png" class="attachment-large size-large wp-image-770" alt="" srcset="/assets/vintage/vendor/bni-1024x313.png 1024w, /assets/vintage/vendor/bni-300x92.png 300w, /assets/vintage/vendor/bni-768x235.png 768w, /assets/vintage/vendor/bni.png 1080w" sizes="auto, (max-width: 800px) 100vw, 800px" />															</div>
+															<img loading="lazy" decoding="async" width="800" height="245" src="{{ $template->getAssetUrl('bank_bni_logo', 'assets/vintage/vendor/bni.png') }}" class="attachment-large size-large wp-image-770" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-3bfea22 jltma-glass-effect-no elementor-widget elementor-widget-text-editor" data-id="3bfea22" data-element_type="widget" data-widget_type="text-editor.default">
 				<div class="elementor-widget-container">
-									<p>Bank BNI<br />No. Rekening 557xxxx<br />a.n <strong>LINDA</strong></p>								</div>
+									<p>Bank BNI<br />No. Rekening {{ $template->getAsset('bank_bni_number', '557xxxx') }}<br />a.n <strong>{{ $template->getAsset('bank_bni_name', 'LINDA') }}</strong></p>								</div>
 				</div>
 				<div class="elementor-element elementor-element-1190eb38 elementor-align-left elementor-mobile-align-left jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-weddingpress-copy-text" data-id="1190eb38" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="weddingpress-copy-text.default">
 				<div class="elementor-widget-container">
@@ -938,6 +1148,10 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 		<script>
 		function copyText(el) {
 		    var content = jQuery(el).siblings('div.copy-content').html()
+		    if (!content || !jQuery.trim(content)) {
+		        // Fallback: copy the card caption (bank name, account number, ...)
+		        content = jQuery(el).closest('.elementor-widget-container').find('p').first().html() || ''
+		    }
 		    var temp = jQuery("<textarea>");
 		    jQuery("body").append(temp);
 		    temp.val(content.replace(/<br ?\/?>/g, "\n")).select();
@@ -962,11 +1176,11 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 		<div role="region" aria-labelledby="e-n-accordion-item-1220" class="elementor-element elementor-element-3f17830a e-con-full animated-slow e-flex elementor-invisible e-con e-child" data-id="3f17830a" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;,&quot;animation&quot;:&quot;fadeInUp&quot;,&quot;animation_delay&quot;:200}">
 				<div class="elementor-element elementor-element-212daaba jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="212daaba" data-element_type="widget" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="800" height="420" src="/assets/vintage/vendor/Bank-Rakyat-Indonesia-BRI-1024x538.png" class="attachment-large size-large wp-image-4366" alt="" srcset="/assets/vintage/vendor/Bank-Rakyat-Indonesia-BRI-1024x538.png 1024w, /assets/vintage/vendor/Bank-Rakyat-Indonesia-BRI-300x158.png 300w, /assets/vintage/vendor/Bank-Rakyat-Indonesia-BRI-768x403.png 768w, /assets/vintage/vendor/Bank-Rakyat-Indonesia-BRI.png 1200w" sizes="auto, (max-width: 800px) 100vw, 800px" />															</div>
+															<img loading="lazy" decoding="async" width="800" height="420" src="{{ $template->getAssetUrl('bank_bri_logo', 'assets/vintage/vendor/Bank-Rakyat-Indonesia-BRI.png') }}" class="attachment-large size-large wp-image-4366" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-40b2ec0f jltma-glass-effect-no elementor-widget elementor-widget-text-editor" data-id="40b2ec0f" data-element_type="widget" data-widget_type="text-editor.default">
 				<div class="elementor-widget-container">
-									<p>Bank BRI<br />No. Rekening 00500xxx<br />a.n <strong>MUKHSIN</strong></p>								</div>
+									<p>Bank BRI<br />No. Rekening {{ $template->getAsset('bank_bri_number', '00500xxx') }}<br />a.n <strong>{{ $template->getAsset('bank_bri_name', 'MUKHSIN') }}</strong></p>								</div>
 				</div>
 				<div class="elementor-element elementor-element-59d5d02c elementor-align-left elementor-mobile-align-left jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-weddingpress-copy-text" data-id="59d5d02c" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="weddingpress-copy-text.default">
 				<div class="elementor-widget-container">
@@ -1005,6 +1219,10 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 		<script>
 		function copyText(el) {
 		    var content = jQuery(el).siblings('div.copy-content').html()
+		    if (!content || !jQuery.trim(content)) {
+		        // Fallback: copy the card caption (bank name, account number, ...)
+		        content = jQuery(el).closest('.elementor-widget-container').find('p').first().html() || ''
+		    }
 		    var temp = jQuery("<textarea>");
 		    jQuery("body").append(temp);
 		    temp.val(content.replace(/<br ?\/?>/g, "\n")).select();
@@ -1037,7 +1255,7 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 				</div>
 				<div class="elementor-element elementor-element-1eb392a0 jltma-glass-effect-no elementor-widget elementor-widget-text-editor" data-id="1eb392a0" data-element_type="widget" data-widget_type="text-editor.default">
 				<div class="elementor-widget-container">
-									<p>KIRIM KADO<br />Alamat : Jl. Jaya Mangku, Kutai Kartanegara<br />a.n LINDA</p>								</div>
+									<p>KIRIM KADO<br />Alamat : {{ $template->getAsset('physical_gift_address', 'Jl. Jaya Mangku, Kutai Kartanegara') }}<br />a.n {{ $template->getAsset('physical_gift_name', 'LINDA') }}</p>								</div>
 				</div>
 				<div class="elementor-element elementor-element-52ebc3f5 elementor-align-left elementor-mobile-align-left jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-weddingpress-copy-text" data-id="52ebc3f5" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="weddingpress-copy-text.default">
 				<div class="elementor-widget-container">
@@ -1076,6 +1294,10 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 		<script>
 		function copyText(el) {
 		    var content = jQuery(el).siblings('div.copy-content').html()
+		    if (!content || !jQuery.trim(content)) {
+		        // Fallback: copy the card caption (bank name, account number, ...)
+		        content = jQuery(el).closest('.elementor-widget-container').find('p').first().html() || ''
+		    }
 		    var temp = jQuery("<textarea>");
 		    jQuery("body").append(temp);
 		    temp.val(content.replace(/<br ?\/?>/g, "\n")).select();
@@ -1115,7 +1337,7 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 				<div class="elementor-element elementor-element-7e7f9d7f elementor-align-center zoom jltma-glass-effect-no elementor-widget elementor-widget-button" data-id="7e7f9d7f" data-element_type="widget" data-widget_type="button.default">
 				<div class="elementor-widget-container">
 									<div class="elementor-button-wrapper">
-					<a class="elementor-button elementor-size-xs" role="button">
+					<a href="{{ $template->getSetting('live_stream_url', '#') }}" {{ $template->getSetting('live_stream_url') ? 'target="_blank" rel="noopener"' : '' }} class="elementor-button elementor-size-xs" role="button">
 						<span class="elementor-button-content-wrapper">
 						<span class="elementor-button-icon">
 				<svg aria-hidden="true" class="e-font-icon-svg e-fas-video" viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M336.2 64H47.8C21.4 64 0 85.4 0 111.8v288.4C0 426.6 21.4 448 47.8 448h288.4c26.4 0 47.8-21.4 47.8-47.8V111.8c0-26.4-21.4-47.8-47.8-47.8zm189.4 37.7L416 177.3v157.4l109.6 75.5c21.2 14.6 50.4-.3 50.4-25.8V127.5c0-25.4-29.1-40.4-50.4-25.8z"></path></svg>			</span>
@@ -1137,7 +1359,7 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 				</div>
 				<div class="elementor-element elementor-element-7c0570d2 jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-image" data-id="7c0570d2" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInDown&quot;,&quot;_animation_delay&quot;:100,&quot;_animation_mobile&quot;:&quot;fadeInDown&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="800" height="345" src="/assets/vintage/vendor/dresscode-color-1024x441.png" class="attachment-large size-large wp-image-423" alt="" srcset="/assets/vintage/vendor/dresscode-color-1024x441.png 1024w, /assets/vintage/vendor/dresscode-color-300x129.png 300w, /assets/vintage/vendor/dresscode-color-768x331.png 768w, /assets/vintage/vendor/dresscode-color.png 1126w" sizes="auto, (max-width: 800px) 100vw, 800px" />															</div>
+															<img loading="lazy" decoding="async" width="800" height="345" src="{{ $template->getAssetUrl('dresscode_image', 'assets/vintage/vendor/dresscode-color.png') }}" class="attachment-large size-large wp-image-423" alt="" />															</div>
 				</div>
 				</div>
 				</div>
@@ -1146,7 +1368,7 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 					<div class="e-con-inner">
 				<div class="elementor-element elementor-element-613571e3 zoom jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="613571e3" data-element_type="widget" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="800" height="530" src="/assets/vintage/vendor/LOGO-VIN-2.png" class="attachment-large size-large wp-image-31271" alt="" srcset="/assets/vintage/vendor/LOGO-VIN-2.png 819w, /assets/vintage/vendor/LOGO-VIN-2-300x199.png 300w, /assets/vintage/vendor/LOGO-VIN-2-768x509.png 768w" sizes="auto, (max-width: 800px) 100vw, 800px" />															</div>
+															<img loading="lazy" decoding="async" width="800" height="530" src="{{ $template->getAssetUrl('logo_image', 'assets/vintage/vendor/LOGO-VIN-2.png') }}" class="attachment-large size-large wp-image-31271" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-6a583333 zoom jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="6a583333" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
@@ -1655,15 +1877,15 @@ jQuery(document).ready((jQ)=>{
 				</div>
 				<div class="elementor-element elementor-element-35371983 jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-text-editor" data-id="35371983" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="text-editor.default">
 				<div class="elementor-widget-container">
-									<p>Terima Kasih</p>								</div>
+									<p>{{ $template->getSetting('thank_title', 'Terima Kasih') }}</p>								</div>
 				</div>
 				<div class="elementor-element elementor-element-119671aa muncul jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="119671aa" data-element_type="widget" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="900" height="1350" src="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_42_15-AM.jpg" class="attachment-full size-full wp-image-31415" alt="" srcset="/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_42_15-AM.jpg 900w, /assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_42_15-AM-200x300.jpg 200w, /assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_42_15-AM-683x1024.jpg 683w, /assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_42_15-AM-768x1152.jpg 768w" sizes="auto, (max-width: 900px) 100vw, 900px" />															</div>
+															<img loading="lazy" decoding="async" width="900" height="1350" src="{{ $template->getAssetUrl('closing_image', 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_42_15-AM.jpg') }}" class="attachment-full size-full wp-image-31415" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-2195b04f jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-text-editor" data-id="2195b04f" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="text-editor.default">
 				<div class="elementor-widget-container">
-									<p>Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Anda berkenan hadir dan memberikan doa restunya untuk pernikahan kami.</p><p>Atas doa &amp; restunya,<br />kami ucapkan terima kasih.</p>								</div>
+									<p>{{ $template->getSetting('thank_text', 'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Anda berkenan hadir dan memberikan doa restunya untuk pernikahan kami.') }}</p><p>{{ $template->getSetting('thank_closing', 'Atas doa & restunya, kami ucapkan terima kasih.') }}</p>								</div>
 				</div>
 				<div class="elementor-element elementor-element-43b280ac jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-heading" data-id="43b280ac" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:200}" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
@@ -1678,15 +1900,15 @@ jQuery(document).ready((jQ)=>{
 				</div>
 				<div class="elementor-element elementor-element-6b9c02de elementor-widget-mobile__width-inherit elementor-absolute jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="6b9c02de" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img fetchpriority="high" decoding="async" width="1080" height="528" src="/assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B.webp" class="attachment-full size-full wp-image-31321" alt="" srcset="/assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B.webp 1080w, /assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B-300x147.webp 300w, /assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B-1024x501.webp 1024w, /assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B-768x375.webp 768w" sizes="(max-width: 1080px) 100vw, 1080px" />															</div>
+															<img fetchpriority="high" decoding="async" width="1080" height="528" src="{{ $template->getAssetUrl('floral_border', 'assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B.webp') }}" class="attachment-full size-full wp-image-31321" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-6df234b3 elementor-widget__width-initial elementor-absolute goyang-1 jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="6df234b3" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="594" height="684" src="/assets/vintage/vendor/BUNGA-VIN-2.png" class="attachment-full size-full wp-image-31318" alt="" srcset="/assets/vintage/vendor/BUNGA-VIN-2.png 594w, /assets/vintage/vendor/BUNGA-VIN-2-261x300.png 261w" sizes="auto, (max-width: 594px) 100vw, 594px" />															</div>
+															<img loading="lazy" decoding="async" width="594" height="684" src="{{ $template->getAssetUrl('flower_decoration', 'assets/vintage/vendor/BUNGA-VIN-2.png') }}" class="attachment-full size-full wp-image-31318" alt="" />															</div>
 				</div>
 				<div class="elementor-element elementor-element-6d00a23e elementor-widget__width-initial elementor-absolute goyang-1 e-transform jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="6d00a23e" data-element_type="widget" data-settings="{&quot;_position&quot;:&quot;absolute&quot;,&quot;_transform_flipX_effect&quot;:&quot;transform&quot;}" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="594" height="684" src="/assets/vintage/vendor/BUNGA-VIN-2.png" class="attachment-full size-full wp-image-31318" alt="" srcset="/assets/vintage/vendor/BUNGA-VIN-2.png 594w, /assets/vintage/vendor/BUNGA-VIN-2-261x300.png 261w" sizes="auto, (max-width: 594px) 100vw, 594px" />															</div>
+															<img loading="lazy" decoding="async" width="594" height="684" src="{{ $template->getAssetUrl('flower_decoration', 'assets/vintage/vendor/BUNGA-VIN-2.png') }}" class="attachment-full size-full wp-image-31318" alt="" />															</div>
 				</div>
 					</div>
 		</div>
@@ -1716,7 +1938,7 @@ jQuery(document).ready((jQ)=>{
                         <div class="overlayy"></div>
                             <div class="content-modalx">
                                 <div class="info_modalx">
-                                                                        <div class="elementor-image img"><img decoding="async" src="/assets/vintage/vendor/LOGO-VIN-2.png" title="LOGO-VIN-2" alt="LOGO-VIN-2" loading="lazy" /></div>
+                                                                        <div class="elementor-image img"><img decoding="async" src="{{ $template->getAssetUrl('logo_image', 'assets/vintage/vendor/LOGO-VIN-2.png') }}" title="LOGO-VIN-2" alt="LOGO-VIN-2" loading="lazy" /></div>
                                                                         
                                                                         <div class="wdp-txt-the-wedding" style="width:auto !important" >WEDDING INVITATION                                    </div>
                                     
@@ -2168,20 +2390,140 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // 5. Countdown background slideshow animation
-    var bgImages = [
-        '/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg',
-        '/assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_36_39-AM.jpg'
-    ];
-    var currentBg = 0;
-    var container = document.querySelector('.elementor-element-79047782');
-    if (container) {
+    // 5. Countdown background slideshow animation.
+    // Photos come from Dashboard > Settings > Foto (Background Slide 1 & 2).
+    // These used to be hardcoded, which silently overwrote any uploaded photo
+    // every 5 seconds.
+    var bgImages = {!! json_encode(array_values(array_filter([
+        $template->getAssetUrl('bg_slide_1', 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg'),
+        $template->getAssetUrl('bg_slide_2', 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_36_39-AM.jpg'),
+    ]))) !!};
+    var bgCurrent = 0;
+    var bgContainer = document.querySelector('.elementor-element-79047782');
+    if (bgContainer && bgImages.length > 1) {
         setInterval(function () {
-            currentBg = (currentBg + 1) % bgImages.length;
-            container.style.backgroundImage = 'url(' + bgImages[currentBg] + ')';
+            bgCurrent = (bgCurrent + 1) % bgImages.length;
+            bgContainer.style.backgroundImage = 'url("' + bgImages[bgCurrent] + '")';
         }, 5000);
     }
 });
+</script>
+
+{{-- Lightbox galeri — dibuka saat foto di tampilan Grid diklik --}}
+<div class="wdp-lightbox" id="wdpGalleryLightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Foto galeri">
+    <div class="wdp-lightbox__bar">
+        <span class="wdp-lightbox__counter" data-lb-counter></span>
+        <span class="wdp-lightbox__caption" data-lb-caption></span>
+        <button type="button" data-lb-close aria-label="Tutup">&#10005;</button>
+    </div>
+    <div class="wdp-lightbox__stage" data-lb-stage>
+        <button type="button" data-lb-prev aria-label="Foto sebelumnya">&#8249;</button>
+        <img src="" alt="" data-lb-image />
+        <button type="button" data-lb-next aria-label="Foto berikutnya">&#8250;</button>
+    </div>
+</div>
+
+<script>
+    // ==================== GALLERY: SLIDE / GRID + LIGHTBOX ====================
+    (function () {
+        var switcher = document.querySelector('[data-gallery-switch]');
+        var grid = document.querySelector('.wdp-gallery-grid');
+        var panels = document.querySelectorAll('[data-gallery-panel]');
+        var carousel = document.querySelector('.elementor-image-carousel-wrapper.swiper');
+
+        // --- Slide / Grid switch
+        if (switcher && panels.length) {
+            switcher.addEventListener('click', function (e) {
+                var btn = e.target.closest('[data-gallery-view]');
+                if (!btn) return;
+                var view = btn.getAttribute('data-gallery-view');
+
+                switcher.querySelectorAll('[data-gallery-view]').forEach(function (b) {
+                    var on = b === btn;
+                    b.classList.toggle('is-active', on);
+                    b.setAttribute('aria-selected', on ? 'true' : 'false');
+                });
+                panels.forEach(function (panel) {
+                    panel.hidden = panel.getAttribute('data-gallery-panel') !== view;
+                });
+
+                // A Swiper built while hidden has zero width — recalculate.
+                if (view === 'slide' && carousel && carousel.swiper) {
+                    setTimeout(function () { carousel.swiper.update(); }, 60);
+                }
+            });
+        }
+
+        // --- Lightbox
+        var box = document.getElementById('wdpGalleryLightbox');
+        if (!grid || !box) return;
+
+        var image = box.querySelector('[data-lb-image]');
+        var caption = box.querySelector('[data-lb-caption]');
+        var counter = box.querySelector('[data-lb-counter]');
+        var current = 0;
+        var previousOverflow = '';
+
+        function thumbs() {
+            return Array.prototype.slice.call(grid.querySelectorAll('[data-gallery-src]'));
+        }
+
+        function show(index) {
+            var list = thumbs();
+            if (!list.length) return;
+            current = (index + list.length) % list.length;
+            var thumb = list[current];
+            var text = thumb.getAttribute('data-gallery-caption') || '';
+            image.setAttribute('src', thumb.getAttribute('data-gallery-src'));
+            image.setAttribute('alt', text);
+            if (caption) caption.textContent = text;
+            if (counter) counter.textContent = (current + 1) + ' / ' + list.length;
+        }
+
+        function open(index) {
+            previousOverflow = document.body.style.overflow;
+            show(index);
+            box.classList.add('is-open');
+            box.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function close() {
+            box.classList.remove('is-open');
+            box.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = previousOverflow;
+        }
+
+        grid.addEventListener('click', function (e) {
+            var thumb = e.target.closest('[data-gallery-index]');
+            if (!thumb) return;
+            open(Array.prototype.slice.call(grid.querySelectorAll('[data-gallery-index]')).indexOf(thumb));
+        });
+
+        box.addEventListener('click', function (e) {
+            if (e.target === box || e.target.classList.contains('wdp-lightbox__stage')) { close(); return; }
+            if (e.target.closest('[data-lb-close]')) { close(); return; }
+            if (e.target.closest('[data-lb-prev]')) { show(current - 1); return; }
+            if (e.target.closest('[data-lb-next]')) { show(current + 1); }
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (!box.classList.contains('is-open')) return;
+            if (e.key === 'Escape') close();
+            else if (e.key === 'ArrowLeft') show(current - 1);
+            else if (e.key === 'ArrowRight') show(current + 1);
+        });
+
+        // Swipe on touch devices
+        var touchStartX = null;
+        box.addEventListener('touchstart', function (e) { touchStartX = e.touches[0].clientX; }, { passive: true });
+        box.addEventListener('touchend', function (e) {
+            if (touchStartX === null) return;
+            var dx = e.changedTouches[0].clientX - touchStartX;
+            if (Math.abs(dx) > 40) show(current + (dx < 0 ? 1 : -1));
+            touchStartX = null;
+        });
+    })();
 </script>
 
 </body>

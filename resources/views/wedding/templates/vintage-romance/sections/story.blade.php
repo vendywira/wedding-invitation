@@ -1,11 +1,16 @@
+@php
+    $storyTitle = $template->getSetting('story_title', 'Our Story');
+    $storySubtitle = $template->getSetting('story_subtitle', 'Every love story is beautiful but ours is my favorite');
+@endphp
+
 <section id="story" class="story-section">
     <div class="story-container">
-        <h2 class="story-title muncul">Our Story</h2>
-        <p class="story-subtitle muncul">Every love story is beautiful but ours is my favorite</p>
+        <h2 class="story-title muncul">{{ $storyTitle }}</h2>
+        <p class="story-subtitle muncul">{{ $storySubtitle }}</p>
 
         <div class="story-content">
             <div class="story-image muncul">
-                <img src="{{ asset($template->getAsset('story_image', 'assets/vintage/story.jpg')) }}" alt="" class="img-fluid">
+                <img src="{{ $template->getAssetUrl('story_image', 'assets/vintage/story.jpg') }}" alt="" class="img-fluid">
             </div>
 
             <div class="story-timeline">

@@ -1,7 +1,12 @@
+@php
+    $rsvpTitle = $template->getSetting('rsvp_title', 'Konfirmasi Kehadiran');
+    $rsvpSubtitle = $template->getSetting('rsvp_subtitle', 'Mohon konfirmasi kehadiran Bapak/Ibu/Saudara/i');
+@endphp
+
 <section id="rsvp" class="rsvp-section">
     <div class="rsvp-container">
-        <h2 class="rsvp-title" data-aos="zoom-in">Konfirmasi Kehadiran</h2>
-        <p class="rsvp-subtitle" data-aos="fade-up">Mohon konfirmasi kehadiran Bapak/Ibu/Saudara/i</p>
+        <h2 class="rsvp-title" data-aos="zoom-in">{{ $rsvpTitle }}</h2>
+        <p class="rsvp-subtitle" data-aos="fade-up">{{ $rsvpSubtitle }}</p>
 
         <form id="konfirmasi-form" class="rsvp-form" data-aos="fade-up">
             @csrf

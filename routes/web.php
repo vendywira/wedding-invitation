@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MessageTemplateController;
+use App\Http\Controllers\TemplateSettingController;
 use App\Http\Controllers\WeddingController;
 use App\Http\Controllers\WeddingTemplateController;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,6 @@ Route::get('/invitation', [WeddingController::class, 'show'])->name('wedding.pub
 
 // Route untuk menyimpan RSVP
 Route::post('/store-message', [WeddingController::class, 'storeMessage'])->name('wedding.store-message');
-
 
 Auth::routes();
 
@@ -58,4 +58,19 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/wedding-templates/{id}', [WeddingTemplateController::class, 'destroy'])->name('admin.wedding-templates.destroy');
     Route::post('/wedding-templates/{id}/activate', [WeddingTemplateController::class, 'activate'])->name('admin.wedding-templates.activate');
     Route::get('/wedding-templates/{id}/preview', [WeddingTemplateController::class, 'preview'])->name('admin.wedding-templates.preview');
+
+    // Template Settings Routes
+    // The settings panel lives inside the dashboard (Settings tab) and is
+    // loaded through the `embed` endpoint below — there is no standalone page.
+    Route::get('/template-settings/embed', [TemplateSettingController::class, 'contentOnly'])->name('admin.template-settings.embed');
+    Route::put('/template-settings', [TemplateSettingController::class, 'updateSettings'])->name('admin.template-settings.update');
+    Route::put('/template-settings/events', [TemplateSettingController::class, 'updateEvents'])->name('admin.template-settings.events.update');
+    Route::post('/template-settings/upload-asset', [TemplateSettingController::class, 'uploadAsset'])->name('admin.template-settings.upload-asset');
+    Route::delete('/template-settings/delete-asset', [TemplateSettingController::class, 'deleteAsset'])->name('admin.template-settings.delete-asset');
+    Route::post('/template-settings/upload-gallery', [TemplateSettingController::class, 'uploadGallery'])->name('admin.template-settings.upload-gallery');
+    // Gallery photos are addressed by their storage path (the numeric position
+    // becomes stale after a drag-and-drop reorder).
+    Route::put('/template-settings/gallery/caption', [TemplateSettingController::class, 'updateGalleryCaption'])->name('admin.template-settings.gallery.caption');
+    Route::delete('/template-settings/gallery', [TemplateSettingController::class, 'deleteGalleryImage'])->name('admin.template-settings.gallery.delete');
+    Route::put('/template-settings/gallery/reorder', [TemplateSettingController::class, 'reorderGallery'])->name('admin.template-settings.gallery.reorder');
 });

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\Guest;
 use App\Models\Message;
-use App\Models\Event;
-use Illuminate\Http\Request;
+use App\Models\WeddingTemplate;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
@@ -34,7 +35,11 @@ class AdminController extends Controller
         // Stats per event
         $eventStats = $this->getEventStats();
 
-        return view('admin.dashboard', compact('guests', 'messages', 'stats', 'eventStats'));
+        // Template data
+        $templates = WeddingTemplate::all();
+        $activeTemplate = WeddingTemplate::where('is_active', true)->first();
+
+        return view('admin.dashboard', compact('guests', 'messages', 'stats', 'eventStats', 'templates', 'activeTemplate'));
     }
 
     /**
@@ -63,7 +68,7 @@ class AdminController extends Controller
             'success' => true,
             'stats' => $stats,
             'eventStats' => $eventStats,
-            'last_updated' => Carbon::now()->format('Y-m-d H:i:s')
+            'last_updated' => Carbon::now()->format('Y-m-d H:i:s'),
         ]);
     }
 
@@ -80,7 +85,7 @@ class AdminController extends Controller
             'success' => true,
             'guests' => $guests,
             'total_guests' => $guests->count(),
-            'last_updated' => Carbon::now()->format('Y-m-d H:i:s')
+            'last_updated' => Carbon::now()->format('Y-m-d H:i:s'),
         ]);
     }
 
@@ -97,7 +102,7 @@ class AdminController extends Controller
             'success' => true,
             'messages' => $messages,
             'total_messages' => $messages->count(),
-            'last_updated' => Carbon::now()->format('Y-m-d H:i:s')
+            'last_updated' => Carbon::now()->format('Y-m-d H:i:s'),
         ]);
     }
 
@@ -193,11 +198,11 @@ class AdminController extends Controller
                             $fail("Nama tamu '{$value}' sudah terdaftar untuk acara {$eventName}.");
                         }
                     }
-                }
+                },
             ],
             'event_type' => 'required|in:p,r',
             'guest_attends' => 'required|integer|min:1|max:10',
-            'whatsapp_number' => 'nullable|string|max:20'
+            'whatsapp_number' => 'nullable|string|max:20',
         ]);
 
         // Pastikan event ada
@@ -211,9 +216,10 @@ class AdminController extends Controller
 
         if ($existingGuest) {
             $eventName = $eventKey === 'gedung' ? 'Gedung' : 'Rumah';
+
             return response()->json([
                 'success' => false,
-                'message' => "Nama tamu '{$request->name}' sudah terdaftar untuk acara {$eventName}."
+                'message' => "Nama tamu '{$request->name}' sudah terdaftar untuk acara {$eventName}.",
             ], 422);
         }
 
@@ -223,7 +229,7 @@ class AdminController extends Controller
             'code' => uniqid(),
             'guest_attends' => $request->guest_attends ?? 1,
             'whatsapp_number' => $request->whatsapp_number,
-            'is_opened' => false
+            'is_opened' => false,
         ]);
 
         // Generate link
@@ -238,7 +244,7 @@ class AdminController extends Controller
             'success' => true,
             'message' => 'Tamu berhasil ditambahkan',
             'guest' => $guest,
-            'invitation_url' => $invitationUrl
+            'invitation_url' => $invitationUrl,
         ]);
     }
 
@@ -264,12 +270,12 @@ class AdminController extends Controller
                             $fail("Nama tamu '{$value}' sudah terdaftar untuk acara {$eventName}.");
                         }
                     }
-                }
+                },
             ],
             'guest_attends' => 'required|integer|min:1|max:10',
             'event_type' => 'required|in:p,r',
             'attendance' => 'nullable|in:Hadir,Tidak Hadir,Belum Konfirmasi',
-            'whatsapp_number' => 'nullable|string|max:20'
+            'whatsapp_number' => 'nullable|string|max:20',
         ]);
 
         $guest = Guest::findOrFail($id);
@@ -285,9 +291,10 @@ class AdminController extends Controller
 
         if ($existingGuest) {
             $eventName = $eventKey === 'gedung' ? 'Gedung' : 'Rumah';
+
             return response()->json([
                 'success' => false,
-                'message' => "Nama tamu '{$request->name}' sudah terdaftar untuk acara {$eventName}."
+                'message' => "Nama tamu '{$request->name}' sudah terdaftar untuk acara {$eventName}.",
             ], 422);
         }
 
@@ -297,13 +304,13 @@ class AdminController extends Controller
             'event_id' => $event->id,
             'guest_attends' => $request->guest_attends,
             'whatsapp_number' => $request->whatsapp_number,
-            'attendance' => $request->attendance
+            'attendance' => $request->attendance,
         ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Data tamu berhasil diperbarui',
-            'guest' => $guest->load('event')
+            'guest' => $guest->load('event'),
         ]);
     }
 
@@ -318,7 +325,7 @@ class AdminController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Tamu berhasil dihapus'
+            'message' => 'Tamu berhasil dihapus',
         ]);
     }
 
@@ -329,7 +336,7 @@ class AdminController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Pesan berhasil dihapus'
+            'message' => 'Pesan berhasil dihapus',
         ]);
     }
 
@@ -342,7 +349,7 @@ class AdminController extends Controller
 
         // Apply event filter
         if ($eventFilter !== 'all') {
-            $query->whereHas('event', function($q) use ($eventFilter) {
+            $query->whereHas('event', function ($q) use ($eventFilter) {
                 $q->where('event_key', $eventFilter);
             });
         }
@@ -358,7 +365,7 @@ class AdminController extends Controller
 
         $guests = $query->get();
 
-        $filename = "daftar-tamu-" . Carbon::now()->format('Y-m-d') . ".csv";
+        $filename = 'daftar-tamu-'.Carbon::now()->format('Y-m-d').'.csv';
         $handle = fopen('php://output', 'w');
         fputcsv($handle, ['Nama', 'WhatsApp', 'Kode', 'Jumlah Tamu', 'Konfirmasi', 'Dibuka', 'Dibuat', 'Diupdate', 'Pesan']);
 
@@ -373,13 +380,13 @@ class AdminController extends Controller
                 $guest->is_opened ? 'Ya' : 'Tidak',
                 $guest->created_at->format('d/m/Y H:i'),
                 $guest->updated_at->format('d/m/Y H:i'),
-                $messages
+                $messages,
             ]);
         }
 
         fclose($handle);
 
-        return response()->streamDownload(function() use ($handle) {
+        return response()->streamDownload(function () {
             //
         }, $filename, [
             'Content-Type' => 'text/csv',
@@ -390,7 +397,7 @@ class AdminController extends Controller
     {
         $guests = Guest::with('messages')->get();
 
-        $filename = "daftar-tamu-" . Carbon::now()->format('Y-m-d') . ".csv";
+        $filename = 'daftar-tamu-'.Carbon::now()->format('Y-m-d').'.csv';
         $handle = fopen('php://output', 'w');
         fputcsv($handle, ['Nama', 'WhatsApp', 'Kode', 'Jumlah Tamu', 'Konfirmasi', 'Dibuka', 'Dibuat', 'Diupdate', 'Pesan']);
 
@@ -405,13 +412,13 @@ class AdminController extends Controller
                 $guest->is_opened ? 'Ya' : 'Tidak',
                 $guest->created_at->format('d/m/Y H:i'),
                 $guest->updated_at->format('d/m/Y H:i'),
-                $messages
+                $messages,
             ]);
         }
 
         fclose($handle);
 
-        return response()->streamDownload(function() use ($handle) {
+        return response()->streamDownload(function () {
             //
         }, $filename, [
             'Content-Type' => 'text/csv',
@@ -422,15 +429,15 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'event_type' => 'required|in:p,r'
+            'event_type' => 'required|in:p,r',
         ]);
 
         $eventKey = $request->event_type === 'p' ? 'gedung' : 'rumah';
         $event = Event::where('event_key', $eventKey)->first();
 
-        if (!$event) {
+        if (! $event) {
             return response()->json([
-                'exists' => false
+                'exists' => false,
             ]);
         }
 
@@ -440,14 +447,15 @@ class AdminController extends Controller
 
         if ($existingGuest) {
             $eventName = $eventKey === 'gedung' ? 'Gedung' : 'Rumah';
+
             return response()->json([
                 'exists' => true,
-                'message' => "Nama tamu '{$request->name}' sudah terdaftar untuk acara {$eventName}."
+                'message' => "Nama tamu '{$request->name}' sudah terdaftar untuk acara {$eventName}.",
             ]);
         }
 
         return response()->json([
-            'exists' => false
+            'exists' => false,
         ]);
     }
 }
