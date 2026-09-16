@@ -55,47 +55,17 @@ class WeddingTemplateSeeder extends Seeder
                     'show_gallery' => '1',
                     'show_countdown' => '1',
                     'show_gift' => '1',
-                    'show_live' => '1',
-                    'show_dresscode' => '1',
-                    'show_story' => '1',
-                    'show_best_wishes' => '1',
                 ],
-                // Text based assets (not uploads). The bank/address values used
-                // to live here; they now belong to the `gifts` list below.
-                'assets_config' => $vintage->assets_config ?? [],
+                // Text based assets (not uploads)
+                'assets_config' => array_merge($vintage->assets_config ?? [], [
+                    'bank_bni_number' => '557xxxx',
+                    'bank_bni_name' => 'LINDA',
+                    'bank_bri_number' => '00500xxx',
+                    'bank_bri_name' => 'MUKHSIN',
+                    'physical_gift_address' => 'Jl. Jaya Mangku, Kutai Kartanegara',
+                    'physical_gift_name' => 'LINDA',
+                ]),
                 'gallery' => [],
-                // Default gift entries (two banks + a gift shipping address).
-                // The list is fully editable from Dashboard → Settings → Hadiah,
-                // so a fresh install matches what the migration used to seed.
-                'gifts' => [
-                    [
-                        'id' => 'gift-1',
-                        'type' => 'bank',
-                        'label' => 'Bank BNI',
-                        'number' => '557xxxx',
-                        'holder' => 'LINDA',
-                        'address' => '',
-                        'default_logo' => 'assets/vintage/vendor/bni.png',
-                    ],
-                    [
-                        'id' => 'gift-2',
-                        'type' => 'bank',
-                        'label' => 'Bank BRI',
-                        'number' => '00500xxx',
-                        'holder' => 'MUKHSIN',
-                        'address' => '',
-                        'default_logo' => 'assets/vintage/vendor/Bank-Rakyat-Indonesia-BRI.png',
-                    ],
-                    [
-                        'id' => 'gift-3',
-                        'type' => 'address',
-                        'label' => 'KIRIM KADO',
-                        'number' => '',
-                        'holder' => 'LINDA',
-                        'address' => 'Jl. Jaya Mangku, Kutai Kartanegara',
-                        'default_logo' => null,
-                    ],
-                ],
             ]);
 
             $this->command->info('✅ Vintage Romance template settings seeded.');

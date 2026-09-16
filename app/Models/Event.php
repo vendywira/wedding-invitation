@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Event extends Model
 {
@@ -14,9 +13,6 @@ class Event extends Model
 
     protected $fillable = [
         'event_key',
-        'group_name',
-        'is_default',
-        'sort_order',
         'title',
         'location',
         'address',
@@ -26,65 +22,16 @@ class Event extends Model
         'google_map_link',
     ];
 
-    protected $casts = [
-        'is_default' => 'boolean',
-        'sort_order' => 'integer',
-    ];
-
     /**
-     * One `events` row is one invitation group:
-     *
-     * - `event_key`  → the public URL slug     (/<event_key>/invitation)
-     * - `group_name` → the label the admin sees in the dashboard
-     * - `details`    → extra ceremonies listed on top of the primary one
-     * - guests       → the guest list that receives this exact invitation
-     *
-     * Groups are no longer limited to "gedung"/"rumah": the admin can create as
-     * many as needed and point each of them at a different audience.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection<int, Event>
-     */
-    public static function groups()
-    {
-        return static::query()
-            ->with('details')
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->get();
-    }
-
-    /**
-     * The group rendered by the public, un-targeted `/invitation` link.
-     */
-    public static function defaultGroup(): ?self
-    {
-        return static::query()->where('is_default', true)->first()
-            ?? static::query()->orderBy('sort_order')->orderBy('id')->first();
-    }
-
-    /**
-     * Make this group the one the public `/invitation` link renders.
-     */
-    public function makeDefault(): void
-    {
-        static::query()->where('id', '!=', $this->id)->update(['is_default' => false]);
-        $this->forceFill(['is_default' => true])->save();
-    }
-
-    /**
-     * Human readable label for the group shown throughout the dashboard.
+     * Human readable label for each event key.
      */
     public function getLabelAttribute(): string
     {
-        if (filled($this->group_name)) {
-            return (string) $this->group_name;
-        }
-
-        if (filled($this->title)) {
-            return (string) $this->title;
-        }
-
-        return Str::headline((string) $this->event_key);
+        return match ($this->event_key) {
+            'gedung' => 'Resepsi (Gedung)',
+            'rumah' => 'Akad / Rumah',
+            default => ucfirst((string) $this->event_key),
+        };
     }
 
     /**
@@ -100,21 +47,6 @@ class Event extends Model
         }
 
         return $start !== '' ? $start : $finish;
-    }
-
-    /**
-     * Full invitation link for this group, optionally personalised per guest.
-     */
-    public function publicUrl(?string $guestName = null): string
-    {
-        $url = url('/'.$this->event_key.'/invitation');
-
-        return $guestName ? $url.'?to='.urlencode($guestName) : $url;
-    }
-
-    public function getGuestCountAttribute(): int
-    {
-        return $this->guests()->count();
     }
 
     /**

@@ -13,14 +13,9 @@ Route::get('/', function () {
     return redirect()->route('wedding.public');
 });
 
-// Public link: renders the group flagged as "undangan utama".
+Route::get('/p/invitation', [WeddingController::class, 'show'])->name('wedding.show');
+Route::get('/r/invitation', [WeddingController::class, 'show'])->name('wedding.show');
 Route::get('/invitation', [WeddingController::class, 'show'])->name('wedding.public');
-
-// One invitation per group — the slug is the group's `event_key`, so the admin
-// can create as many targeted invitations as needed (/p, /r, /keluarga-bride…).
-Route::get('/{eventSlug}/invitation', [WeddingController::class, 'show'])
-    ->where('eventSlug', '[A-Za-z0-9_-]+')
-    ->name('wedding.show');
 
 // Route untuk menyimpan RSVP
 Route::post('/store-message', [WeddingController::class, 'storeMessage'])->name('wedding.store-message');
@@ -70,10 +65,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/template-settings/embed', [TemplateSettingController::class, 'contentOnly'])->name('admin.template-settings.embed');
     Route::put('/template-settings', [TemplateSettingController::class, 'updateSettings'])->name('admin.template-settings.update');
     Route::put('/template-settings/events', [TemplateSettingController::class, 'updateEvents'])->name('admin.template-settings.events.update');
-    Route::get('/template-settings/groups', [TemplateSettingController::class, 'listGroups'])->name('admin.template-settings.groups.index');
-    Route::post('/template-settings/groups', [TemplateSettingController::class, 'storeGroup'])->name('admin.template-settings.groups.store');
-    Route::put('/template-settings/gifts', [TemplateSettingController::class, 'updateGifts'])->name('admin.template-settings.gifts.update');
-    Route::delete('/template-settings/groups', [TemplateSettingController::class, 'destroyGroup'])->name('admin.template-settings.groups.destroy');
     Route::post('/template-settings/upload-asset', [TemplateSettingController::class, 'uploadAsset'])->name('admin.template-settings.upload-asset');
     Route::delete('/template-settings/delete-asset', [TemplateSettingController::class, 'deleteAsset'])->name('admin.template-settings.delete-asset');
     Route::post('/template-settings/upload-gallery', [TemplateSettingController::class, 'uploadGallery'])->name('admin.template-settings.upload-gallery');

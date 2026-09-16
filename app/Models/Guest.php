@@ -23,17 +23,6 @@ class Guest extends Model
         'is_opened' => 'boolean',
     ];
 
-    /**
-     * `guests.attendance` is NOT NULL without a driver-level default, so a
-     * guest created without an explicit status (dashboard add, auto-created
-     * from a `?to=` link) would fail to insert.
-     */
-    protected $attributes = [
-        'attendance' => 'Belum Konfirmasi',
-        'guest_attends' => 1,
-        'is_opened' => false,
-    ];
-
     public function event()
     {
         return $this->belongsTo(Event::class, 'event_id');

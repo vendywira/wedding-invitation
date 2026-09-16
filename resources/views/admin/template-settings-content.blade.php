@@ -1,7 +1,7 @@
 {{-- Content-only partial for embedding in the dashboard Settings tab.
      All handlers (window.settingsTab / saveSettingsForm / uploadAsset /
      deleteAsset / uploadGallery / editGalleryCaption / deleteGallery /
-     saveGroupForm / saveNewGroup / deleteGroup) are defined in dashboard.blade.php. --}}
+     saveEventForm) are defined in dashboard.blade.php. --}}
 
 @php
     $settings = $template->template_settings ?? [];
@@ -26,8 +26,8 @@
             'floral_border' => ['label' => 'Border Bunga (Atas)', 'default' => 'assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B.webp'],
             'scroll_gif' => ['label' => 'Animasi Scroll', 'default' => 'assets/vintage/vendor/Animation-174404519592-scroll.gif'],
             'dresscode_image' => ['label' => 'Gambar Dress Code', 'default' => 'assets/vintage/vendor/dresscode-color.png'],
-            // Bank logos are uploaded per gift entry in the Hadiah tab
-            // (`gift_logo_<id>`), so they are not listed here.
+            'bank_bni_logo' => ['label' => 'Logo Bank BNI', 'default' => 'assets/vintage/vendor/bni.png'],
+            'bank_bri_logo' => ['label' => 'Logo Bank BRI', 'default' => 'assets/vintage/vendor/Bank-Rakyat-Indonesia-BRI.png'],
         ],
         'Background Section' => [
             'bg_slide_1' => ['label' => 'Background Slide 1', 'default' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg'],
@@ -44,32 +44,16 @@
     ];
     $imageAssets = array_merge(...array_values($assetGroups));
 
-    // Switch tampil/sembunyi per section. Key-nya bebas (tersimpan di
-    // template_settings) dan dipetakan ke satu elemen di invitation oleh
-    // blok CSS "Section visibility toggles" di template.
     $toggles = [
         'show_bride_photo' => 'Foto Mempelai Wanita',
         'show_groom_photo' => 'Foto Mempelai Pria',
-        'show_story_image' => 'Foto Our Story (fotonya saja)',
-        'show_story' => 'Section Our Story',
+        'show_story_image' => 'Foto Our Story',
         'show_gallery' => 'Section Gallery',
         'show_countdown' => 'Section Countdown',
         'show_gift' => 'Section Wedding Gift',
-        'show_live' => 'Section Live Moment',
-        'show_dresscode' => 'Section Dresscode',
-        'show_best_wishes' => 'Section Best Wishes (komentar)',
     ];
 
-    // Blank blueprint reused by window.addGiftRow() for a new gift entry.
-    $giftTemplate = [
-        'id' => '',
-        'type' => 'bank',
-        'label' => '',
-        'number' => '',
-        'holder' => '',
-        'address' => '',
-        'default_logo' => null,
-    ];
+    $eventLabels = ['gedung' => 'Resepsi (Gedung)', 'rumah' => 'Akad / Rumah'];
 @endphp
 
 <style>
@@ -341,167 +325,61 @@
             </div>
 
             <p class="text-muted" style="font-size:.85rem;">
-                Setiap <strong>grup undangan</strong> punya link sendiri (<code>/slug/invitation</code>),
-                daftar acara sendiri, dan daftar tamu sendiri — jadi satu undangan bisa ditujukan ke audiens
-                yang berbeda. Acara <strong>Utama</strong> dipakai untuk countdown &amp; tanggal undangan,
-                sedangkan acara <strong>tambahan</strong> ditampilkan berurutan di bawahnya pada section
-                "Wedding Day".
+                Tambahkan sebanyak apa pun acara pada satu undangan. Acara <strong>Utama</strong> dipakai untuk
+                countdown &amp; tanggal undangan, sedangkan acara <strong>tambahan</strong> ditampilkan berurutan
+                di bawahnya pada section "Wedding Day".
             </p>
 
-            <div class="settings-card">
-                <div class="settings-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <span><i class="fas fa-layer-group me-2"></i>Grup Undangan ({{ $groups->count() }})</span>
-                    <button type="button" class="btn btn-light btn-sm" onclick="window.toggleGroupForm()">
-                        <i class="fas fa-plus me-1"></i> Tambah Grup
-                    </button>
-                </div>
-                <div class="settings-card-body">
-                    <p class="text-muted mb-2" style="font-size:.82rem;">
-                        Grup <span class="badge bg-success">Utama</span> adalah yang tampil di link publik
-                        <code>/invitation</code>. Mengubah slug membuat link lama tidak berlaku lagi.
-                    </p>
-
-                    <div id="tsNewGroupPanel" class="d-none">
-                        <form id="tsNewGroupForm" onsubmit="event.preventDefault(); window.saveNewGroup();">
-                            @csrf
-                            <div class="ceremony-row" style="background:#fff8f6;">
-                                <div class="row g-3">
-                                    <div class="col-md-5">
-                                        <label class="form-label">Nama Grup Undangan</label>
-                                        <input type="text" class="form-control" name="group_name" data-group-name placeholder="Mis. Undangan Keluarga Bride" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Slug URL</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">/</span>
-                                            <input type="text" class="form-control" name="event_key" data-group-slug placeholder="otomatis-dari-nama">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 d-flex align-items-end">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="is_default" value="1" id="tsNewGroupDefault">
-                                            <label class="form-check-label" for="tsNewGroupDefault">Jadikan undangan utama</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Nama Acara Utama</label>
-                                        <input type="text" class="form-control" name="title" placeholder="Resepsi Pernikahan">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Tanggal</label>
-                                        <input type="date" class="form-control" name="event_date" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Waktu Mulai</label>
-                                        <input type="text" class="form-control" name="start_time" placeholder="08:00" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Waktu Selesai</label>
-                                        <input type="text" class="form-control" name="finish_time" placeholder="Selesai" required>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <label class="form-label">Link Google Maps</label>
-                                        <input type="text" class="form-control" name="google_map_link" placeholder="https://maps.app.goo.gl/...">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Nama Tempat / Lokasi</label>
-                                        <input type="text" class="form-control" name="location" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Alamat Lengkap</label>
-                                        <textarea class="form-control" name="address" rows="1" placeholder="Jalan, RT/RW, Kecamatan, Kabupaten"></textarea>
-                                    </div>
-                                </div>
-                                <div class="mt-3">
-                                    <button type="submit" class="btn btn-primary-custom"><i class="fas fa-save me-1"></i> Buat Grup</button>
-                                    <button type="button" class="btn btn-outline-secondary ms-2" onclick="window.toggleGroupForm()">Batal</button>
-                                </div>
-                            </div>
-                        </form>
+            @foreach(['gedung', 'rumah'] as $eventKey)
+                @php
+                    $event = $events[$eventKey] ?? null;
+                    $primaryDate = $event && $event->event_date ? \Carbon\Carbon::parse($event->event_date)->format('Y-m-d') : '';
+                @endphp
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <i class="fas fa-map-marker-alt me-2"></i>{{ $eventLabels[$eventKey] }}
+                        <small class="ms-2" style="opacity:.8;">({{ $eventKey === 'gedung' ? '/p/invitation' : '/r/invitation' }})</small>
                     </div>
-                </div>
-            </div>
+                    <div class="settings-card-body">
+                        <form id="tsEventForm{{ ucfirst($eventKey) }}" onsubmit="event.preventDefault(); window.saveEventForm('tsEventForm{{ ucfirst($eventKey) }}');">
+                            @csrf
+                            <input type="hidden" name="event_key" value="{{ $eventKey }}">
 
-            <div id="tsGroupList">
-            @forelse($groups as $group)
-                <form id="tsGroupForm{{ $group->id }}" class="ts-group-form" onsubmit="event.preventDefault(); window.saveGroupForm({{ $group->id }});">
-                    @csrf
-                    <input type="hidden" name="event_id" value="{{ $group->id }}">
-
-                    <div class="settings-card">
-                        <div class="settings-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-                            <span>
-                                <i class="fas fa-map-marker-alt me-2"></i>{{ $group->label }}
-                                @if($group->is_default)<span class="badge bg-light text-dark ms-1">Utama</span>@endif
-                            </span>
-                            <span class="d-flex align-items-center gap-2">
-                                <a href="{{ $group->publicUrl() }}" target="_blank" class="text-white" style="font-size:.8rem;">
-                                    <code class="text-white">/{{ $group->event_key }}/invitation</code>
-                                    <i class="fas fa-external-link-alt ms-1"></i>
-                                </a>
-                                <button type="button" class="btn btn-outline-light btn-sm" title="Hapus grup"
-                                        onclick="window.deleteGroup(@js($group->event_key), @js($group->label))">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </span>
-                        </div>
-                        <div class="settings-card-body">
-                            <div class="row g-3">
-                                <div class="col-md-5">
-                                    <label class="form-label">Nama Grup Undangan</label>
-                                    <input type="text" class="form-control" name="group_name" value="{{ $group->label }}" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Slug URL</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">/</span>
-                                        <input type="text" class="form-control" name="event_key" value="{{ $group->event_key }}" data-group-slug>
-                                    </div>
-                                    <small class="text-muted">Ubah hanya bila perlu — link lama tidak berlaku lagi.</small>
-                                </div>
-                                <div class="col-md-3 d-flex align-items-center">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="is_default" value="1" id="tsGroupDefault{{ $group->id }}" @checked($group->is_default)>
-                                        <label class="form-check-label" for="tsGroupDefault{{ $group->id }}">Undangan utama</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <h6 class="fw-bold mt-4 mb-2" style="font-size:.85rem;">Acara Utama</h6>
+                            <h6 class="fw-bold mb-2" style="font-size:.85rem;">Acara Utama</h6>
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <label class="form-label">Nama Acara</label>
-                                    <input type="text" class="form-control" name="title" value="{{ $group->title }}" placeholder="Resepsi Pernikahan">
+                                    <input type="text" class="form-control" name="title" value="{{ $event->title ?? '' }}" placeholder="{{ $eventKey === 'gedung' ? 'Resepsi Pernikahan' : 'Akad Nikah' }}">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Tanggal</label>
-                                    <input type="date" class="form-control" name="event_date" value="{{ $group->event_date ? \Carbon\Carbon::parse($group->event_date)->format('Y-m-d') : '' }}" required>
+                                    <input type="date" class="form-control" name="event_date" value="{{ $primaryDate }}" required>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Waktu Mulai</label>
-                                    <input type="text" class="form-control" name="start_time" value="{{ $group->start_time }}" placeholder="08:00" required>
+                                    <input type="text" class="form-control" name="start_time" value="{{ $event->start_time ?? '' }}" placeholder="08:00" required>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Waktu Selesai</label>
-                                    <input type="text" class="form-control" name="finish_time" value="{{ $group->finish_time }}" placeholder="Selesai" required>
+                                    <input type="text" class="form-control" name="finish_time" value="{{ $event->finish_time ?? '' }}" placeholder="Selesai" required>
                                 </div>
                                 <div class="col-md-8">
                                     <label class="form-label">Link Google Maps</label>
-                                    <input type="text" class="form-control" name="google_map_link" value="{{ $group->google_map_link }}" placeholder="https://maps.app.goo.gl/...">
+                                    <input type="text" class="form-control" name="google_map_link" value="{{ $event->google_map_link ?? '' }}" placeholder="https://maps.app.goo.gl/...">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Nama Tempat / Lokasi</label>
-                                    <input type="text" class="form-control" name="location" value="{{ $group->location }}" required>
+                                    <input type="text" class="form-control" name="location" value="{{ $event->location ?? '' }}" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Alamat Lengkap</label>
-                                    <textarea class="form-control" name="address" rows="1" placeholder="Jalan, RT/RW, Kecamatan, Kabupaten">{{ $group->address }}</textarea>
+                                    <textarea class="form-control" name="address" rows="1" placeholder="Jalan, RT/RW, Kecamatan, Kabupaten">{{ $event->address ?? '' }}</textarea>
                                 </div>
                             </div>
 
                             <h6 class="fw-bold mt-4 mb-2" style="font-size:.85rem;">Acara Tambahan</h6>
-                            <div id="tsCeremonyRows{{ $group->id }}" data-ceremony-container>
-                                @foreach($group->details as $detail)
+                            <div id="tsCeremonyRows{{ ucfirst($eventKey) }}">
+                                @foreach(($event->details ?? collect()) as $detail)
                                     <div class="ceremony-row" data-ceremony-row>
                                         <div class="row g-3">
                                             <div class="col-12">
@@ -542,26 +420,17 @@
                                     </div>
                                 @endforeach
                             </div>
-                            <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="window.addCeremonyRow('tsCeremonyRows{{ $group->id }}')">
+                            <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="window.addCeremonyRow('tsCeremonyRows{{ ucfirst($eventKey) }}')">
                                 <i class="fas fa-plus me-1"></i> Tambah Acara
                             </button>
 
                             <div class="mt-3">
-                                <button type="submit" class="btn btn-primary-custom"><i class="fas fa-save me-1"></i> Simpan {{ $group->label }}</button>
-                                <span class="text-muted ms-2" style="font-size:.8rem;">
-                                    {{ $group->guest_count }} tamu · {{ $group->details->count() + 1 }} acara
-                                </span>
+                                <button type="submit" class="btn btn-primary-custom"><i class="fas fa-save me-1"></i> Simpan {{ $eventLabels[$eventKey] }}</button>
                             </div>
-                        </div>
+                        </form>
                     </div>
-                </form>
-            @empty
-                <div class="text-center text-muted py-4">
-                    <i class="fas fa-layer-group fa-2x mb-2"></i>
-                    <p class="mb-0">Belum ada grup undangan. Klik <strong>Tambah Grup</strong> untuk membuat.</p>
                 </div>
-            @endforelse
-            </div>
+            @endforeach
         </div>
 
         {{-- ================= TEKS ================= --}}
@@ -698,45 +567,87 @@
             </form>
         </div>
 
-        {{-- ================= HADIAH / REKENING (dinamis) ================= --}}
+        {{-- ================= HADIAH / REKENING ================= --}}
         <div class="tab-pane fade" id="ts-gift">
-            <div class="settings-card">
-                <div class="settings-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <span><i class="fas fa-gift me-2"></i>Daftar Hadiah (<span id="tsGiftCount">{{ count($gifts) }}</span>)</span>
-                    <button type="button" class="btn btn-light btn-sm" onclick="window.addGiftRow()">
-                        <i class="fas fa-plus me-1"></i> Tambah Hadiah
-                    </button>
-                </div>
-                <div class="settings-card-body">
-                    <p class="text-muted" style="font-size:.85rem;">
-                        Tambahkan sebanyak apa pun: rekening bank, e-wallet (GoPay / OVO / Dana), atau alamat
-                        pengiriman kado. Urutan mengikuti tombol ↑ ↓ dan tiap entri bisa punya logo sendiri.
-                    </p>
-
-                    <form id="tsGiftForm" onsubmit="event.preventDefault(); window.saveGifts();">
-                        @csrf
-                        <div id="tsGiftList">
-                            @forelse($gifts as $gift)
-                                @include('admin.partials.gift-row', ['gift' => $gift, 'index' => $loop->iteration])
-                            @empty
-                                <p class="text-muted mb-0" id="tsGiftEmpty">Belum ada entri hadiah. Klik <strong>Tambah Hadiah</strong> untuk membuat.</p>
-                            @endforelse
+            <form id="tsGiftForm" onsubmit="event.preventDefault(); window.saveSettingsForm('tsGiftForm');">
+                @csrf
+                <div class="settings-card">
+                    <div class="settings-card-header"><i class="fas fa-university me-2"></i>Rekening Bank BNI</div>
+                    <div class="settings-card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Nomor Rekening</label>
+                                <input type="text" class="form-control" name="assets_config[bank_bni_number]" value="{{ $assets['bank_bni_number'] ?? '' }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Atas Nama</label>
+                                <input type="text" class="form-control" name="assets_config[bank_bni_name]" value="{{ $assets['bank_bni_name'] ?? '' }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Logo Bank BNI</label>
+                                <div class="asset-thumb" style="height:70px;">
+                                    <img src="{{ $template->getAssetUrl('bank_bni_logo', 'assets/vintage/vendor/bni.png') }}" alt="BNI" style="max-height:68px;">
+                                </div>
+                                <div class="d-flex gap-1 mt-2">
+                                    <label class="btn btn-outline-primary btn-sm mb-0"><i class="fas fa-upload me-1"></i> Upload<input type="file" class="d-none" accept="image/jpeg,image/png,image/webp,image/gif" onchange="window.uploadAsset(this, 'bank_bni_logo')"></label>
+                                    @if(!empty($assets['bank_bni_logo']))
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="window.deleteAsset('bank_bni_logo')"><i class="fas fa-trash"></i></button>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
-
-                        <button type="submit" class="btn btn-primary-custom mt-3"><i class="fas fa-save me-1"></i> Simpan Data Hadiah</button>
-                    </form>
+                    </div>
                 </div>
-            </div>
+
+                <div class="settings-card">
+                    <div class="settings-card-header"><i class="fas fa-university me-2"></i>Rekening Bank BRI</div>
+                    <div class="settings-card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Nomor Rekening</label>
+                                <input type="text" class="form-control" name="assets_config[bank_bri_number]" value="{{ $assets['bank_bri_number'] ?? '' }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Atas Nama</label>
+                                <input type="text" class="form-control" name="assets_config[bank_bri_name]" value="{{ $assets['bank_bri_name'] ?? '' }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Logo Bank BRI</label>
+                                <div class="asset-thumb" style="height:70px;">
+                                    <img src="{{ $template->getAssetUrl('bank_bri_logo', 'assets/vintage/vendor/Bank-Rakyat-Indonesia-BRI.png') }}" alt="BRI" style="max-height:68px;">
+                                </div>
+                                <div class="d-flex gap-1 mt-2">
+                                    <label class="btn btn-outline-primary btn-sm mb-0"><i class="fas fa-upload me-1"></i> Upload<input type="file" class="d-none" accept="image/jpeg,image/png,image/webp,image/gif" onchange="window.uploadAsset(this, 'bank_bri_logo')"></label>
+                                    @if(!empty($assets['bank_bri_logo']))
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="window.deleteAsset('bank_bri_logo')"><i class="fas fa-trash"></i></button>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <div class="settings-card-header"><i class="fas fa-box-open me-2"></i>Kirim Kado (Alamat)</div>
+                    <div class="settings-card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Nama Penerima</label>
+                                <input type="text" class="form-control" name="assets_config[physical_gift_name]" value="{{ $assets['physical_gift_name'] ?? '' }}">
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label">Alamat Pengiriman</label>
+                                <textarea class="form-control" name="assets_config[physical_gift_address]" rows="2">{{ $assets['physical_gift_address'] ?? '' }}</textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom mt-3"><i class="fas fa-save me-1"></i> Simpan Data Hadiah</button>
+                    </div>
+                </div>
+            </form>
         </div>
 
     </div>
 </div>
-
-{{-- Blueprint for one "hadiah" row. window.addGiftRow() clones it, assigns a
-     fresh id + logo slot and renames the fields on submit. --}}
-<template id="tsGiftRowTemplate">
-    @include('admin.partials.gift-row', ['gift' => $giftTemplate, 'index' => ''])
-</template>
 
 {{-- Blueprint for one "acara tambahan" row. Names are assigned by
      window.addCeremonyRow()/reindexCeremonyRows() so add/remove never

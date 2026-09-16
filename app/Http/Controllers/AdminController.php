@@ -39,10 +39,7 @@ class AdminController extends Controller
         $templates = WeddingTemplate::all();
         $activeTemplate = WeddingTemplate::where('is_active', true)->first();
 
-        // Invitation groups (dynamic: gedung/rumah plus any custom group).
-        $groups = Event::groups();
-
-        return view('admin.dashboard', compact('guests', 'messages', 'stats', 'eventStats', 'templates', 'activeTemplate', 'groups'));
+        return view('admin.dashboard', compact('guests', 'messages', 'stats', 'eventStats', 'templates', 'activeTemplate'));
     }
 
     /**
@@ -109,55 +106,75 @@ class AdminController extends Controller
         ]);
     }
 
-    /**
-     * Statistics per invitation group, keyed by the group slug. Groups are fully
-     * dynamic, so a newly created one shows up here automatically.
-     *
-     * @return array<string, array<string, mixed>>
-     */
-    private function getEventStats(): array
+    private function getEventStats()
     {
+        // Cari event gedung dan rumah
+        $gedungEvent = Event::where('event_key', 'gedung')->first();
+        $rumahEvent = Event::where('event_key', 'rumah')->first();
+
         $eventStats = [];
 
-        foreach (Event::groups() as $group) {
-            $guests = Guest::where('event_id', $group->id)->get();
-            $attendingGuests = $guests->where('attendance', 'Hadir');
-            $guestIds = $guests->pluck('id')->all();
+        // Stats untuk Gedung - HANYA YANG HADIR
+        if ($gedungEvent) {
+            $gedungGuests = Guest::where('event_id', $gedungEvent->id)->get();
+            $gedungAttendingGuests = $gedungGuests->where('attendance', 'Hadir');
+            $gedungGuestIds = $gedungGuests->pluck('id')->toArray();
 
-            $eventStats[$group->event_key] = [
-                'name' => $group->label,
-                'location' => $group->location,
-                'is_default' => (bool) $group->is_default,
-                'total_guests' => $attendingGuests->count(),
-                'total_messages' => Message::whereIn('guest_id', $guestIds)->count(),
-                'attending_guests' => $attendingGuests->count(),
-                'not_attending_guests' => $guests->where('attendance', 'Tidak Hadir')->count(),
-                'opened_invitations' => $guests->where('is_opened', true)->count(),
-                'not_opened_invitations' => $guests->where('is_opened', false)->count(),
-                'guest_attends_total' => $attendingGuests->sum('guest_attends'),
-                'recent_guests' => $guests->where('created_at', '>=', Carbon::now()->subDays(7))->count(),
-                'all_guests_count' => $guests->count(),
+            $eventStats['gedung'] = [
+                'name' => $gedungEvent->location,
+                'total_guests' => $gedungAttendingGuests->count(),
+                'total_messages' => Message::whereIn('guest_id', $gedungGuestIds)->count(),
+                'attending_guests' => $gedungAttendingGuests->count(),
+                'not_attending_guests' => $gedungGuests->where('attendance', 'Tidak Hadir')->count(),
+                'opened_invitations' => $gedungGuests->where('is_opened', true)->count(),
+                'not_opened_invitations' => $gedungGuests->where('is_opened', false)->count(),
+                'guest_attends_total' => $gedungAttendingGuests->sum('guest_attends'),
+                'recent_guests' => $gedungGuests->where('created_at', '>=', Carbon::now()->subDays(7))->count(),
+                'all_guests_count' => $gedungGuests->count(),
             ];
+        } else {
+            $eventStats['gedung'] = $this->getDefaultEventStats('Resepsi di Gedung');
+        }
+
+        // Stats untuk Rumah - HANYA YANG HADIR
+        if ($rumahEvent) {
+            $rumahGuests = Guest::where('event_id', $rumahEvent->id)->get();
+            $rumahAttendingGuests = $rumahGuests->where('attendance', 'Hadir');
+            $rumahGuestIds = $rumahGuests->pluck('id')->toArray();
+
+            $eventStats['rumah'] = [
+                'name' => $rumahEvent->location,
+                'total_guests' => $rumahAttendingGuests->count(),
+                'total_messages' => Message::whereIn('guest_id', $rumahGuestIds)->count(),
+                'attending_guests' => $rumahAttendingGuests->count(),
+                'not_attending_guests' => $rumahGuests->where('attendance', 'Tidak Hadir')->count(),
+                'opened_invitations' => $rumahGuests->where('is_opened', true)->count(),
+                'not_opened_invitations' => $rumahGuests->where('is_opened', false)->count(),
+                'guest_attends_total' => $rumahAttendingGuests->sum('guest_attends'),
+                'recent_guests' => $rumahGuests->where('created_at', '>=', Carbon::now()->subDays(7))->count(),
+                'all_guests_count' => $rumahGuests->count(),
+            ];
+        } else {
+            $eventStats['rumah'] = $this->getDefaultEventStats('Resepsi di Rumah');
         }
 
         return $eventStats;
     }
 
-    /**
-     * Resolve the invitation group a guest request targets.
-     *
-     * `event_type` carries the group slug (`events.event_key`); when it is
-     * missing the default group is used.
-     */
-    private function resolveGroup(Request $request): ?Event
+    private function getDefaultEventStats($eventName)
     {
-        $slug = $request->get('event_type');
-
-        if (! is_string($slug) || $slug === '') {
-            return Event::defaultGroup();
-        }
-
-        return Event::where('event_key', $slug)->first();
+        return [
+            'name' => $eventName,
+            'total_guests' => 0,
+            'total_messages' => 0,
+            'attending_guests' => 0,
+            'not_attending_guests' => 0,
+            'opened_invitations' => 0,
+            'not_opened_invitations' => 0,
+            'guest_attends_total' => 0,
+            'recent_guests' => 0,
+            'all_guests_count' => 0,
+        ];
     }
 
     public function storeGuest(Request $request)
@@ -168,37 +185,29 @@ class AdminController extends Controller
                 'string',
                 'max:255',
                 function ($attribute, $value, $fail) use ($request) {
-                    $event = $this->resolveGroup($request);
+                    $eventKey = $request->event_type === 'p' ? 'gedung' : 'rumah';
+                    $event = Event::where('event_key', $eventKey)->first();
 
-                    if (! $event) {
-                        return;
-                    }
+                    if ($event) {
+                        $existingGuest = Guest::where('event_id', $event->id)
+                            ->where('name', $value)
+                            ->first();
 
-                    $existingGuest = Guest::where('event_id', $event->id)
-                        ->where('name', $value)
-                        ->first();
-
-                    if ($existingGuest) {
-                        $fail("Nama tamu '{$value}' sudah terdaftar di grup \"{$event->label}\".");
+                        if ($existingGuest) {
+                            $eventName = $eventKey === 'gedung' ? 'Gedung' : 'Rumah';
+                            $fail("Nama tamu '{$value}' sudah terdaftar untuk acara {$eventName}.");
+                        }
                     }
                 },
             ],
-            'event_type' => 'required|string|exists:events,event_key',
+            'event_type' => 'required|in:p,r',
             'guest_attends' => 'required|integer|min:1|max:10',
             'whatsapp_number' => 'nullable|string|max:20',
-        ], [
-            'event_type.exists' => 'Grup undangan yang dipilih tidak ditemukan.',
         ]);
 
-        // Pastikan grup undangan ada
-        $event = $this->resolveGroup($request);
-
-        if (! $event) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Grup undangan tidak ditemukan.',
-            ], 422);
-        }
+        // Pastikan event ada
+        $eventKey = $request->event_type === 'p' ? 'gedung' : 'rumah';
+        $event = Event::where('event_key', $eventKey)->first();
 
         // Double check untuk memastikan tidak ada duplikasi (race condition)
         $existingGuest = Guest::where('event_id', $event->id)
@@ -206,9 +215,11 @@ class AdminController extends Controller
             ->first();
 
         if ($existingGuest) {
+            $eventName = $eventKey === 'gedung' ? 'Gedung' : 'Rumah';
+
             return response()->json([
                 'success' => false,
-                'message' => "Nama tamu '{$request->name}' sudah terdaftar di grup \"{$event->label}\".",
+                'message' => "Nama tamu '{$request->name}' sudah terdaftar untuk acara {$eventName}.",
             ], 422);
         }
 
@@ -221,10 +232,12 @@ class AdminController extends Controller
             'is_opened' => false,
         ]);
 
-        // Generate link — selalu mengikuti grup undangan tamu tersebut
+        // Generate link
         $invitationUrl = null;
         if ($request->generate_link) {
-            $invitationUrl = $event->publicUrl($guest->name);
+            $baseUrl = url('/');
+            $path = $request->event_type === 'p' ? 'p' : 'r';
+            $invitationUrl = "$baseUrl/$path/invitation?to=$guest->name";
         }
 
         return response()->json([
@@ -243,40 +256,32 @@ class AdminController extends Controller
                 'string',
                 'max:255',
                 function ($attribute, $value, $fail) use ($request, $id) {
-                    $event = $this->resolveGroup($request);
+                    $eventKey = $request->event_type === 'p' ? 'gedung' : 'rumah';
+                    $event = Event::where('event_key', $eventKey)->first();
 
-                    if (! $event) {
-                        return;
-                    }
+                    if ($event) {
+                        $existingGuest = Guest::where('event_id', $event->id)
+                            ->where('name', $value)
+                            ->where('id', '!=', $id)
+                            ->first();
 
-                    $existingGuest = Guest::where('event_id', $event->id)
-                        ->where('name', $value)
-                        ->where('id', '!=', $id)
-                        ->first();
-
-                    if ($existingGuest) {
-                        $fail("Nama tamu '{$value}' sudah terdaftar di grup \"{$event->label}\".");
+                        if ($existingGuest) {
+                            $eventName = $eventKey === 'gedung' ? 'Gedung' : 'Rumah';
+                            $fail("Nama tamu '{$value}' sudah terdaftar untuk acara {$eventName}.");
+                        }
                     }
                 },
             ],
             'guest_attends' => 'required|integer|min:1|max:10',
-            'event_type' => 'required|string|exists:events,event_key',
+            'event_type' => 'required|in:p,r',
             'attendance' => 'nullable|in:Hadir,Tidak Hadir,Belum Konfirmasi',
             'whatsapp_number' => 'nullable|string|max:20',
-        ], [
-            'event_type.exists' => 'Grup undangan yang dipilih tidak ditemukan.',
         ]);
 
         $guest = Guest::findOrFail($id);
 
-        $event = $this->resolveGroup($request);
-
-        if (! $event) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Grup undangan tidak ditemukan.',
-            ], 422);
-        }
+        $eventKey = $request->event_type === 'p' ? 'gedung' : 'rumah';
+        $event = Event::where('event_key', $eventKey)->first();
 
         // Double check untuk memastikan tidak ada duplikasi (race condition)
         $existingGuest = Guest::where('event_id', $event->id)
@@ -285,9 +290,11 @@ class AdminController extends Controller
             ->first();
 
         if ($existingGuest) {
+            $eventName = $eventKey === 'gedung' ? 'Gedung' : 'Rumah';
+
             return response()->json([
                 'success' => false,
-                'message' => "Nama tamu '{$request->name}' sudah terdaftar di grup \"{$event->label}\".",
+                'message' => "Nama tamu '{$request->name}' sudah terdaftar untuk acara {$eventName}.",
             ], 422);
         }
 
@@ -422,12 +429,11 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'event_type' => 'required|string|exists:events,event_key',
-        ], [
-            'event_type.exists' => 'Grup undangan yang dipilih tidak ditemukan.',
+            'event_type' => 'required|in:p,r',
         ]);
 
-        $event = $this->resolveGroup($request);
+        $eventKey = $request->event_type === 'p' ? 'gedung' : 'rumah';
+        $event = Event::where('event_key', $eventKey)->first();
 
         if (! $event) {
             return response()->json([
@@ -440,9 +446,11 @@ class AdminController extends Controller
             ->first();
 
         if ($existingGuest) {
+            $eventName = $eventKey === 'gedung' ? 'Gedung' : 'Rumah';
+
             return response()->json([
                 'exists' => true,
-                'message' => "Nama tamu '{$request->name}' sudah terdaftar di grup \"{$event->label}\".",
+                'message' => "Nama tamu '{$request->name}' sudah terdaftar untuk acara {$eventName}.",
             ]);
         }
 
