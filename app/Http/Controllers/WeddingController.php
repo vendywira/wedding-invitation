@@ -19,31 +19,40 @@ class WeddingController extends Controller
             abort(404, 'No active template found');
         }
 
-        $guestData = null;
-        $path = $request->getPathInfo();
-        $eventKey = str_starts_with($path, '/r/') ? 'rumah' : 'gedung';
-        $event = Event::where('event_key', $eventKey)->first();
+        $event = $this->resolveGroup($request);
 
-        if ($event) {
+        if (!$event) {
+            abort(404, 'Undangan belum diatur');
+        }
+
+        $eventKey = $event->event_key;
+        $guestData = null;
+
+        if ($event->event_date) {
             $event->event_date_time_start = Carbon::parse($event->event_date . ' ' . $event->start_time)
                 ->format('Y/m/d H:i:s');
         }
 
         if ($guest) {
-            $guestData = Guest::where('guest_code', $guest)->first();
+            $guestData = Guest::where('code', $guest)->first();
         }
 
         // Jika tidak ada guest dari parameter, cek dari query string
         if (!$guestData && $request->has('to')) {
             $guestName = urldecode($request->get('to'));
 
-            // Cari guest berdasarkan nama
-            $guestData = Guest::where('name', 'like', '%' . $guestName . '%')->first();
+            // Tamu dicari di grup undangan ini dulu: satu nama bisa terdaftar
+            // di beberapa grup (mis. tamu yang diundang ke gedung dan ke rumah).
+            $guestData = Guest::where('event_id', $event->id)
+                ->where('name', 'like', '%' . $guestName . '%')
+                ->first()
+                ?? Guest::where('name', 'like', '%' . $guestName . '%')->first();
 
             if (!$guestData) {
+                // Tamu yang membuka lewat link grup ini otomatis terdaftar di grup tersebut.
                 $guestData = new Guest([
                     'name' => $guestName,
-                    'event_id' => $event ? $event->id : 1,
+                    'event_id' => $event->id,
                     'code' => uniqid(),
                     'guest_attends' => 1,
                     'is_opened' => true
@@ -61,7 +70,7 @@ class WeddingController extends Controller
         }
 
         $messages = Message::orderBy('created_at', 'desc')->get();
-        $metaData = $this->generateMetaDataForBothRoutes($request, $event, $guestData, $eventKey);
+        $metaData = $this->generateMetaData($request, $event, $guestData, $eventKey);
 
         $viewPath = "wedding.templates.{$template->slug}.index";
 
@@ -71,16 +80,35 @@ class WeddingController extends Controller
             ->header('X-Robots-Tag', $metaData['robots_meta']);
     }
 
-    private function generateMetaDataForBothRoutes(Request $request, $event, $guestData, $eventKey)
+    /**
+     * Which invitation group the current URL points at.
+     *
+     * `/{slug}/invitation` → the group that owns that slug, while the plain
+     * `/invitation` link renders the group flagged as default.
+     */
+    private function resolveGroup(Request $request): ?Event
+    {
+        $segments = array_values(array_filter(
+            explode('/', trim((string) $request->getPathInfo(), '/'))
+        ));
+
+        if (count($segments) >= 2 && end($segments) === 'invitation') {
+            return Event::where('event_key', $segments[0])->first();
+        }
+
+        return Event::defaultGroup();
+    }
+
+    private function generateMetaData(Request $request, $event, $guestData, $eventKey)
     {
         $currentUrl = url()->current();
         $hasToParam = $request->has('to');
         $guestName = $guestData->name;
         $location = $event->location ?? '';
-        $eventDateFormatted = $event ?
+        $eventDateFormatted = $event->event_date ?
             Carbon::parse($event->event_date)->locale('id')->translatedFormat('l, j F Y') :
             'Rabu, 12 November 2025';
-        $path = $eventKey === 'gedung' ? 'p' : 'r';
+        $path = $event->event_key;
         $weddingEmoji = '🤵🏻💍👰🏻';
 
         if ($hasToParam && $guestName !== 'Tamu Undangan') {

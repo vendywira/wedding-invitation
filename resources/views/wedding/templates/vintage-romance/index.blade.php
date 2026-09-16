@@ -32,10 +32,16 @@ foreach ($galleryImages as $galleryImage) {
 }
 $showBridePhoto = $template->getSetting('show_bride_photo', '1');
 $showGroomPhoto = $template->getSetting('show_groom_photo', '1');
+$showStory = $template->getSetting('show_story', '1');
 $showStoryImage = $template->getSetting('show_story_image', '1');
 $showGallery = $template->getSetting('show_gallery', '1');
 $showCountdown = $template->getSetting('show_countdown', '1');
 $showGift = $template->getSetting('show_gift', '1');
+$showLive = $template->getSetting('show_live', '1');
+$showDresscode = $template->getSetting('show_dresscode', '1');
+$showBestWishes = $template->getSetting('show_best_wishes', '1');
+// Daftar hadiah (bank / e-wallet / alamat kado) diatur dari Settings → Hadiah.
+$giftAccounts = $template->getGifts();
 @endphp
 <!DOCTYPE html>
 <html lang="en-US" prefix="og: https://ogp.me/ns#">
@@ -298,8 +304,6 @@ function jltmaNS(n){for(var e=n.split("."),a=window,i="",r=e.length,t=0;r>t;t++)
 .elementor-element-501b5057,
 .elementor-element-54904115,
 .elementor-element-68e309a1 { background-image: url('{{ $template->getAssetUrl('bg_section', 'assets/vintage/vendor/BG-VIIN-2.jpg') }}') !important; }
-.elementor-element-30eabcb4,
-.elementor-element-3f17830a,
 .elementor-element-62e96db2 { background-image: url('{{ $template->getAssetUrl('gift_card_bg', 'assets/vintage/vendor/ATC-CARD-1.jpg') }}') !important; }
 .elementor-element-3ca3dd75 .overlayy { background-image: url('{{ $template->getAssetUrl('modal_overlay', 'assets/vintage/vendor/CB-VIN-2-FIX-RE.jpg') }}') !important; }
 /* Foto sampul pembuka ("BUKA UNDANGAN"). Script bawaan template mengisi
@@ -428,13 +432,32 @@ function jltmaNS(n){for(var e=n.split("."),a=window,i="",r=e.length,t=0;r>t;t++)
 }
 .wdp-lightbox button:hover { background: rgba(255, 255, 255, .25); }
 
-/* Section visibility toggles controlled from Dashboard > Settings > Teks */
+/* Section visibility toggles controlled from Dashboard > Settings > Teks.
+
+   Semua section ini saudara (anak langsung dari 79bcddc0), jadi satu ID
+   hanya mengenai satu section:
+
+     3cda51a5  Our Story            501b5057  Gallery (+ video)
+     5236da65  Countdown            54904115  Best Wishes (komentar)
+     6a4cb199  Wedding Gift         4a08c6be  Live Moment
+     239ae875  Dresscode
+
+   Hati-hati: 7f6eb8cc adalah INDUK dari 6a4cb199 + 4a08c6be + 239ae875.
+   Memakainya untuk toggle hadiah akan ikut menyembunyikan Live Moment dan
+   Dresscode — karena itu toggle hadiah memakai 6a4cb199 (kartu hadiah saja).
+
+   Toggle per-foto memakai 4acbe1ca / 1775694c / 4ce5666c (lihat daftar
+   di bawah), dipakai kalau hanya fotonya yang ingin disembunyikan. */
 @if(($showBridePhoto ?? '1') === '0') .elementor-element-4acbe1ca { display: none !important; } @endif
 @if(($showGroomPhoto ?? '1') === '0') .elementor-element-1775694c { display: none !important; } @endif
 @if(($showStoryImage ?? '1') === '0') .elementor-element-4ce5666c { display: none !important; } @endif
+@if(($showStory ?? '1') === '0') .elementor-element-3cda51a5 { display: none !important; } @endif
 @if(($showGallery ?? '1') === '0') .elementor-element-501b5057 { display: none !important; } @endif
 @if(($showCountdown ?? '1') === '0') .elementor-element-5236da65 { display: none !important; } @endif
-@if(($showGift ?? '1') === '0') .elementor-element-7f6eb8cc { display: none !important; } @endif
+@if(($showGift ?? '1') === '0') .elementor-element-6a4cb199 { display: none !important; } @endif
+@if(($showLive ?? '1') === '0') .elementor-element-4a08c6be { display: none !important; } @endif
+@if(($showDresscode ?? '1') === '0') .elementor-element-239ae875 { display: none !important; } @endif
+@if(($showBestWishes ?? '1') === '0') .elementor-element-54904115 { display: none !important; } @endif
 </style>
 
 </head>
@@ -1102,14 +1125,37 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 
 						</summary>
 				<div role="region" aria-labelledby="e-n-accordion-item-1220" class="elementor-element elementor-element-4f442e6c e-con-full e-flex e-con e-child" data-id="4f442e6c" data-element_type="container">
-		<div role="region" aria-labelledby="e-n-accordion-item-1220" class="elementor-element elementor-element-62e96db2 e-con-full animated-slow e-flex elementor-invisible e-con e-child" data-id="62e96db2" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;,&quot;animation&quot;:&quot;fadeInUp&quot;,&quot;animation_delay&quot;:100}">
+		@foreach($giftAccounts as $gift)
+@php
+	$giftLogoUrl = $template->getGiftLogoUrl($gift);
+	$giftIsAddress = $gift['type'] === 'address';
+	$giftCopyLines = [$gift['label']];
+	$giftCopyLines[] = $giftIsAddress ? 'Alamat : '.$gift['address'] : 'No. Rekening '.$gift['number'];
+
+	if ($gift['holder'] !== '') {
+		$giftCopyLines[] = 'a.n '.$gift['holder'];
+	}
+
+	// Escape each line, then join with real <br /> tags so the copied text
+	// keeps its line breaks (the block is echoed raw).
+	$giftCopyText = implode('<br />', array_map(fn ($line) => e($line), $giftCopyLines));
+@endphp
+<div role="region" aria-labelledby="e-n-accordion-item-1220" class="elementor-element elementor-element-62e96db2 e-con-full animated-slow e-flex elementor-invisible e-con e-child" data-id="62e96db2" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;,&quot;animation&quot;:&quot;fadeInUp&quot;,&quot;animation_delay&quot;:100}">
 				<div class="elementor-element elementor-element-7332c195 jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="7332c195" data-element_type="widget" data-widget_type="image.default">
 				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="800" height="245" src="{{ $template->getAssetUrl('bank_bni_logo', 'assets/vintage/vendor/bni.png') }}" class="attachment-large size-large wp-image-770" alt="" />															</div>
+															@if($giftIsAddress || ! $giftLogoUrl)<div class="elementor-icon-wrapper"><div class="elementor-icon"><svg aria-hidden="true" class="e-font-icon-svg e-fas-gift" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M32 448c0 17.7 14.3 32 32 32h160V320H32v128zm256 32h160c17.7 0 32-14.3 32-32V320H288v160zm192-320h-42.1c6.2-12.1 10.1-25.5 10.1-40 0-48.5-39.5-88-88-88-41.6 0-68.5 21.3-103 68.3-34.5-47-61.4-68.3-103-68.3-48.5 0-88 39.5-88 88 0 14.5 3.8 27.9 10.1 40H32c-17.7 0-32 14.3-32 32v80c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16v-80c0-17.7-14.3-32-32-32zm-326.1 0c-22.1 0-40-17.9-40-40s17.9-40 40-40c19.9 0 34.6 3.3 86.1 80h-86.1zm206.1 0h-86.1c51.4-76.5 65.7-80 86.1-80 22.1 0 40 17.9 40 40s-17.9 40-40 40z"></path></svg></div></div>@else<img loading="lazy" decoding="async" src="{{ $giftLogoUrl }}" class="attachment-large size-large" alt="{{ $gift['label'] }}" />@endif															</div>
 				</div>
 				<div class="elementor-element elementor-element-3bfea22 jltma-glass-effect-no elementor-widget elementor-widget-text-editor" data-id="3bfea22" data-element_type="widget" data-widget_type="text-editor.default">
 				<div class="elementor-widget-container">
-									<p>Bank BNI<br />No. Rekening {{ $template->getAsset('bank_bni_number', '557xxxx') }}<br />a.n <strong>{{ $template->getAsset('bank_bni_name', 'LINDA') }}</strong></p>								</div>
+									<p>{{ $gift['label'] }}<br />
+									@if($giftIsAddress)
+										Alamat : {{ $gift['address'] }}
+									@else
+										No. Rekening {{ $gift['number'] }}
+									@endif
+									@if($gift['holder'] !== '')
+										<br />a.n <strong>{{ $gift['holder'] }}</strong>
+									@endif</p>								</div>
 				</div>
 				<div class="elementor-element elementor-element-1190eb38 elementor-align-left elementor-mobile-align-left jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-weddingpress-copy-text" data-id="1190eb38" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="weddingpress-copy-text.default">
 				<div class="elementor-widget-container">
@@ -1118,7 +1164,7 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 
 		<div class="head-title"></div>
 		<div class="elementor-button-wrapper">
-						<div class="copy-content spancontent" style="display: none;"></div>
+						<div class="copy-content spancontent" style="display: none;">{!! $giftCopyText !!}</div>
 				
 			<a style="cursor:pointer;" onclick="copyText(this)" data-message="Copied" class="elementor-button" role="button">
 				
@@ -1173,159 +1219,15 @@ Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara
 						</div>
 				</div>
 				</div>
-		<div role="region" aria-labelledby="e-n-accordion-item-1220" class="elementor-element elementor-element-3f17830a e-con-full animated-slow e-flex elementor-invisible e-con e-child" data-id="3f17830a" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;,&quot;animation&quot;:&quot;fadeInUp&quot;,&quot;animation_delay&quot;:200}">
-				<div class="elementor-element elementor-element-212daaba jltma-glass-effect-no elementor-widget elementor-widget-image" data-id="212daaba" data-element_type="widget" data-widget_type="image.default">
-				<div class="elementor-widget-container">
-															<img loading="lazy" decoding="async" width="800" height="420" src="{{ $template->getAssetUrl('bank_bri_logo', 'assets/vintage/vendor/Bank-Rakyat-Indonesia-BRI.png') }}" class="attachment-large size-large wp-image-4366" alt="" />															</div>
-				</div>
-				<div class="elementor-element elementor-element-40b2ec0f jltma-glass-effect-no elementor-widget elementor-widget-text-editor" data-id="40b2ec0f" data-element_type="widget" data-widget_type="text-editor.default">
-				<div class="elementor-widget-container">
-									<p>Bank BRI<br />No. Rekening {{ $template->getAsset('bank_bri_number', '00500xxx') }}<br />a.n <strong>{{ $template->getAsset('bank_bri_name', 'MUKHSIN') }}</strong></p>								</div>
-				</div>
-				<div class="elementor-element elementor-element-59d5d02c elementor-align-left elementor-mobile-align-left jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-weddingpress-copy-text" data-id="59d5d02c" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="weddingpress-copy-text.default">
-				<div class="elementor-widget-container">
-							
-		<div class="elementor-image img"></div>
+@endforeach
+</div>
+</details>
+</div>
+</div>
+</div>
+</div>
 
-		<div class="head-title"></div>
-		<div class="elementor-button-wrapper">
-						<div class="copy-content spancontent" style="display: none;"></div>
-				
-			<a style="cursor:pointer;" onclick="copyText(this)" data-message="Copied" class="elementor-button" role="button">
-				
-		<div class="elementor-button-content-wrapper">
-						<span class="elementor-button-icon elementor-align-icon-">
-				<svg aria-hidden="true" class="e-font-icon-svg e-far-copy" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"></path></svg>			</span>
-						<span class="elementor-button-text">Copy</span>
-		</div>
-					</a>
-			
-		</div>
-
-		<style type="text/css">
-			.spancontent {
-				padding-bottom: 20px;
-			}
-			.copy-content {
-				color: #6EC1E4;
-				text-align: center;
-			}
-			.head-title {
-				color: #6EC1E4;
-				text-align: center;
-			}
-		</style>
-
-		<script>
-		function copyText(el) {
-		    var content = jQuery(el).siblings('div.copy-content').html()
-		    if (!content || !jQuery.trim(content)) {
-		        // Fallback: copy the card caption (bank name, account number, ...)
-		        content = jQuery(el).closest('.elementor-widget-container').find('p').first().html() || ''
-		    }
-		    var temp = jQuery("<textarea>");
-		    jQuery("body").append(temp);
-		    temp.val(content.replace(/<br ?\/?>/g, "\n")).select();
-		    document.execCommand("copy");
-		    temp.remove();
-		    var text = jQuery(el).html()
-		    jQuery(el).html(jQuery(el).data('message'))
-		    var counter = 0;
-		    var interval = setInterval(function() {
-		        counter++;
-		        if (counter == 1) {
-		            jQuery(el).html(text)
-		        }
-		    }, 500);
-		}
-
-		</script>
-
-						</div>
-				</div>
-				</div>
-		<div role="region" aria-labelledby="e-n-accordion-item-1220" class="elementor-element elementor-element-30eabcb4 e-con-full animated-slow e-flex elementor-invisible e-con e-child" data-id="30eabcb4" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;,&quot;animation&quot;:&quot;fadeInUp&quot;,&quot;animation_delay&quot;:200}">
-				<div class="elementor-element elementor-element-7ea176f3 elementor-view-default jltma-glass-effect-no elementor-widget elementor-widget-icon" data-id="7ea176f3" data-element_type="widget" data-widget_type="icon.default">
-				<div class="elementor-widget-container">
-							<div class="elementor-icon-wrapper">
-			<div class="elementor-icon">
-			<svg aria-hidden="true" class="e-font-icon-svg e-fas-gift" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M32 448c0 17.7 14.3 32 32 32h160V320H32v128zm256 32h160c17.7 0 32-14.3 32-32V320H288v160zm192-320h-42.1c6.2-12.1 10.1-25.5 10.1-40 0-48.5-39.5-88-88-88-41.6 0-68.5 21.3-103 68.3-34.5-47-61.4-68.3-103-68.3-48.5 0-88 39.5-88 88 0 14.5 3.8 27.9 10.1 40H32c-17.7 0-32 14.3-32 32v80c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16v-80c0-17.7-14.3-32-32-32zm-326.1 0c-22.1 0-40-17.9-40-40s17.9-40 40-40c19.9 0 34.6 3.3 86.1 80h-86.1zm206.1 0h-86.1c51.4-76.5 65.7-80 86.1-80 22.1 0 40 17.9 40 40s-17.9 40-40 40z"></path></svg>			</div>
-		</div>
-						</div>
-				</div>
-				<div class="elementor-element elementor-element-1eb392a0 jltma-glass-effect-no elementor-widget elementor-widget-text-editor" data-id="1eb392a0" data-element_type="widget" data-widget_type="text-editor.default">
-				<div class="elementor-widget-container">
-									<p>KIRIM KADO<br />Alamat : {{ $template->getAsset('physical_gift_address', 'Jl. Jaya Mangku, Kutai Kartanegara') }}<br />a.n {{ $template->getAsset('physical_gift_name', 'LINDA') }}</p>								</div>
-				</div>
-				<div class="elementor-element elementor-element-52ebc3f5 elementor-align-left elementor-mobile-align-left jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-weddingpress-copy-text" data-id="52ebc3f5" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="weddingpress-copy-text.default">
-				<div class="elementor-widget-container">
-							
-		<div class="elementor-image img"></div>
-
-		<div class="head-title"></div>
-		<div class="elementor-button-wrapper">
-						<div class="copy-content spancontent" style="display: none;"></div>
-				
-			<a style="cursor:pointer;" onclick="copyText(this)" data-message="Copied" class="elementor-button" role="button">
-				
-		<div class="elementor-button-content-wrapper">
-						<span class="elementor-button-icon elementor-align-icon-">
-				<svg aria-hidden="true" class="e-font-icon-svg e-far-copy" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"></path></svg>			</span>
-						<span class="elementor-button-text">Copy</span>
-		</div>
-					</a>
-			
-		</div>
-
-		<style type="text/css">
-			.spancontent {
-				padding-bottom: 20px;
-			}
-			.copy-content {
-				color: #6EC1E4;
-				text-align: center;
-			}
-			.head-title {
-				color: #6EC1E4;
-				text-align: center;
-			}
-		</style>
-
-		<script>
-		function copyText(el) {
-		    var content = jQuery(el).siblings('div.copy-content').html()
-		    if (!content || !jQuery.trim(content)) {
-		        // Fallback: copy the card caption (bank name, account number, ...)
-		        content = jQuery(el).closest('.elementor-widget-container').find('p').first().html() || ''
-		    }
-		    var temp = jQuery("<textarea>");
-		    jQuery("body").append(temp);
-		    temp.val(content.replace(/<br ?\/?>/g, "\n")).select();
-		    document.execCommand("copy");
-		    temp.remove();
-		    var text = jQuery(el).html()
-		    jQuery(el).html(jQuery(el).data('message'))
-		    var counter = 0;
-		    var interval = setInterval(function() {
-		        counter++;
-		        if (counter == 1) {
-		            jQuery(el).html(text)
-		        }
-		    }, 500);
-		}
-
-		</script>
-
-						</div>
-				</div>
-				</div>
-				</div>
-					</details>
-					</div>
-						</div>
-				</div>
-				</div>
-		<div class="elementor-element elementor-element-4a08c6be e-con-full animated-slow e-flex elementor-invisible e-con e-child" data-id="4a08c6be" data-element_type="container" data-settings="{&quot;animation&quot;:&quot;fadeInUp&quot;,&quot;animation_delay&quot;:10,&quot;background_background&quot;:&quot;classic&quot;}">
+<div class="elementor-element elementor-element-4a08c6be e-con-full animated-slow e-flex elementor-invisible e-con e-child" data-id="4a08c6be" data-element_type="container" data-settings="{&quot;animation&quot;:&quot;fadeInUp&quot;,&quot;animation_delay&quot;:10,&quot;background_background&quot;:&quot;classic&quot;}">
 				<div class="elementor-element elementor-element-25ec52ed muncul jltma-glass-effect-no elementor-widget elementor-widget-heading" data-id="25ec52ed" data-element_type="widget" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
 					<p class="elementor-heading-title elementor-size-default">Live Moment</p>				</div>
