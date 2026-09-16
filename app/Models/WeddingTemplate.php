@@ -20,6 +20,7 @@ class WeddingTemplate extends Model
         'assets_config',
         'gallery',
         'template_settings',
+        'gifts',
     ];
 
     protected $casts = [
@@ -29,7 +30,13 @@ class WeddingTemplate extends Model
         'assets_config' => 'array',
         'gallery' => 'array',
         'template_settings' => 'array',
+        'gifts' => 'array',
     ];
+
+    /**
+     * Gift types the invitation knows how to render.
+     */
+    public const GIFT_TYPES = ['bank', 'ewallet', 'address'];
 
     protected static function boot(): void
     {
@@ -104,6 +111,59 @@ class WeddingTemplate extends Model
     public function getGalleryImages(): array
     {
         return $this->gallery ?? [];
+    }
+
+    /**
+     * Gift entries shown in the "Wedding Gift" section, in display order.
+     *
+     * Every entry is normalised so the invitation can render it without
+     * guessing: `type` decides the layout (bank/e-wallet number vs. a shipping
+     * address) and `id` also keys its uploaded logo (`gift_logo_<id>`).
+     *
+     * @return array<int, array<string, string|null>>
+     */
+    public function getGifts(): array
+    {
+        $gifts = $this->gifts ?? [];
+
+        $normalised = [];
+
+        foreach (array_values($gifts) as $index => $gift) {
+            if (! is_array($gift)) {
+                continue;
+            }
+
+            $type = (string) ($gift['type'] ?? 'bank');
+
+            $normalised[] = [
+                'id' => (string) ($gift['id'] ?? 'gift-'.($index + 1)),
+                'type' => in_array($type, self::GIFT_TYPES, true) ? $type : 'bank',
+                'label' => (string) ($gift['label'] ?? ''),
+                'number' => (string) ($gift['number'] ?? ''),
+                'holder' => (string) ($gift['holder'] ?? ''),
+                'address' => (string) ($gift['address'] ?? ''),
+                'default_logo' => $gift['default_logo'] ?? null,
+            ];
+        }
+
+        return $normalised;
+    }
+
+    /**
+     * Logo of a gift entry: the uploaded file when there is one, otherwise the
+     * bundled default that shipped with the template.
+     */
+    public function getGiftLogoUrl(array $gift): ?string
+    {
+        $path = $this->getAsset('gift_logo_'.$gift['id'], $gift['default_logo'] ?? null);
+
+        if (! $path) {
+            return null;
+        }
+
+        return str_starts_with($path, 'template-assets/')
+            ? asset('storage/'.$path)
+            : asset($path);
     }
 
     public function addGalleryImage(string $path, ?string $caption = null): void

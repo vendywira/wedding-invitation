@@ -133,101 +133,68 @@
                         </div>
                     </div>
 
-                    <!-- Event Statistics -->
+                    <!-- Event Statistics — satu kartu per grup undangan (dinamis) -->
+                    @php
+                        $groupPalette = ['bg-primary', 'bg-success', 'bg-info', 'bg-warning', 'bg-secondary', 'bg-dark'];
+                        $groupColors = $groups->values()->mapWithKeys(function ($group, $index) use ($groupPalette) {
+                            return [$group->event_key => $groupPalette[$index % count($groupPalette)]];
+                        });
+                    @endphp
                     <div class="row mb-4">
+                        @forelse($eventStats as $groupSlug => $eventStat)
+                        @php
+                            $groupProgress = $eventStat['all_guests_count'] > 0
+                                ? (($eventStat['attending_guests'] + $eventStat['not_attending_guests']) / $eventStat['all_guests_count']) * 100
+                                : 0;
+                        @endphp
                         <div class="col-md-6 mb-3">
                             <div class="event-card">
-                                <div class="event-header gedung">
-                                    <h5 class="mb-1"><i class="fas fa-building me-2"></i>{{
-                                        $eventStats['gedung']['name'] }}</h5>
-                                    <small><span
-                                            id="gedungAllGuests">{{ $eventStats['gedung']['all_guests_count'] }}</span>
-                                        tamu diundang</small>
-                                </div>
-                                <div class="event-stats">
-                                    <div class="row text-center">
-                                        <div class="col-4 event-stat">
-                                            <div class="event-number text-primary" id="gedungTotalGuests">{{
-                                                $eventStats['gedung']['total_guests'] }}
-                                            </div>
-                                            <div class="event-label">Tamu Hadir</div>
-                                        </div>
-                                        <div class="col-4 event-stat">
-                                            <div class="event-number text-success" id="gedungGuestAttends">{{
-                                                $eventStats['gedung']['guest_attends_total'] }}
-                                            </div>
-                                            <div class="event-label">Total Orang</div>
-                                        </div>
-                                        <div class="col-4 event-stat">
-                                            <div class="event-number text-info" id="gedungTotalMessages">{{
-                                                $eventStats['gedung']['total_messages'] }}
-                                            </div>
-                                            <div class="event-label">Ucapan</div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-3">
-                                        <small class="text-muted">Progress Konfirmasi</small>
-                                        <div class="progress progress-custom mt-1">
-                                            @php
-                                            $gedungProgress = $eventStats['gedung']['all_guests_count'] > 0 ?
-                                            (($eventStats['gedung']['attending_guests'] +
-                                            $eventStats['gedung']['not_attending_guests']) /
-                                            $eventStats['gedung']['all_guests_count']) * 100 : 0;
-                                            @endphp
-                                            <div class="progress-bar bg-success" style="width: {{ $gedungProgress }}%"
-                                                 id="gedungProgressBar"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <div class="event-card">
-                                <div class="event-header rumah">
-                                    <h5 class="mb-1"><i class="fas fa-home me-2"></i>{{ $eventStats['rumah']['name'] }}
+                                <div class="event-header {{ $loop->odd ? 'gedung' : 'rumah' }}">
+                                    <h5 class="mb-1">
+                                        <i class="fas fa-{{ $loop->odd ? 'building' : 'home' }} me-2"></i>{{ $eventStat['name'] }}
+                                        @if($eventStat['is_default'])
+                                            <span class="badge bg-light text-dark ms-1">Utama</span>
+                                        @endif
                                     </h5>
-                                    <small><span
-                                            id="rumahAllGuests">{{ $eventStats['rumah']['all_guests_count'] }}</span>
-                                        tamu diundang</small>
+                                    <small>
+                                        <span id="event-{{ $groupSlug }}-all">{{ $eventStat['all_guests_count'] }}</span> tamu diundang
+                                        · <a class="text-white-50" href="{{ url($groupSlug.'/invitation') }}"
+                                             target="_blank">/{{ $groupSlug }}/invitation</a>
+                                    </small>
                                 </div>
                                 <div class="event-stats">
                                     <div class="row text-center">
                                         <div class="col-4 event-stat">
-                                            <div class="event-number text-primary" id="rumahTotalGuests">{{
-                                                $eventStats['rumah']['total_guests'] }}
-                                            </div>
+                                            <div class="event-number text-primary" id="event-{{ $groupSlug }}-attending">{{ $eventStat['total_guests'] }}</div>
                                             <div class="event-label">Tamu Hadir</div>
                                         </div>
                                         <div class="col-4 event-stat">
-                                            <div class="event-number text-success" id="rumahGuestAttends">{{
-                                                $eventStats['rumah']['guest_attends_total'] }}
-                                            </div>
+                                            <div class="event-number text-success" id="event-{{ $groupSlug }}-people">{{ $eventStat['guest_attends_total'] }}</div>
                                             <div class="event-label">Total Orang</div>
                                         </div>
                                         <div class="col-4 event-stat">
-                                            <div class="event-number text-info" id="rumahTotalMessages">{{
-                                                $eventStats['rumah']['total_messages'] }}
-                                            </div>
+                                            <div class="event-number text-info" id="event-{{ $groupSlug }}-messages">{{ $eventStat['total_messages'] }}</div>
                                             <div class="event-label">Ucapan</div>
                                         </div>
                                     </div>
                                     <div class="mt-3">
                                         <small class="text-muted">Progress Konfirmasi</small>
                                         <div class="progress progress-custom mt-1">
-                                            @php
-                                            $rumahProgress = $eventStats['rumah']['all_guests_count'] > 0 ?
-                                            (($eventStats['rumah']['attending_guests'] +
-                                            $eventStats['rumah']['not_attending_guests']) /
-                                            $eventStats['rumah']['all_guests_count']) * 100 : 0;
-                                            @endphp
-                                            <div class="progress-bar bg-success" style="width: {{ $rumahProgress }}%"
-                                                 id="rumahProgressBar"></div>
+                                            <div class="progress-bar bg-success" style="width: {{ $groupProgress }}%"
+                                                 id="event-{{ $groupSlug }}-progress"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        @empty
+                        <div class="col-12 mb-3">
+                            <div class="alert alert-warning mb-0">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Belum ada grup undangan. Buat grupnya di <strong>Settings → Acara</strong>.
+                            </div>
+                        </div>
+                        @endforelse
                     </div>
                 </div> <!-- /dashboard tab-pane -->
 
@@ -271,8 +238,9 @@
                                         <div class="col-md-2 col-6">
                                             <select name="event_type" class="form-control form-control-sm" required
                                                     id="eventTypeSelect">
-                                                <option value="p">Gedung</option>
-                                                <option value="r">Rumah</option>
+                                                @foreach($groups as $groupOption)
+                                                    <option value="{{ $groupOption->event_key }}">{{ $groupOption->label }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-2 col-12">
@@ -306,9 +274,10 @@
                                                 </div>
                                                 <div class="col-md-4 col-6">
                                                     <select class="form-control form-control-sm" id="eventFilter">
-                                                        <option value="all">Semua Acara</option>
-                                                        <option value="gedung">Gedung</option>
-                                                        <option value="rumah">Rumah</option>
+                                                        <option value="all">Semua Grup</option>
+                                                        @foreach($groups as $groupOption)
+                                                            <option value="{{ $groupOption->event_key }}">{{ $groupOption->label }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4 col-6">
@@ -366,7 +335,7 @@
                                 <thead>
                                 <tr>
                                     <th>Nama Tamu</th>
-                                    <th>Acara</th>
+                                    <th>Grup Undangan</th>
                                     <th>WhatsApp</th>
                                     <th>Jumlah</th>
                                     <th>Status</th>
@@ -379,13 +348,13 @@
                                 <tbody id="guestsTableBody">
                                 @foreach($guests as $guest)
                                 @php
-                                $baseUrl = url('/');
-                                $eventKey = $guest->event ? $guest->event->event_key : 'gedung';
-                                $path = $eventKey === 'rumah' ? 'r' : 'p';
-                                $invitationUrl = "{$baseUrl}/{$path}/invitation?to=" . urlencode($guest->name);
+                                $guestGroupSlug = $guest->event ? $guest->event->event_key : ($groups->first()?->event_key ?? '');
+                                $invitationUrl = $guestGroupSlug
+                                    ? url("/{$guestGroupSlug}/invitation?to=" . urlencode($guest->name))
+                                    : url('/invitation');
                                 @endphp
                                 <tr data-guest-id="{{ $guest->id }}"
-                                    data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
+                                    data-event-type="{{ $guest->event ? $guest->event->event_key : '' }}"
                                     data-attendance="{{ $guest->attendance ?? 'Belum Konfirmasi' }}"
                                     data-whatsapp="{{ $guest->whatsapp_number }}">
                                     <td>
@@ -394,8 +363,8 @@
                                     </td>
                                     <td>
                                         @if($guest->event)
-                                        <span class="badge {{ $guest->event->event_key === 'rumah' ? 'bg-success' : 'bg-primary' }} badge-custom">
-                                                    {{ $guest->event->event_key }}
+                                        <span class="badge {{ $groupColors[$guest->event->event_key] ?? 'bg-primary' }} badge-custom">
+                                                    {{ $guest->event->label }}
                                                 </span>
                                         @else
                                         <span class="badge bg-secondary badge-custom">-</span>
@@ -454,7 +423,7 @@
                                                     data-id="{{ $guest->id }}"
                                                     data-name="{{ $guest->name }}"
                                                     data-guest-attends="{{ $guest->guest_attends }}"
-                                                    data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
+                                                    data-event-type="{{ $guest->event ? $guest->event->event_key : '' }}"
                                                     data-attendance="{{ $guest->attendance ?? 'Belum Konfirmasi' }}"
                                                     data-whatsapp="{{ $guest->whatsapp_number }}"
                                                     title="Edit Tamu">
@@ -476,13 +445,13 @@
                             <div class="d-md-none" id="mobileGuestsList">
                                 @foreach($guests as $guest)
                                 @php
-                                $baseUrl = url('/');
-                                $eventKey = $guest->event ? $guest->event->event_key : 'gedung';
-                                $path = $eventKey === 'rumah' ? 'r' : 'p';
-                                $invitationUrl = "{$baseUrl}/{$path}/invitation?to=" . urlencode($guest->name);
+                                $guestGroupSlug = $guest->event ? $guest->event->event_key : ($groups->first()?->event_key ?? '');
+                                $invitationUrl = $guestGroupSlug
+                                    ? url("/{$guestGroupSlug}/invitation?to=" . urlencode($guest->name))
+                                    : url('/invitation');
                                 @endphp
                                 <div class="card mb-3" data-guest-id="{{ $guest->id }}"
-                                     data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
+                                     data-event-type="{{ $guest->event ? $guest->event->event_key : '' }}"
                                      data-attendance="{{ $guest->attendance ?? 'Belum Konfirmasi' }}"
                                      data-whatsapp="{{ $guest->whatsapp_number }}">
                                     <div class="card-body">
@@ -493,8 +462,8 @@
                                         <p class="card-text mb-1">
                                             <strong>Acara:</strong>
                                             @if($guest->event)
-                                            <span class="badge {{ $guest->event->event_key === 'rumah' ? 'bg-success' : 'bg-primary' }} badge-custom">
-                                                        {{ $guest->event->event_key }}
+                                            <span class="badge {{ $groupColors[$guest->event->event_key] ?? 'bg-primary' }} badge-custom">
+                                                        {{ $guest->event->label }}
                                                     </span>
                                             @else
                                             <span class="badge bg-secondary badge-custom">-</span>
@@ -546,7 +515,7 @@
                                                     data-id="{{ $guest->id }}"
                                                     data-name="{{ $guest->name }}"
                                                     data-guest-attends="{{ $guest->guest_attends }}"
-                                                    data-event-type="{{ $guest->event ? $guest->event->event_key : 'gedung' }}"
+                                                    data-event-type="{{ $guest->event ? $guest->event->event_key : '' }}"
                                                     data-attendance="{{ $guest->attendance ?? 'Belum Konfirmasi' }}"
                                                     data-whatsapp="{{ $guest->whatsapp_number }}"
                                                     title="Edit Tamu">
@@ -907,8 +876,9 @@
                     <div class="mb-3">
                         <label class="form-label">Jenis Acara</label>
                         <select class="form-control" id="editEventType" name="event_type" required>
-                            <option value="p">Gedung</option>
-                            <option value="r">Rumah</option>
+                            @foreach($groups as $groupOption)
+                                <option value="{{ $groupOption->event_key }}">{{ $groupOption->label }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="mb-3">
@@ -1028,12 +998,88 @@
                     document.getElementById('settingsContent').dataset.loaded = '1';
                     initSettingsGallerySort();
                     initSettingsEvents();
+                    initSettingsGifts();
                 })
                 .catch(() => {
                     document.getElementById('settingsContent').innerHTML = '<div class="text-center py-5 text-danger"><i class="fas fa-exclamation-triangle fa-2x mb-2"></i><p>Gagal memuat pengaturan</p></div>';
                 });
         }
 
+    }
+
+    // ==================== INVITATION GROUPS ====================
+    // Every group is dynamic; it is identified by its URL slug (`event_key`).
+    // These maps drive the guest table, the filters and the WhatsApp link.
+    let groupLabels = @json($groups->mapWithKeys(function ($group) {
+        return [$group->event_key => $group->label];
+    }));
+    let groupColors = @json($groupColors);
+    let defaultGroupSlug = @json($groups->firstWhere('is_default', true)?->event_key ?? ($groups->first()?->event_key ?? ''));
+
+    function escapeAttrValue(value) {
+        return String(value == null ? '' : value)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    // Groups live in the Settings pane but are consumed by the guest tab, so
+    // after a group is created/renamed/deleted the dropdowns are rebuilt from
+    // the server list instead of requiring a page reload.
+    function refreshGroupOptions() {
+        fetch('{{ route("admin.template-settings.groups.index") }}', {
+            headers: { 'Accept': 'application/json' }
+        })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                if (!d.success || !d.groups) return;
+
+                const palette = ['bg-primary', 'bg-success', 'bg-info', 'bg-warning', 'bg-secondary', 'bg-dark'];
+                const labels = {};
+                const colors = {};
+
+                d.groups.forEach(function(group, index) {
+                    labels[group.slug] = group.label;
+                    colors[group.slug] = palette[index % palette.length];
+                });
+
+                groupLabels = labels;
+                groupColors = colors;
+
+                const defaultGroup = d.groups.filter(function(group) { return group.is_default; })[0];
+                defaultGroupSlug = defaultGroup ? defaultGroup.slug : (d.groups[0] ? d.groups[0].slug : '');
+
+                syncGroupSelects(d.groups);
+            })
+            .catch(function() {});
+    }
+    window.refreshGroupOptions = refreshGroupOptions;
+
+    function syncGroupSelects(groups) {
+        const targets = [
+            { selector: '#eventFilter', allLabel: 'Semua Grup' },
+            { selector: '#eventTypeSelect' },
+            { selector: '#editEventType' }
+        ];
+
+        targets.forEach(function(target) {
+            const select = document.querySelector(target.selector);
+            if (!select) return;
+
+            const previous = select.value;
+            let html = target.allLabel ? '<option value="all">' + target.allLabel + '</option>' : '';
+
+            html += groups.map(function(group) {
+                return '<option value="' + escapeAttrValue(group.slug) + '">' + escapeAttrValue(group.label) + '</option>';
+            }).join('');
+
+            select.innerHTML = html;
+
+            if (previous && select.querySelector('option[value="' + previous + '"]')) {
+                select.value = previous;
+            }
+        });
     }
 
     // ==================== SETTINGS EMBED JS ====================
@@ -1082,6 +1128,7 @@
                 activateSettingsTab(keep);
                 initSettingsGallerySort();
                 initSettingsEvents();
+                initSettingsGifts();
             })
             .catch(function() { setTimeout(function() { location.reload(); }, 600); });
     }
@@ -1101,8 +1148,20 @@
     }
 
     function initSettingsEvents() {
-        paintCeremonyNumbers('tsCeremonyRowsGedung');
-        paintCeremonyNumbers('tsCeremonyRowsRumah');
+        // Numbering is painted per group card, so groups created from Settings —
+        // or any group added later — are handled automatically.
+        document.querySelectorAll('[data-ceremony-container]').forEach(function(container) {
+            paintCeremonyNumbers(container.id);
+        });
+
+        // The group name fills in the URL slug until the slug is edited by hand.
+        var newGroupForm = document.getElementById('tsNewGroupForm');
+        if (newGroupForm) {
+            bindGroupSlugAutoFill(
+                newGroupForm.querySelector('[data-group-name]'),
+                newGroupForm.querySelector('[data-group-slug]')
+            );
+        }
     }
     window.initSettingsEvents = initSettingsEvents;
 
@@ -1538,20 +1597,60 @@
     }
     window.initSettingsGallerySort = initSettingsGallerySort;
 
-    // Save one of the event forms (Acara Gedung / Acara Rumah).
-    window.saveEventForm = function(formId) {
-        var form = document.getElementById(formId);
-        if (!form) return;
-        reindexCeremonyRows(form);
-        var fd = new FormData(form);
-        fd.append('_method', 'PUT');
-        fetch('{{ route("admin.template-settings.events.update") }}', {
+    // ==================== INVITATION GROUPS ====================
+    // Groups are dynamic: every group owns a URL slug, a ceremony list and its
+    // own guest list, so the same invitation can target different audiences.
+    function slugifyGroupName(value) {
+        return String(value || '')
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
+    }
+
+    function bindGroupSlugAutoFill(nameInput, slugInput) {
+        if (!nameInput || !slugInput) return;
+
+        slugInput.addEventListener('input', function() {
+            slugInput.dataset.manual = '1';
+        });
+
+        nameInput.addEventListener('input', function() {
+            if (slugInput.dataset.manual === '1') return;
+            slugInput.value = slugifyGroupName(nameInput.value);
+        });
+    }
+
+    window.toggleGroupForm = function() {
+        var panel = document.getElementById('tsNewGroupPanel');
+        if (!panel) return;
+
+        panel.classList.toggle('d-none');
+
+        if (!panel.classList.contains('d-none')) {
+            var nameInput = panel.querySelector('input[name="group_name"]');
+            if (nameInput) nameInput.focus();
+            if (panel.scrollIntoView) panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+    };
+
+    function submitGroupForm(url, formData) {
+        return fetch(url, {
             method: 'POST',
             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
-            body: fd
-        }).then(function(r) { return r.json(); }).then(function(d) {
+            body: formData
+        }).then(function(r) {
+            // 419/413/500 answers are not JSON — report the status instead of a
+            // generic "something went wrong".
+            return r.json().catch(function() {
+                return { success: false, message: 'Respons server tidak valid (HTTP ' + r.status + ')' };
+            });
+        }).then(function(d) {
             if (d.success) {
-                showToast(d.message || 'Data acara disimpan');
+                showToast(d.message || 'Data grup undangan disimpan');
+                refreshGroupOptions();
                 refreshSettingsPane('#ts-events');
             } else {
                 var err = d.message || 'Gagal menyimpan';
@@ -1559,7 +1658,303 @@
                 showToast(err, 'error');
             }
         }).catch(function() { showToast('Terjadi kesalahan', 'error'); });
+    }
+
+    window.saveNewGroup = function() {
+        var form = document.getElementById('tsNewGroupForm');
+        if (!form) return;
+        if (!form.reportValidity()) return;
+
+        submitGroupForm('{{ route("admin.template-settings.groups.store") }}', new FormData(form));
     };
+
+    // Save one group card: name, slug, default flag and its ceremonies.
+    window.saveGroupForm = function(groupId) {
+        var form = document.getElementById('tsGroupForm' + groupId);
+        if (!form) return;
+
+        reindexCeremonyRows(form);
+
+        var fd = new FormData(form);
+        fd.append('_method', 'PUT');
+        submitGroupForm('{{ route("admin.template-settings.events.update") }}', fd);
+    };
+
+    window.deleteGroup = function(slug, label) {
+        if (!window.confirm('Hapus grup undangan "' + label + '"?\n\nAcara di dalamnya ikut terhapus dan link /' + slug + '/invitation tidak berlaku lagi. Tamu yang masih terdaftar di grup ini harus dipindahkan atau dihapus dulu.')) {
+            return;
+        }
+
+        var fd = new FormData();
+        fd.append('_method', 'DELETE');
+        fd.append('event_key', slug);
+
+        fetch('{{ route("admin.template-settings.groups.destroy") }}', {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+            body: fd
+        }).then(function(r) {
+            return r.json().catch(function() {
+                return { success: false, message: 'Respons server tidak valid (HTTP ' + r.status + ')' };
+            });
+        }).then(function(d) {
+            if (d.success) {
+                showToast(d.message || 'Grup undangan dihapus');
+                refreshGroupOptions();
+                refreshSettingsPane('#ts-events');
+            } else {
+                showToast(d.message || 'Gagal menghapus grup', 'error');
+            }
+        }).catch(function() { showToast('Terjadi kesalahan', 'error'); });
+    };
+
+    // ==================== HADIAH / GIFT ENTRIES ====================
+    // The gift list is dynamic (bank accounts, e-wallets, shipping address), so
+    // rows are driven from the DOM instead of fixed field names.
+    function giftRows() {
+        var list = document.getElementById('tsGiftList');
+        return list ? Array.prototype.slice.call(list.querySelectorAll('[data-gift-row]')) : [];
+    }
+
+    function paintGiftNumbers() {
+        giftRows().forEach(function(row, index) {
+            var label = row.querySelector('[data-gift-number]');
+            if (label) label.textContent = index + 1;
+        });
+
+        var counter = document.getElementById('tsGiftCount');
+        if (counter) counter.textContent = giftRows().length;
+    }
+
+    function toggleGiftEmptyState(show) {
+        var empty = document.getElementById('tsGiftEmpty');
+        if (empty) empty.classList.toggle('d-none', !show);
+    }
+
+    // Bank / e-wallet entries show a number and a logo, an address entry shows
+    // the shipping address instead.
+    window.syncGiftRowFields = function(select) {
+        var row = select && select.closest ? select.closest('[data-gift-row]') : null;
+        if (!row) return;
+
+        var isAddress = select.value === 'address';
+
+        row.querySelectorAll('[data-gift-field]').forEach(function(field) {
+            var name = field.getAttribute('data-gift-field');
+            var visible = isAddress ? name === 'address' : (name === 'number' || name === 'logo');
+            field.classList.toggle('d-none', !visible);
+        });
+    };
+
+    window.addGiftRow = function() {
+        var list = document.getElementById('tsGiftList');
+        var tpl = document.getElementById('tsGiftRowTemplate');
+        if (!list || !tpl) return;
+
+        toggleGiftEmptyState(false);
+
+        var fragment = tpl.content.cloneNode(true);
+        var row = fragment.querySelector('[data-gift-row]');
+
+        // A fresh id doubles as the storage key of this entry's logo slot.
+        if (row) row.querySelector('[data-field="id"]').value = 'gift-' + Date.now();
+
+        list.appendChild(fragment);
+        paintGiftNumbers();
+
+        if (!row) return;
+
+        window.syncGiftRowFields(row.querySelector('[data-field="type"]'));
+
+        var label = row.querySelector('[data-field="label"]');
+        if (label) label.focus();
+        if (row.scrollIntoView) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    };
+
+    window.removeGiftRow = function(btn) {
+        var row = btn.closest ? btn.closest('[data-gift-row]') : null;
+        if (!row) return;
+
+        var deleteBtn = row.querySelector('[data-gift-logo-delete]');
+
+        if (deleteBtn && !deleteBtn.classList.contains('d-none')) {
+            if (!window.confirm('Entri ini punya logo yang sudah diupload. Hapus entri beserta logonya?')) return;
+        }
+
+        row.remove();
+        paintGiftNumbers();
+        toggleGiftEmptyState(giftRows().length === 0);
+    };
+
+    window.moveGiftRow = function(btn, direction) {
+        var row = btn.closest ? btn.closest('[data-gift-row]') : null;
+        if (!row) return;
+
+        var sibling = direction < 0 ? row.previousElementSibling : row.nextElementSibling;
+
+        // Skip anything that is not a gift row (e.g. the empty-state message).
+        while (sibling && !sibling.matches('[data-gift-row]')) {
+            sibling = direction < 0 ? sibling.previousElementSibling : sibling.nextElementSibling;
+        }
+
+        if (!sibling) return;
+
+        if (direction < 0) {
+            sibling.parentNode.insertBefore(row, sibling);
+        } else {
+            sibling.parentNode.insertBefore(sibling, row);
+        }
+
+        paintGiftNumbers();
+    };
+
+    // Logos are uploaded straight into this entry's asset slot, without
+    // refreshing the pane — otherwise unsaved edits in the other rows would be
+    // thrown away.
+    window.uploadGiftLogo = async function(input) {
+        var row = input.closest ? input.closest('[data-gift-row]') : null;
+        if (!row) return;
+
+        var file = input.files[0];
+        input.value = '';
+        if (!file) return;
+
+        if (!isSupportedImage(file)) {
+            showToast('Format "' + (file.type || 'tidak dikenal') + '" tidak didukung.\nGunakan JPG, PNG, WebP, atau GIF.', 'error');
+            return;
+        }
+
+        var id = row.querySelector('[data-field="id"]').value;
+
+        if (!id) {
+            showToast('Simpan entri hadiah ini dulu sebelum upload logo', 'error');
+            return;
+        }
+
+        try {
+            var prepared = await compressForUpload(file, 800, 0.9);
+            var fd = new FormData();
+            fd.append('asset_key', 'gift_logo_' + id);
+            fd.append('file', prepared);
+
+            var r = await fetch('{{ route("admin.template-settings.upload-asset") }}', {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                body: fd
+            });
+
+            var result = await readJsonResponse(r);
+
+            if (result.data && result.data.success) {
+                var preview = row.querySelector('[data-gift-logo-preview]');
+                if (preview) {
+                    preview.src = result.data.url;
+                    preview.classList.remove('d-none');
+                }
+
+                var removeBtn = row.querySelector('[data-gift-logo-delete]');
+                if (removeBtn) removeBtn.classList.remove('d-none');
+
+                showToast('Logo hadiah berhasil diupload');
+            } else {
+                showToast(uploadHint(result), 'error');
+            }
+        } catch (e) {
+            showToast('Upload gagal: ' + (e && e.message ? e.message : 'kesalahan tidak diketahui'), 'error');
+        }
+    };
+
+    window.deleteGiftLogo = async function(btn) {
+        var row = btn.closest ? btn.closest('[data-gift-row]') : null;
+        if (!row) return;
+        if (!window.confirm('Hapus logo hadiah ini?')) return;
+
+        var id = row.querySelector('[data-field="id"]').value;
+
+        try {
+            var r = await fetch('{{ route("admin.template-settings.delete-asset") }}', {
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ asset_key: 'gift_logo_' + id })
+            });
+            var j = await r.json();
+
+            if (!j.success) {
+                showToast(j.message || 'Gagal hapus logo', 'error');
+                return;
+            }
+
+            var preview = row.querySelector('[data-gift-logo-preview]');
+            var fallback = row.getAttribute('data-default-logo-url') || '';
+
+            if (preview) {
+                if (fallback) {
+                    preview.src = fallback;
+                    preview.classList.remove('d-none');
+                } else {
+                    preview.removeAttribute('src');
+                    preview.classList.add('d-none');
+                }
+            }
+
+            btn.classList.add('d-none');
+            showToast('Logo hadiah dihapus');
+        } catch (e) {
+            showToast('Error menghapus logo', 'error');
+        }
+    };
+
+    // Names are (re)assigned from the DOM order right before submit, so an
+    // up/down move or a removed row can never leave a gap or a duplicate index.
+    function reindexGiftRows(form) {
+        form.querySelectorAll('[data-gift-row] [data-field]').forEach(function(field) {
+            field.removeAttribute('name');
+        });
+
+        giftRows().forEach(function(row, index) {
+            row.querySelectorAll('[data-field]').forEach(function(field) {
+                field.name = 'gifts[' + index + '][' + field.getAttribute('data-field') + ']';
+            });
+        });
+    }
+
+    window.saveGifts = function() {
+        var form = document.getElementById('tsGiftForm');
+        if (!form) return;
+
+        reindexGiftRows(form);
+
+        var fd = new FormData(form);
+        fd.append('_method', 'PUT');
+
+        fetch('{{ route("admin.template-settings.gifts.update") }}', {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+            body: fd
+        }).then(function(r) {
+            return r.json().catch(function() {
+                return { success: false, message: 'Respons server tidak valid (HTTP ' + r.status + ')' };
+            });
+        }).then(function(d) {
+            if (d.success) {
+                showToast(d.message || 'Data hadiah disimpan');
+                refreshSettingsPane('#ts-gift');
+            } else {
+                var err = d.message || 'Gagal menyimpan';
+                if (d.errors) err += '\n' + Object.values(d.errors).flat().join('\n');
+                showToast(err, 'error');
+            }
+        }).catch(function() { showToast('Terjadi kesalahan', 'error'); });
+    };
+
+    function initSettingsGifts() {
+        giftRows().forEach(function(row) {
+            window.syncGiftRowFields(row.querySelector('[data-field="type"]'));
+        });
+
+        paintGiftNumbers();
+    }
+    window.initSettingsGifts = initSettingsGifts;
 
     window.saveSettingsForm = function(formId) {
         var form = document.getElementById(formId);
@@ -1710,12 +2105,8 @@
             const whatsappNumber = $(this).data('whatsapp') || '';
             let attendance = $(this).data('attendance');
 
-            let formattedEventType = 'p';
-            if (eventType === 'rumah') {
-                formattedEventType = 'r';
-            } else if (eventType === 'gedung') {
-                formattedEventType = 'p';
-            }
+            // `event_type` now carries the group slug directly.
+            const formattedEventType = eventType || defaultGroupSlug;
 
             if (!attendance || attendance === 'null' || attendance === 'undefined') {
                 attendance = 'Belum Konfirmasi';
@@ -2220,8 +2611,8 @@
             }
 
             const baseUrl = '{{ url("/") }}';
-            const path = event.event_key === 'rumah' ? 'r' : 'p';
-            const invitationLink = `${baseUrl}/${path}/invitation?to=${encodeURIComponent(guestName)}`;
+            const groupSlug = event.event_key || defaultGroupSlug;
+            const invitationLink = `${baseUrl}/${groupSlug}/invitation?to=${encodeURIComponent(guestName)}`;
 
             const options = {
                 weekday: 'long',
@@ -2360,12 +2751,7 @@
 
                 if (searchTerm !== '' && !guestName.includes(searchTerm)) return false;
 
-                if (eventFilter !== 'all') {
-                    let normalizedEventType = eventType;
-                    if (eventType === 'p') normalizedEventType = 'gedung';
-                    if (eventType === 'r') normalizedEventType = 'rumah';
-                    if (normalizedEventType !== eventFilter) return false;
-                }
+                if (eventFilter !== 'all' && eventType !== eventFilter) return false;
 
                 if (statusFilter !== 'all') {
                     if (statusFilter === 'Belum Konfirmasi') {
@@ -2425,7 +2811,7 @@
 
             if (eventFilter !== 'all') {
                 if (infoText !== '') infoText += ' | ';
-                infoText += `Acara: ${eventFilter === 'gedung' ? 'Resepsi Gedung' : 'Resepsi Rumah'}`;
+                infoText += `Grup: ${groupLabels[eventFilter] || eventFilter}`;
             }
 
             if (statusFilter !== 'all') {
@@ -2519,23 +2905,21 @@
                     $('#totalMessages').text(response.stats.total_messages);
                     $('#pendingGuests').text(response.stats.pending_guests);
 
-                    $('#gedungAllGuests').text(response.eventStats.gedung.all_guests_count);
-                    $('#gedungTotalGuests').text(response.eventStats.gedung.total_guests);
-                    $('#gedungGuestAttends').text(response.eventStats.gedung.guest_attends_total);
-                    $('#gedungTotalMessages').text(response.eventStats.gedung.total_messages);
+                    // Stats are rendered per group, so the cards are looked up by
+                    // slug instead of the old hardcoded gedung/rumah pair.
+                    const groupStats = response.eventStats || {};
+                    Object.keys(groupStats).forEach(function(slug) {
+                        const groupStat = groupStats[slug];
+                        $('#event-' + slug + '-all').text(groupStat.all_guests_count);
+                        $('#event-' + slug + '-attending').text(groupStat.total_guests);
+                        $('#event-' + slug + '-people').text(groupStat.guest_attends_total);
+                        $('#event-' + slug + '-messages').text(groupStat.total_messages);
 
-                    $('#rumahAllGuests').text(response.eventStats.rumah.all_guests_count);
-                    $('#rumahTotalGuests').text(response.eventStats.rumah.total_guests);
-                    $('#rumahGuestAttends').text(response.eventStats.rumah.guest_attends_total);
-                    $('#rumahTotalMessages').text(response.eventStats.rumah.total_messages);
-
-                    const gedungProgress = response.eventStats.gedung.all_guests_count > 0 ?
-                        ((response.eventStats.gedung.attending_guests + response.eventStats.gedung.not_attending_guests) / response.eventStats.gedung.all_guests_count) * 100 : 0;
-                    $('#gedungProgressBar').css('width', `${gedungProgress}%`);
-
-                    const rumahProgress = response.eventStats.rumah.all_guests_count > 0 ?
-                        ((response.eventStats.rumah.attending_guests + response.eventStats.rumah.not_attending_guests) / response.eventStats.rumah.all_guests_count) * 100 : 0;
-                    $('#rumahProgressBar').css('width', `${rumahProgress}%`);
+                        const progress = groupStat.all_guests_count > 0
+                            ? ((groupStat.attending_guests + groupStat.not_attending_guests) / groupStat.all_guests_count) * 100
+                            : 0;
+                        $('#event-' + slug + '-progress').css('width', `${progress}%`);
+                    });
 
                     lastUpdateTime = new Date();
                     isRefreshing = false;
@@ -2573,13 +2957,14 @@
 
                     function getEventBadge(event) {
                         if (!event) return '<span class="badge bg-secondary badge-custom">-</span>';
-                        return '<span class="badge ' + (event.event_key === 'rumah' ? 'bg-success' : 'bg-primary') + ' badge-custom">' + event.event_key + '</span>';
+                        const slug = event.event_key || '';
+                        return '<span class="badge ' + (groupColors[slug] || 'bg-primary') + ' badge-custom">' + escapeHtml(groupLabels[slug] || slug) + '</span>';
                     }
 
                     let tableHtml = '';
                     guests.forEach(function(g) {
-                        const eventKey = g.event ? g.event.event_key : 'gedung';
-                        const path = eventKey === 'rumah' ? 'r' : 'p';
+                        const eventKey = g.event ? g.event.event_key : defaultGroupSlug;
+                        const path = eventKey;
                         const inviteUrl = baseUrl + '/' + path + '/invitation?to=' + encodeURIComponent(g.name);
                         const eventData = g.event ? JSON.stringify(g.event).replace(/'/g, '&#39;').replace(/"/g, '&quot;') : 'null';
                         tableHtml += '<tr data-guest-id="' + g.id + '" data-event-type="' + eventKey + '" data-attendance="' + (g.attendance || 'Belum Konfirmasi') + '" data-whatsapp="' + (g.whatsapp_number || '') + '">';
@@ -2604,8 +2989,8 @@
 
                     let mobileHtml = '';
                     guests.forEach(function(g) {
-                        const eventKey = g.event ? g.event.event_key : 'gedung';
-                        const path = eventKey === 'rumah' ? 'r' : 'p';
+                        const eventKey = g.event ? g.event.event_key : defaultGroupSlug;
+                        const path = eventKey;
                         const inviteUrl = baseUrl + '/' + path + '/invitation?to=' + encodeURIComponent(g.name);
                         const eventData = g.event ? JSON.stringify(g.event).replace(/'/g, '&#39;').replace(/"/g, '&quot;') : 'null';
                         mobileHtml += '<div class="card mb-3" data-guest-id="' + g.id + '" data-event-type="' + eventKey + '" data-attendance="' + (g.attendance || 'Belum Konfirmasi') + '" data-whatsapp="' + (g.whatsapp_number || '') + '">';
@@ -2735,7 +3120,7 @@
 
             let filterInfo = '';
             if (eventFilter !== 'all') {
-                filterInfo += `Acara: ${eventFilter === 'gedung' ? 'Gedung' : 'Rumah'}`;
+                filterInfo += `Grup: ${groupLabels[eventFilter] || eventFilter}`;
             }
             if (statusFilter !== 'all') {
                 if (filterInfo) filterInfo += ', ';

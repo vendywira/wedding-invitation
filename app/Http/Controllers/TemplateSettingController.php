@@ -213,17 +213,8 @@ class TemplateSettingController extends Controller
             'ratio_tolerance' => 0.4,
             'auto_resize' => true,
         ],
-        'bank_bni_logo' => [
-            'label' => 'Logo Bank BNI',
-            'min_width' => 200,
-            'min_height' => 60,
-            'max_width' => 3000,
-            'max_height' => 3000,
-            'aspect_ratio' => null,
-            'preferred_ratio' => '16:5',
-            'ratio_tolerance' => 0.4,
-            'auto_resize' => true,
-        ],
+        // Bank logos now belong to their gift entry (`gift_logo_<id>`), so they
+        // are validated by the generic rules there and no longer live here.
         'bg_cover' => [
             'label' => 'Background Cover',
             'min_width' => 600,
@@ -312,30 +303,6 @@ class TemplateSettingController extends Controller
             'ratio_tolerance' => 0.5,
             'auto_resize' => true,
         ],
-        'bank_bri_logo' => [
-            'label' => 'Logo Bank BRI',
-            'min_width' => 200,
-            'min_height' => 60,
-            'max_width' => 3000,
-            'max_height' => 3000,
-            'aspect_ratio' => null,
-            'preferred_ratio' => '16:5',
-            'ratio_tolerance' => 0.4,
-            'auto_resize' => true,
-        ],
-    ];
-
-    /**
-     * Text values that live in assets_config (bank details, gift address, ...).
-     * These are edited as plain text fields, not uploads.
-     */
-    public const TEXT_ASSET_KEYS = [
-        'bank_bni_number',
-        'bank_bni_name',
-        'bank_bri_number',
-        'bank_bri_name',
-        'physical_gift_address',
-        'physical_gift_name',
     ];
 
     /**
@@ -603,8 +570,8 @@ class TemplateSettingController extends Controller
             'template' => $template,
             'assetValidationRules' => $this->assetValidationRules,
             'galleryValidationRules' => $this->galleryValidationRules,
-            'events' => $this->events(),
-            'textAssetKeys' => self::TEXT_ASSET_KEYS,
+            'groups' => $this->groups(),
+            'gifts' => $template->getGifts(),
         ]);
     }
 
@@ -630,8 +597,6 @@ class TemplateSettingController extends Controller
         $validated = $request->validate([
             'template_settings' => 'nullable|array',
             'template_settings.*' => 'nullable|string|max:5000',
-            'assets_config' => 'nullable|array',
-            'assets_config.*' => 'nullable|string|max:1000',
         ]);
 
         $newSettings = array_merge(
@@ -639,22 +604,7 @@ class TemplateSettingController extends Controller
             $validated['template_settings'] ?? []
         );
 
-        $updates = ['template_settings' => $newSettings];
-
-        // Text-based assets (bank account info, physical gift address, ...)
-        if (! empty($validated['assets_config'])) {
-            $textAssets = array_intersect_key(
-                $validated['assets_config'],
-                array_flip(self::TEXT_ASSET_KEYS)
-            );
-
-            $updates['assets_config'] = array_merge(
-                $template->assets_config ?? [],
-                $textAssets
-            );
-        }
-
-        $template->update($updates);
+        $template->update(['template_settings' => $newSettings]);
 
         return response()->json([
             'success' => true,
@@ -665,27 +615,129 @@ class TemplateSettingController extends Controller
     }
 
     /**
-     * The two invitation events (gedung = /p, rumah = /r), keyed by event_key.
+     * Replace the whole gift list (bank accounts, e-wallets, shipping address).
      *
-     * @return \Illuminate\Support\Collection<int, Event>
+     * Every entry owns a logo slot keyed by its id (`gift_logo_<id>`), which is
+     * uploaded/deleted through the generic asset endpoints; removing an entry
+     * here also removes its uploaded logo.
      */
-    private function events()
+    public function updateGifts(Request $request)
     {
-        return Event::whereIn('event_key', ['gedung', 'rumah'])
-            ->with('details')
-            ->get()
-            ->keyBy('event_key');
+        $template = WeddingTemplate::where('is_active', true)->first();
+
+        if (! $template) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak ada template aktif',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'gifts' => 'nullable|array|max:20',
+            'gifts.*.id' => 'nullable|string|max:60',
+            'gifts.*.type' => 'nullable|string|in:'.implode(',', WeddingTemplate::GIFT_TYPES),
+            'gifts.*.label' => 'nullable|string|max:120',
+            'gifts.*.number' => 'nullable|string|max:120',
+            'gifts.*.holder' => 'nullable|string|max:120',
+            'gifts.*.address' => 'nullable|string|max:1000',
+            'gifts.*.default_logo' => 'nullable|string|max:255',
+        ], [
+            'gifts.max' => 'Maksimal 20 entri hadiah.',
+        ]);
+
+        $existing = $template->getGifts();
+        $existingById = [];
+
+        foreach ($existing as $gift) {
+            $existingById[$gift['id']] = $gift;
+        }
+
+        $gifts = [];
+
+        foreach ($validated['gifts'] ?? [] as $index => $gift) {
+            // Rows without a label are simply ignored, so an empty "Tambah
+            // Hadiah" row never blocks saving.
+            if (blank($gift['label'] ?? null)) {
+                continue;
+            }
+
+            $id = filled($gift['id'] ?? null) ? (string) $gift['id'] : 'gift-'.($index + 1);
+
+            $gifts[] = [
+                'id' => $id,
+                'type' => $gift['type'] ?? 'bank',
+                'label' => $gift['label'],
+                'number' => $gift['number'] ?? '',
+                'holder' => $gift['holder'] ?? '',
+                'address' => $gift['address'] ?? '',
+                // Entries seeded from the old fixed cards keep their bundled logo.
+                'default_logo' => $gift['default_logo'] ?? ($existingById[$id]['default_logo'] ?? null),
+            ];
+        }
+
+        $template->update(['gifts' => $gifts]);
+
+        // Drop the uploaded logo of every entry that is no longer in the list.
+        $keptIds = array_column($gifts, 'id');
+        $assets = $template->assets_config ?? [];
+        $assetsChanged = false;
+
+        foreach (array_keys($existingById) as $removedId) {
+            if (in_array($removedId, $keptIds, true)) {
+                continue;
+            }
+
+            $key = 'gift_logo_'.$removedId;
+
+            if (empty($assets[$key])) {
+                continue;
+            }
+
+            if (Storage::disk('public')->exists($assets[$key])) {
+                Storage::disk('public')->delete($assets[$key]);
+            }
+
+            unset($assets[$key]);
+            $assetsChanged = true;
+        }
+
+        if ($assetsChanged) {
+            $template->update(['assets_config' => $assets]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => count($gifts).' entri hadiah berhasil disimpan',
+            'gifts' => $template->fresh()->getGifts(),
+        ]);
     }
 
     /**
-     * Update one invitation's ceremonies: the primary event plus any number of
-     * additional ceremonies (`details[]`), which are shown one after another in
-     * the "Wedding Day" section of that invitation.
+     * Every invitation group, in the order the admin arranged them.
+     *
+     * A group is one `events` row: `event_key` is the public URL slug
+     * (/<event_key>/invitation), `group_name` is its dashboard label and its
+     * `event_details` are the extra ceremonies of that invitation.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, Event>
      */
-    public function updateEvents(Request $request)
+    private function groups()
     {
-        $validated = $request->validate([
-            'event_key' => 'required|string|in:gedung,rumah',
+        return Event::groups();
+    }
+
+    /**
+     * Validation rules shared by the create/update group forms.
+     *
+     * @return array<string, mixed>
+     */
+    private function groupValidationRules(bool $creating): array
+    {
+        return [
+            // Groups are addressed by id when edited, so the slug stays editable.
+            'event_id' => $creating ? 'nullable' : 'required|integer|exists:events,id',
+            'event_key' => 'nullable|string|max:60',
+            'group_name' => ($creating ? 'required' : 'nullable').'|string|max:255',
             'title' => 'nullable|string|max:255',
             'event_date' => 'required|date',
             'start_time' => 'required|string|max:50',
@@ -693,6 +745,7 @@ class TemplateSettingController extends Controller
             'location' => 'required|string|max:255',
             'address' => 'nullable|string|max:1000',
             'google_map_link' => 'nullable|string|max:1000',
+            'is_default' => 'nullable|boolean',
             // Additional ceremonies. Rows without a title are simply ignored,
             // so an empty "Tambah Acara" row never blocks saving.
             'details' => 'nullable|array',
@@ -703,21 +756,46 @@ class TemplateSettingController extends Controller
             'details.*.location' => 'nullable|string|max:255',
             'details.*.address' => 'nullable|string|max:1000',
             'details.*.google_map_link' => 'nullable|string|max:1000',
-        ]);
+        ];
+    }
 
-        $event = Event::firstOrNew(['event_key' => $validated['event_key']]);
-        $event->fill(collect($validated)->except('details')->all())->save();
+    /**
+     * Turn a name into a unique URL slug (public-facing part of the link).
+     * An existing group is ignored when it is the row being updated.
+     */
+    private function uniqueGroupSlug(?string $requested, string $fallback, ?int $ignoreId = null): string
+    {
+        $base = Str::slug((string) ($requested ?: $fallback));
 
-        // Replace the ceremony list with the submitted one so ordering and
-        // deletions are handled in a single save. A payload that omits
-        // `details` entirely (legacy/partial callers) leaves the existing
-        // extra ceremonies untouched instead of silently wiping them.
-        if ($request->has('details')) {
-            $event->details()->delete();
+        if ($base === '') {
+            $base = 'undangan';
         }
 
+        $slug = $base;
+        $suffix = 2;
+
+        while (Event::where('event_key', $slug)
+            ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+            ->exists()) {
+            $slug = $base.'-'.$suffix++;
+        }
+
+        return $slug;
+    }
+
+    /**
+     * Replace a group's extra ceremonies with the submitted list, so ordering
+     * and deletions are handled in a single save.
+     *
+     * @param  array<int, array<string, mixed>>  $details
+     */
+    private function syncGroupDetails(Event $event, array $details): void
+    {
+        $event->details()->delete();
+
         $position = 0;
-        foreach ($validated['details'] ?? [] as $detail) {
+
+        foreach ($details as $detail) {
             if (blank($detail['title'] ?? null)) {
                 continue;
             }
@@ -732,6 +810,155 @@ class TemplateSettingController extends Controller
                 'google_map_link' => $detail['google_map_link'] ?? null,
                 'sort_order' => $position++,
             ]);
+        }
+    }
+
+    /**
+     * Group list as JSON, so the dashboard can refresh its guest dropdowns and
+     * filters right after a group is created or deleted (no page reload).
+     */
+    public function listGroups()
+    {
+        return response()->json([
+            'success' => true,
+            'groups' => $this->groups()->map(function (Event $group) {
+                return [
+                    'slug' => $group->event_key,
+                    'label' => $group->label,
+                    'is_default' => (bool) $group->is_default,
+                    'guest_count' => $group->guest_count,
+                ];
+            })->values(),
+        ]);
+    }
+
+    /**
+     * Create a new invitation group (its own URL, ceremonies and guest list).
+     */
+    public function storeGroup(Request $request)
+    {
+        $validated = $request->validate($this->groupValidationRules(true), [
+            'group_name.required' => 'Nama grup undangan wajib diisi.',
+            'event_date.required' => 'Tanggal acara utama wajib diisi.',
+            'start_time.required' => 'Waktu mulai wajib diisi.',
+            'finish_time.required' => 'Waktu selesai wajib diisi.',
+            'location.required' => 'Nama tempat/lokasi wajib diisi.',
+        ]);
+
+        $event = Event::create([
+            'event_key' => $this->uniqueGroupSlug($validated['event_key'] ?? null, $validated['group_name']),
+            'group_name' => $validated['group_name'],
+            'title' => $validated['title'] ?? null,
+            'event_date' => $validated['event_date'],
+            'start_time' => $validated['start_time'],
+            'finish_time' => $validated['finish_time'],
+            'location' => $validated['location'],
+            'address' => $validated['address'] ?? null,
+            'google_map_link' => $validated['google_map_link'] ?? null,
+            'sort_order' => (int) Event::max('sort_order') + 1,
+        ]);
+
+        $this->syncGroupDetails($event, $validated['details'] ?? []);
+
+        // The first group ever created becomes the public /invitation target.
+        if ($request->boolean('is_default') || Event::where('is_default', true)->doesntExist()) {
+            $event->makeDefault();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Grup undangan "'.$event->label.'" berhasil dibuat',
+            'event' => $event->fresh()->load('details'),
+        ]);
+    }
+
+    /**
+     * Delete an invitation group. Refuses while guests still belong to it, and
+     * never removes the last remaining group.
+     */
+    public function destroyGroup(Request $request)
+    {
+        $validated = $request->validate([
+            'event_key' => 'required|string|max:60|exists:events,event_key',
+        ]);
+
+        $event = Event::where('event_key', $validated['event_key'])->first();
+
+        if (! $event) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Grup undangan tidak ditemukan',
+            ], 404);
+        }
+
+        $guestCount = $event->guests()->count();
+
+        if ($guestCount > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Grup "'.$event->label.'" masih punya '.$guestCount.' tamu. Pindahkan atau hapus tamunya terlebih dahulu.',
+            ], 422);
+        }
+
+        if (Event::count() <= 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Minimal harus ada satu grup undangan.',
+            ], 422);
+        }
+
+        $label = $event->label;
+        $wasDefault = $event->is_default;
+
+        $event->delete();
+
+        if ($wasDefault) {
+            Event::defaultGroup()?->makeDefault();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Grup undangan "'.$label.'" berhasil dihapus',
+        ]);
+    }
+
+    /**
+     * Update one invitation group: its name/slug and its ceremonies (the primary
+     * event plus any number of additional ceremonies shown after it in the
+     * "Wedding Day" section of that invitation).
+     */
+    public function updateEvents(Request $request)
+    {
+        $validated = $request->validate($this->groupValidationRules(false));
+
+        $event = Event::find($validated['event_id']);
+
+        if (! $event) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Grup undangan tidak ditemukan',
+            ], 422);
+        }
+
+        $attributes = collect($validated)->except(['details', 'is_default', 'event_id', 'event_key'])->all();
+
+        // The public URL slug follows the group name unless it is set manually.
+        $attributes['event_key'] = $this->uniqueGroupSlug(
+            $validated['event_key'] ?? $event->event_key,
+            $validated['group_name'] ?? $event->label,
+            $event->id
+        );
+
+        $event->fill($attributes)->save();
+
+        // A payload that omits `details` entirely (legacy/partial callers) leaves
+        // the existing extra ceremonies untouched instead of silently wiping them.
+        if ($request->has('details')) {
+            $this->syncGroupDetails($event, $validated['details'] ?? []);
+        }
+
+        if ($request->boolean('is_default')) {
+            $event->makeDefault();
         }
 
         $total = $event->details()->count() + 1;
