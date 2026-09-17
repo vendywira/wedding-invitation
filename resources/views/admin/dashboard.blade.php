@@ -2101,8 +2101,8 @@
 
         // Delete guest
         $(document).on('click', '.delete-guest', function() {
-            const guestId = $(this).data('id');
-            const guestName = $(this).data('name');
+            const guestId = this.getAttribute('data-id');
+            const guestName = this.getAttribute('data-name');
 
             showElegantConfirm(
                 `Anda akan menghapus tamu "<strong>${guestName}</strong>". Tindakan ini tidak dapat dibatalkan.`,
@@ -2116,7 +2116,7 @@
                 if (confirmed) {
                     showLoading();
                     $.ajax({
-                        url: '{{ url("/admin/guests") }}/${guestId}',
+                        url: `{{ url("/admin/guests") }}/${guestId}`,
                         type: 'DELETE',
                         data: { _token: '{{ csrf_token() }}' },
                         success: function(response) {
@@ -2139,12 +2139,12 @@
 
         // Edit guest functionality
         $(document).on('click', '.edit-guest', function() {
-            const guestId = $(this).data('id');
-            const guestName = $(this).data('name');
-            const guestAttends = $(this).data('guest-attends');
-            const eventType = $(this).data('event-type');
-            const whatsappNumber = $(this).data('whatsapp') || '';
-            let attendance = $(this).data('attendance');
+            const guestId = this.getAttribute('data-id');
+            const guestName = this.getAttribute('data-name');
+            const guestAttends = this.getAttribute('data-guest-attends');
+            const eventType = this.getAttribute('data-event-type');
+            const whatsappNumber = this.getAttribute('data-whatsapp') || '';
+            let attendance = this.getAttribute('data-attendance');
 
             // `event_type` now carries the group slug directly.
             const formattedEventType = eventType || defaultGroupSlug;
@@ -2181,7 +2181,7 @@
             showLoading();
 
             $.ajax({
-                url: '{{ url("/admin/guests") }}/${guestId}',
+                url: `{{ url("/admin/guests") }}/${guestId}`,
                 type: 'PUT',
                 data: formData,
                 success: function(response) {
@@ -2256,8 +2256,8 @@
         // ==================== MESSAGE MANAGEMENT ====================
         // Delete message
         $(document).on('click', '.delete-message', function() {
-            const messageId = $(this).data('id');
-            const messageName = $(this).data('name');
+            const messageId = this.getAttribute('data-id');
+            const messageName = this.getAttribute('data-name') || 'Anonymous';
 
             showElegantConfirm(
                 `Anda akan menghapus ucapan dari "<strong>${messageName}</strong>".`,
@@ -2271,7 +2271,7 @@
                 if (confirmed) {
                     showLoading();
                     $.ajax({
-                        url: '{{ url("/admin/messages") }}/${messageId}',
+                        url: `{{ url("/admin/messages") }}/${messageId}`,
                         type: 'DELETE',
                         data: { _token: '{{ csrf_token() }}' },
                         success: function(response) {
@@ -2520,7 +2520,7 @@
                 if (confirmed) {
                     showLoading();
                     $.ajax({
-                        url: '{{ url("/templates") }}/${templateId}/set-default',
+                        url: `{{ url("/templates") }}/${templateId}/set-default`,
                         type: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}'
@@ -2559,7 +2559,7 @@
                 if (confirmed) {
                     showLoading();
                     $.ajax({
-                        url: '{{ url("/templates") }}/${templateId}',
+                        url: `{{ url("/templates") }}/${templateId}`,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
@@ -3239,6 +3239,7 @@
                 confirmModal.show();
 
                 $('#confirmActionBtn').off('click').on('click', function() {
+                    $('#elegantConfirmModal').off('hidden.bs.modal');
                     confirmModal.hide();
                     resolve(true);
                 });
