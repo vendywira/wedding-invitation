@@ -11,35 +11,19 @@
     // Every image the vintage-romance invitation renders. `default` is the
     // bundled file used when nothing has been uploaded yet.
     $assetGroups = [
-        'Foto & Ornamen' => [
+        'Foto' => [
             'bride_photo' => ['label' => 'Foto Mempelai Wanita', 'default' => 'assets/vintage/vendor/cewek.jpg'],
             'groom_photo' => ['label' => 'Foto Mempelai Pria', 'default' => 'assets/vintage/vendor/cowok.jpg'],
-            'cover_photo' => ['label' => 'Foto Cover Depan (Sampul "BUKA UNDANGAN")', 'default' => 'assets/vintage/vendor/CB-VIN-2-FIX-RE.jpg'],
-            'hero_photo' => ['label' => 'Foto "A Journey of Love Begins" (Hero)', 'default' => 'assets/vintage/vendor/cewek.jpg'],
+            'hero_photo' => ['label' => 'Foto Journey of Love', 'default' => 'assets/vintage/vendor/cewek.jpg'],
             'story_image' => ['label' => 'Foto Our Story', 'default' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM.jpg'],
             'closing_image' => ['label' => 'Foto Penutup / Terima Kasih', 'default' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_42_15-AM.jpg'],
+            'desktop_cover' => ['label' => 'Cover Depan Desktop', 'default' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM.jpg'],
+            'cover_photo' => ['label' => 'Cover Sampul (Buka Undangan)', 'default' => 'assets/vintage/vendor/CB-VIN-2-FIX-RE.jpg'],
             'logo_image' => ['label' => 'Logo / Monogram', 'default' => 'assets/vintage/vendor/LOGO-VIN-2.png'],
-            'flower_decoration' => ['label' => 'Dekorasi Bunga', 'default' => 'assets/vintage/vendor/BUNGA-VIN-2.png'],
-            'lamp_decoration' => ['label' => 'Dekorasi Lampu', 'default' => 'assets/vintage/vendor/LAMPU-VIN-2.png'],
-            'curtain_decoration' => ['label' => 'Dekorasi Tirai / Hordeng', 'default' => 'assets/vintage/vendor/HORDENG-VIN-2.png'],
-            'divider_image' => ['label' => 'Garis Pemisah / Divider', 'default' => 'assets/vintage/vendor/DIVIDER-VIN-2.png'],
-            'floral_border' => ['label' => 'Border Bunga (Atas)', 'default' => 'assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B.webp'],
-            'scroll_gif' => ['label' => 'Animasi Scroll', 'default' => 'assets/vintage/vendor/Animation-174404519592-scroll.gif'],
-            'dresscode_image' => ['label' => 'Gambar Dress Code', 'default' => 'assets/vintage/vendor/dresscode-color.png'],
-            // Bank logos are uploaded per gift entry in the Hadiah tab
-            // (`gift_logo_<id>`), so they are not listed here.
         ],
-        'Background Section' => [
-            'bg_slide_1' => ['label' => 'Background Slide 1', 'default' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg'],
-            'bg_slide_2' => ['label' => 'Background Slide 2', 'default' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_36_39-AM.jpg'],
-            'bg_cover' => ['label' => 'Background Cover', 'default' => 'assets/vintage/vendor/BG-COVER-VIN-2-FIX.jpg'],
-            'bg_paper' => ['label' => 'Kertas Bunga', 'default' => 'assets/vintage/vendor/PAPER-BG-FLORAL-Q.jpg'],
-            'bg_section' => ['label' => 'Background Section', 'default' => 'assets/vintage/vendor/BG-VIIN-2.jpg'],
-            'gift_card_bg' => ['label' => 'Kartu Hadiah', 'default' => 'assets/vintage/vendor/ATC-CARD-1.jpg'],
-            'modal_overlay' => ['label' => 'Cover Undangan', 'default' => 'assets/vintage/vendor/CB-VIN-2-FIX-RE.jpg'],
-            'desktop_cover' => ['label' => 'Cover Depan Desktop (layar "THE WEDDING OF")', 'default' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM.jpg'],
-            'bg_all' => ['label' => 'Background Utama', 'default' => 'assets/vintage/vendor/BG-ALL-VIN-2.jpg'],
-            'bg_plain_paper' => ['label' => 'Kertas Polos', 'default' => 'assets/vintage/vendor/paper-plos-p-1.jpg'],
+        'Slide Background' => [
+            'bg_slide_1' => ['label' => 'Slide 1', 'default' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg'],
+            'bg_slide_2' => ['label' => 'Slide 2', 'default' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_36_39-AM.jpg'],
         ],
     ];
     $imageAssets = array_merge(...array_values($assetGroups));
@@ -114,6 +98,7 @@
         <li class="nav-item"><button type="button" class="nav-link" data-bs-target="#ts-events" onclick="window.settingsTab(this)"><i class="fas fa-calendar-alt me-1"></i> Acara</button></li>
         <li class="nav-item"><button type="button" class="nav-link" data-bs-target="#ts-texts" onclick="window.settingsTab(this)"><i class="fas fa-font me-1"></i> Teks</button></li>
         <li class="nav-item"><button type="button" class="nav-link" data-bs-target="#ts-gift" onclick="window.settingsTab(this)"><i class="fas fa-gift me-1"></i> Hadiah</button></li>
+        <li class="nav-item"><button type="button" class="nav-link" data-bs-target="#ts-story" onclick="window.settingsTab(this)"><i class="fas fa-heart me-1"></i> Our Story</button></li>
     </ul>
 
     <div class="tab-content">
@@ -730,10 +715,49 @@
         </div>
 
     </div>
+
+    {{-- ================= OUR STORY ================= --}}
+    <div class="tab-pane fade" id="ts-story">
+        <div class="settings-card">
+            <div class="settings-card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-heart me-2"></i>Our Story</span>
+                <button type="button" class="btn btn-sm btn-light" onclick="window.addStoryItem()"><i class="fas fa-plus me-1"></i> Tambah</button>
+            </div>
+            <div class="settings-card-body">
+                <div class="mb-3">
+                    <label class="form-label">Judul Section</label>
+                    <input type="text" class="form-control" id="storyTitle" value="{{ $settings['story_title'] ?? 'Our Story' }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Subtitle</label>
+                    <input type="text" class="form-control" id="storySubtitle" value="{{ $settings['story_subtitle'] ?? 'Every love story is beautiful but ours is my favorite' }}">
+                </div>
+                <div id="storyItemsContainer">
+                    @php
+                    $storyItems = json_decode($template->getSetting('story_items', '[]'), true) ?: [
+                        ['title' => 'PERTEMUAN (2017)', 'description' => 'Berawal dari teman kuliah bersama-sama perjuangkan S1 Teknik Sipil, kami bertemu saat mengerjakan Tugas Besar, pertemuan itu berkembang menjadi kisah yang kami rawat perlahan'],
+                        ['title' => 'LAMARAN (2026)', 'description' => 'Perjalanan kami bukanlah tanpa ujian, kami dihadapkan pada jarak yang memisahkan dan entah berapa kali kami saling memaafkan.'],
+                    ];
+                    @endphp
+                    @foreach($storyItems as $idx => $item)
+                    <div class="story-item card mb-2" data-index="{{ $idx }}">
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong style="font-size:0.85rem;">Cerita {{ $idx + 1 }}</strong>
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('.story-item').remove()"><i class="fas fa-trash"></i></button>
+                            </div>
+                            <input type="text" class="form-control form-control-sm mb-2 story-item-title" placeholder="Judul (misal: PERTEMUAN (2017))" value="{{ $item['title'] ?? '' }}">
+                            <textarea class="form-control form-control-sm story-item-desc" rows="3" placeholder="Cerita...">{{ $item['description'] ?? '' }}</textarea>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                <button type="button" class="btn btn-primary-custom btn-sm mt-2" onclick="window.saveStoryItems()"><i class="fas fa-save me-1"></i> Simpan Our Story</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-{{-- Blueprint for one "hadiah" row. window.addGiftRow() clones it, assigns a
-     fresh id + logo slot and renames the fields on submit. --}}
 <template id="tsGiftRowTemplate">
     @include('admin.partials.gift-row', ['gift' => $giftTemplate, 'index' => ''])
 </template>
@@ -777,6 +801,47 @@
             <div class="col-md-6">
                 <label class="form-label">Alamat Lengkap</label>
                 <textarea class="form-control" data-field="address" rows="1" placeholder="Jalan, RT/RW, Kecamatan, Kabupaten"></textarea>
+            </div>
+        </div>
+    </div>
+
+    {{-- ================= OUR STORY ================= --}}
+    <div class="tab-pane fade" id="ts-story">
+        <div class="settings-card">
+            <div class="settings-card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-heart me-2"></i>Our Story</span>
+                <button type="button" class="btn btn-sm btn-light" onclick="window.addStoryItem()"><i class="fas fa-plus me-1"></i> Tambah</button>
+            </div>
+            <div class="settings-card-body">
+                <div class="mb-3">
+                    <label class="form-label">Judul Section</label>
+                    <input type="text" class="form-control" id="storyTitle" value="{{ $settings['story_title'] ?? 'Our Story' }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Subtitle</label>
+                    <input type="text" class="form-control" id="storySubtitle" value="{{ $settings['story_subtitle'] ?? 'Every love story is beautiful but ours is my favorite' }}">
+                </div>
+                <div id="storyItemsContainer">
+                    @php
+                    $storyItems = json_decode($template->getSetting('story_items', '[]'), true) ?: [
+                        ['title' => 'PERTEMUAN (2017)', 'description' => 'Berawal dari teman kuliah bersama-sama perjuangkan S1 Teknik Sipil, kami bertemu saat mengerjakan Tugas Besar, pertemuan itu berkembang menjadi kisah yang kami rawat perlahan'],
+                        ['title' => 'LAMARAN (2026)', 'description' => 'Perjalanan kami bukanlah tanpa ujian, kami dihadapkan pada jarak yang memisahkan dan entah berapa kali kami saling memaafkan.'],
+                    ];
+                    @endphp
+                    @foreach($storyItems as $idx => $item)
+                    <div class="story-item card mb-2" data-index="{{ $idx }}">
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong style="font-size:0.85rem;">Cerita {{ $idx + 1 }}</strong>
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('.story-item').remove()"><i class="fas fa-trash"></i></button>
+                            </div>
+                            <input type="text" class="form-control form-control-sm mb-2 story-item-title" placeholder="Judul (misal: PERTEMUAN (2017))" value="{{ $item['title'] ?? '' }}">
+                            <textarea class="form-control form-control-sm story-item-desc" rows="3" placeholder="Cerita...">{{ $item['description'] ?? '' }}</textarea>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                <button type="button" class="btn btn-primary-custom btn-sm mt-2" onclick="window.saveStoryItems()"><i class="fas fa-save me-1"></i> Simpan Our Story</button>
             </div>
         </div>
     </div>

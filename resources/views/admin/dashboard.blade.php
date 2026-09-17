@@ -1085,14 +1085,13 @@
     // ==================== SETTINGS EMBED JS ====================
     function settingsTab(btn) {
         var target = btn.getAttribute('data-bs-target');
-        // Remove active from all tabs and panes within settingsContent
         var container = document.getElementById('settingsContent');
         if (!container) return;
         container.querySelectorAll('.nav-link').forEach(function(t) { t.classList.remove('active'); });
-        container.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('show', 'active'); });
+        container.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('show', 'active'); p.style.display = 'none'; });
         btn.classList.add('active');
         var pane = container.querySelector(target);
-        if (pane) pane.classList.add('show', 'active');
+        if (pane) { pane.classList.add('show', 'active'); pane.style.display = ''; }
     }
     window.settingsTab = settingsTab;
 
@@ -1975,6 +1974,48 @@
             }
         }).catch(function() { showToast('Terjadi kesalahan', 'error'); });
     };
+
+    window.addStoryItem = function() {
+        var container = document.getElementById('storyItemsContainer');
+        if (!container) return;
+        var count = container.querySelectorAll('.story-item').length;
+        var div = document.createElement('div');
+        div.className = 'story-item card mb-2';
+        div.dataset.index = count;
+        div.innerHTML = '<div class="card-body p-3">' +
+            '<div class="d-flex justify-content-between align-items-center mb-2">' +
+            '<strong style="font-size:0.85rem;">Cerita ' + (count + 1) + '</strong>' +
+            '<button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest(\'.story-item\').remove()"><i class="fas fa-trash"></i></button>' +
+            '</div>' +
+            '<input type="text" class="form-control form-control-sm mb-2 story-item-title" placeholder="Judul (misal: PERTEMUAN (2017))">' +
+            '<textarea class="form-control form-control-sm story-item-desc" rows="3" placeholder="Cerita..."></textarea>' +
+            '</div>';
+        container.appendChild(div);
+    };
+
+    window.saveStoryItems = function() {
+        var container = document.getElementById('storyItemsContainer');
+        if (!container) return;
+        var items = [];
+        container.querySelectorAll('.story-item').forEach(function(el) {
+            var title = el.querySelector('.story-item-title').value.trim();
+            var desc = el.querySelector('.story-item-desc').value.trim();
+            if (title || desc) items.push({ title: title, description: desc });
+        });
+        var formData = new FormData();
+        formData.append('_method', 'PUT');
+        formData.append('template_settings[story_title]', document.getElementById('storyTitle').value);
+        formData.append('template_settings[story_subtitle]', document.getElementById('storySubtitle').value);
+        formData.append('template_settings[story_items]', JSON.stringify(items));
+        fetch('{{ route("admin.template-settings.update") }}', {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+            body: formData
+        }).then(function(r) { return r.json(); }).then(function(d) {
+            showToast(d.success ? 'Our Story tersimpan!' : (d.message || 'Error'), d.success ? 'success' : 'error');
+        }).catch(function() { showToast('Terjadi kesalahan', 'error'); });
+    };
+
     $(document).ready(function() {
         // Global variables
         let templates = [];

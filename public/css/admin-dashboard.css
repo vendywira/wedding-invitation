@@ -948,3 +948,81 @@
 .tpl-card-footer { background: #f8f9fa; border-top: 1px solid #f1f5f9; padding: 12px 16px; }
 .tpl-btn { border-radius: 8px; }
 .alert-limited { border-radius: 12px; border-left: 4px solid currentColor; }
+
+/* Our Story Step-by-Step Timeline */
+.story-timeline {
+    position: relative;
+    padding: 20px 0;
+}
+.story-timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, transparent, #AF976A 10%, #AF976A 90%, transparent);
+    transform: translateX(-50%);
+}
+.story-step {
+    position: relative;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: flex-start;
+}
+.story-step:nth-child(odd) {
+    flex-direction: row;
+    padding-right: calc(50% + 30px);
+    text-align: right;
+}
+.story-step:nth-child(even) {
+    flex-direction: row-reverse;
+    padding-left: calc(50% + 30px);
+    text-align: left;
+}
+.story-step-dot {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    background: #AF976A;
+    border: 3px solid #F5EDE0;
+    border-radius: 50%;
+    z-index: 2;
+    top: 5px;
+}
+.story-step-content {
+    background: rgba(255,255,255,0.9);
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    width: 100%;
+}
+.story-step-title {
+    font-family: 'Caudex', serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #AF976A;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.story-step-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+}
+@media (max-width: 600px) {
+    .story-timeline::before { left: 20px; }
+    .story-step:nth-child(odd),
+    .story-step:nth-child(even) {
+        flex-direction: row;
+        padding-left: 50px;
+        padding-right: 0;
+        text-align: left;
+    }
+    .story-step-dot { left: 20px; }
+}
