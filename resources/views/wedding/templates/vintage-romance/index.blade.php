@@ -20,6 +20,18 @@
 	// The hero ("a journey of love begins") has its own upload slot; until one is
 	// uploaded it mirrors the bride photo, which is what the template shipped with.
 	$heroPhotoUrl = $template->getAssetUrl('hero_photo') ?: $bridePhotoUrl;
+	// Backsound diatur dari Settings → Musik: musik bawaan template, file yang
+	// diupload admin, atau tanpa musik. Kalau mode "custom" dipilih tapi filenya
+	// belum ada, undangan tetap memakai musik bawaan daripada jadi sunyi.
+	$backsoundMode = $template->getSetting('backsound', 'default');
+	$backsoundUrl = $template->getAssetUrl('backsound_file');
+
+	if ($backsoundMode === 'none') {
+		$backsoundUrl = null;
+	} elseif ($backsoundMode !== 'custom' || ! $backsoundUrl) {
+		$backsoundUrl = asset('assets/vintage/vendor/Brisia-Jodie-Fabio-Asher-Aku-Memilihmu-Official-Lyric-Video-128-kbps-1.mp3');
+	}
+
 	$galleryImages = $template->getGalleryImages();
 	// Gallery photos are shown twice — as a swipeable slide and as a clickable
 	// grid (with lightbox). Build the list once so both views stay in sync.
@@ -40,6 +52,7 @@
 	$showLive = $template->getSetting('show_live', '1');
 	$showDresscode = $template->getSetting('show_dresscode', '1');
 	$showBestWishes = $template->getSetting('show_best_wishes', '1');
+	$showFooter = $template->getSetting('show_footer', '1');
 	// Daftar hadiah (bank / e-wallet / alamat kado) diatur dari Settings → Hadiah.
 	$giftAccounts = $template->getGifts();
 @endphp
@@ -55,43 +68,30 @@
 	</style>
 
 	<!-- Search Engine Optimization by Rank Math - https://rankmath.com/ -->
-	<title>{{ $metaData['title'] ?? 'Wedding Invitation' }}</title>
+	<title>{{ $metaData['title'] ?? $coupleName . ' - Wedding Invitation' }}</title>
 	<meta name="csrf-token" content="{{ csrf_token() }}">
-	<meta name="description" content="THE WEDDING OF" />
-	<meta name="robots" content="nofollow, noindex" />
-	<meta property="og:locale" content="en_US" />
-	<meta property="og:type" content="article" />
-	<meta property="og:title" content="vintage2 - ourinvidigi.com" />
-	<meta property="og:description" content="THE WEDDING OF" />
-	<meta property="og:url" content="https://ourinvidigi.com/vintage2/" />
-	<meta property="og:site_name" content="ourinvidigi.com" />
-	<meta property="og:updated_time" content="2026-07-23T10:50:19+07:00" />
-	<meta property="og:image" content="/assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B.webp" />
-	<meta property="og:image:secure_url" content="/assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B.webp" />
-	<meta property="og:image:width" content="1080" />
-	<meta property="og:image:height" content="528" />
-	<meta property="og:image:alt" content="vintage2" />
-	<meta property="og:image:type" content="image/webp" />
+	<meta name="description" content="{{ $metaData['description'] ?? 'Undangan Pernikahan ' . $coupleName }}" />
+	<meta name="robots" content="{{ $metaData['robots_meta'] ?? 'nofollow, noindex' }}" />
+	<meta property="og:locale" content="id_ID" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="{{ $metaData['og_title'] ?? $coupleName . ' - Wedding Invitation' }}" />
+	<meta property="og:description" content="{{ $metaData['og_description'] ?? 'Undangan Pernikahan ' . $coupleName }}" />
+	<meta property="og:url" content="{{ $metaData['og_url'] ?? url()->current() }}" />
+	<meta property="og:site_name" content="{{ config('app.name', 'Wedding Invitation') }}" />
+	<meta property="og:image" content="{{ $metaData['og_image'] ?? asset($template->getAssetUrl('cover_photo', 'assets/vintage/vendor/CB-VIN-2-FIX-RE.jpg')) }}" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:alt" content="{{ $coupleName }}" />
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content="vintage2 - ourinvidigi.com" />
-	<meta name="twitter:description" content="THE WEDDING OF" />
-	<meta name="twitter:image" content="/assets/vintage/vendor/AhaConvert_BUNGA-VIN-2B.webp" />
+	<meta name="twitter:title" content="{{ $metaData['og_title'] ?? $coupleName . ' - Wedding Invitation' }}" />
+	<meta name="twitter:description" content="{{ $metaData['og_description'] ?? 'Undangan Pernikahan ' . $coupleName }}" />
+	<meta name="twitter:image" content="{{ $metaData['og_image'] ?? asset($template->getAssetUrl('cover_photo', 'assets/vintage/vendor/CB-VIN-2-FIX-RE.jpg')) }}" />
 	<meta name="twitter:label1" content="Time to read" />
 	<meta name="twitter:data1" content="2 minutes" />
 	<!-- /Rank Math WordPress SEO plugin -->
 
 	<link rel='dns-prefetch' href='//unpkg.com' />
 	<link rel='dns-prefetch' href='//cdnjs.cloudflare.com' />
-	<link rel="alternate" type="application/rss+xml" title="ourinvidigi.com &raquo; Feed"
-		href="https://ourinvidigi.com/feed/" />
-	<link rel="alternate" type="application/rss+xml" title="ourinvidigi.com &raquo; Comments Feed"
-		href="https://ourinvidigi.com/comments/feed/" />
-	<link rel="alternate" type="application/rss+xml" title="ourinvidigi.com &raquo; vintage2 Comments Feed"
-		href="https://ourinvidigi.com/vintage2/feed/" />
-	<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed"
-		href="https://ourinvidigi.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fourinvidigi.com%2Fvintage2%2F" />
-	<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed"
-		href="https://ourinvidigi.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fourinvidigi.com%2Fvintage2%2F&#038;format=xml" />
 	<style id="wp-img-auto-sizes-contain-inline-css">
 		img:is([sizes=auto i], [sizes^="auto," i]) {
 			contain-intrinsic-size: 3000px 1500px
@@ -913,11 +913,8 @@
 	</script>
 	<script id="jquery-core-js" src="/assets/vintage/vendor/jquery.min.js?ver=3.7.1"></script>
 	<script id="jquery-migrate-js" src="/assets/vintage/vendor/jquery-migrate.min.js?ver=3.4.1"></script>
-	<link rel="https://api.w.org/" href="https://ourinvidigi.com/wp-json/" />
 	<link rel="alternate" title="JSON" type="application/json"
 		href="https://ourinvidigi.com/wp-json/wp/v2/pages/31261" />
-	<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://ourinvidigi.com/xmlrpc.php?rsd" />
-	<meta name="generator" content="WordPress 7.1" />
 	<link rel='shortlink' href='https://ourinvidigi.com/?p=31261' />
 	<meta name="format-detection" content="telephone=no">
 	<meta name="google" content="notranslate" />
@@ -930,6 +927,15 @@
 	<meta name="msapplication-TileImage" content="/assets/vintage/vendor/invidigi-logo-300x300.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 	<style id="custom-vintage-fixes">
+		@if(!$backsoundUrl)
+		/* Backsound dimatikan dari Settings → Musik. Tombol speakernya ikut
+		   disembunyikan; elemen <audio>-nya sendiri dibiarkan ada (tanpa
+		   <source>) supaya skrip bawaan yang mencari `#song` tetap jalan. */
+		.elementor-element-810bc20 {
+			display: none !important;
+		}
+		@endif
+
 		/* Desktop Split Layout: Left 66% Fixed, Right 33% Scrollable */
 		@media (min-width: 768px) {
 			body.wp-singular {
@@ -994,6 +1000,52 @@
 
 		.cui-wrap-form {
 			display: block !important;
+		}
+
+		/* Plugin menampilkan daftar ucapan lewat AJAX WordPress (dan bisa
+		   menyembunyikannya lagi). Di sini daftarnya dirender langsung dari
+		   database, jadi dipastikan selalu tampil. */
+		.cui-wrapper ul.cui-container-comments {
+			display: block !important;
+		}
+
+		/* `max-height:30vh` + `overflow-y:scroll` bawaan plugin memotong daftar
+		   ucapan (dan menampilkan track scrollbar kosong), sedangkan tinggi
+		   daftar sudah diatur `.wdp-wishes__scroll`. */
+		.cui-box {
+			max-height: none !important;
+			overflow: visible !important;
+		}
+
+		/* Tautan "N Ucapan" bawaan plugin: kliknya memakai `slideToggle` ke
+		   `#cui-wrap-commnent-*`, jadi satu klik bisa melipat seluruh form
+		   konfirmasi + daftar ucapan. Angkanya sudah ditampilkan lewat
+		   `.wdp-wishes__head`, jadi tautan ini disembunyikan. */
+		.cui-wrapper .cui-wrap-link {
+			display: none;
+		}
+
+		/* Tanpa avatar, indentasi 38px milik plugin membuat ucapan menjorok. */
+		.cui-box ul.cui-container-comments li.cui-item-comment .cui-comment-content {
+			margin-left: 0;
+			padding-bottom: .9em;
+		}
+
+		/* Plugin hanya menata `a.cui-commenter-name`; di sini namanya <span>
+		   (tanpa link ke situs tamu), jadi gaya yang sama ditulis ulang supaya
+		   tetap senada emas template. Rantai selectornya disamakan dengan
+		   bawaan plugin agar benar-benar menang, bukan sekadar ditimpa. */
+		.cui-box ul.cui-container-comments li.cui-item-comment .cui-comment-content .cui-comment-info .cui-commenter-name {
+			color: #DABE81;
+			font-family: 'Catamaran', sans-serif;
+			font-weight: 500;
+			font-size: 14px;
+		}
+
+		.cui-box ul.cui-container-comments li.cui-item-comment .cui-comment-content .cui-comment-info .cui-comment-time {
+			font-size: .72em;
+			color: #B0B0B0;
+			padding-left: 0;
 		}
 
 		/* Fallback visibility for entrance animation elements */
@@ -1080,56 +1132,114 @@
 		}
 
 		.wdp-gallery-switch button {
-			border: 1px solid currentColor;
+			border: 1px solid #AF976A;
 			background: transparent;
-			color: inherit;
+			color: #AF976A;
 			border-radius: 999px;
-			padding: 6px 20px;
+			padding: 8px 24px;
 			font-size: 13px;
 			letter-spacing: .6px;
 			line-height: 1.4;
 			cursor: pointer;
-			opacity: .5;
+			opacity: .7;
 			transition: opacity .25s ease, background-color .25s ease;
 		}
 
 		.wdp-gallery-switch button:hover {
-			opacity: .8;
+			opacity: 1;
+			background: rgba(175, 151, 106, .1);
 		}
 
 		.wdp-gallery-switch button.is-active {
 			opacity: 1;
 			font-weight: 600;
-			background: rgba(0, 0, 0, .08);
+			background: #AF976A;
+			color: #fff;
+		}
+
+		/* Panel Grid harus selebar section supaya fotonya tidak menyusut. */
+		.wdp-gallery-panel {
+			width: 100% !important;
+			max-width: 100% !important;
 		}
 
 		.wdp-gallery-panel[hidden] {
 			display: none !important;
 		}
 
-		.wdp-gallery-grid {
-			display: grid;
-			grid-template-columns: repeat(3, minmax(0, 1fr));
-			gap: 8px;
-			width: 100%;
-			box-sizing: border-box;
-			padding: 0 6px;
+		/* Panah navigasi mode Slide — dipakai untuk pindah foto tanpa membuka
+		   lightbox. Diposisikan relatif ke panel Slide (bukan ke `.swiper`)
+		   supaya tidak ikut terpotong `overflow` bawaan carousel. */
+		.wdp-gallery-panel[data-gallery-panel="slide"] {
+			position: relative;
 		}
 
-		@media (max-width: 480px) {
-			.wdp-gallery-grid {
-				grid-template-columns: repeat(2, minmax(0, 1fr));
-				gap: 6px;
+		.wdp-gallery-nav {
+			position: absolute;
+			/* Panel ini juga memuat titik pagination di bawah, jadi titik
+			   tengahnya digeser sedikit ke atas agar pas di tengah foto. */
+			top: calc(50% - 12px);
+			transform: translateY(-50%);
+			z-index: 6;
+			width: 34px;
+			height: 34px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			padding: 0;
+			border: 1px solid rgba(255, 241, 212, .5);
+			border-radius: 50%;
+			background: rgba(0, 0, 0, .35);
+			color: #FFF1D4;
+			font-size: 1.3rem;
+			line-height: 1;
+			cursor: pointer;
+			transition: background .25s ease, border-color .25s ease;
+		}
+
+		.wdp-gallery-nav:hover,
+		.wdp-gallery-nav:focus-visible {
+			background: rgba(0, 0, 0, .6);
+			border-color: #FFF1D4;
+		}
+
+		.wdp-gallery-nav--prev {
+			left: 8px;
+		}
+
+		.wdp-gallery-nav--next {
+			right: 8px;
+		}
+
+		@media (max-width: 767px) {
+			.wdp-gallery-nav {
+				width: 30px;
+				height: 30px;
+				font-size: 1.15rem;
 			}
 		}
 
+		/* Tetap 3 kolom, tapi lebar section dipakai penuh (tanpa padding samping
+		   dan gap sekecil mungkin) supaya tiap foto dapat lebar maksimal. */
+		.wdp-gallery-grid {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 6px;
+			width: 100%;
+			box-sizing: border-box;
+			padding: 0;
+		}
+
+		/* Foto di galeri ini portrait, jadi rasionya dibuat 3:4 (bukan 1:1).
+		   Dengan crop portrait, tinggi foto di 3 kolom ikut bertambah sehingga
+		   isinya terlihat besar, bukan kotak kecil. */
 		.wdp-gallery-thumb {
 			padding: 0;
 			margin: 0;
 			border: 0;
 			display: block;
 			width: 100%;
-			aspect-ratio: 1 / 1;
+			aspect-ratio: 3 / 4;
 			border-radius: 10px;
 			overflow: hidden;
 			background: rgba(0, 0, 0, .08);
@@ -1148,6 +1258,20 @@
 		.wdp-gallery-thumb:hover img,
 		.wdp-gallery-thumb:focus-visible img {
 			transform: scale(1.07);
+		}
+
+		/* Foto di mode Slide juga bisa diklik untuk membuka lightbox, jadi
+		   kursor dan efek hover-nya disamakan dengan thumb di mode Grid. */
+		.elementor-image-carousel .swiper-slide[data-gallery-index] {
+			cursor: zoom-in;
+		}
+
+		.elementor-image-carousel .swiper-slide[data-gallery-index] .swiper-slide-image {
+			transition: transform .4s ease;
+		}
+
+		.elementor-image-carousel .swiper-slide[data-gallery-index]:hover .swiper-slide-image {
+			transform: scale(1.04);
 		}
 
 		.wdp-lightbox {
@@ -1221,6 +1345,101 @@
 
 		.wdp-lightbox button:hover {
 			background: rgba(255, 255, 255, .25);
+		}
+
+		/* ============ Footer / Penutup ============ */
+		/* Di desktop kolom kiri (66.666%) dipasang `position:fixed`, jadi footer
+		   diberi lebar sisa 33.334% di kanan supaya tidak tertutup kolom itu. */
+		.wdp-footer-section {
+			position: relative;
+			z-index: 30;
+			background-color: #1a1a1a;
+			padding: 42px 24px;
+			text-align: center;
+			box-sizing: border-box;
+		}
+
+		@media (min-width: 768px) {
+			.wdp-footer-section {
+				margin-left: 66.666%;
+				width: 33.334%;
+			}
+		}
+
+		.wdp-footer-section .wdp-footer-eyebrow {
+			font-family: 'Caudex', serif;
+			font-size: 1.05rem;
+			letter-spacing: 2px;
+			color: #AF976A;
+			margin-bottom: 8px;
+		}
+
+		.wdp-footer-section .wdp-footer-couple {
+			font-family: 'Playfair Display', serif;
+			font-size: 1.75rem;
+			color: #fff;
+			margin-bottom: 12px;
+		}
+
+		.wdp-footer-section .wdp-footer-thanks {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: .9rem;
+			line-height: 1.7;
+			color: #c9c1b6;
+			margin-bottom: 18px;
+		}
+
+		.wdp-footer-section .wdp-footer-copy {
+			font-size: .72rem;
+			color: #6f6f6f;
+			border-top: 1px solid rgba(175, 151, 106, .3);
+			padding-top: 16px;
+			margin-bottom: 0;
+		}
+
+		/* ============ Best Wishes: daftar ucapan tamu ============ */
+		.cui-box .wdp-wishes__head {
+			font-size: .8rem;
+			font-weight: 600;
+			color: #FFF1D4;
+			margin-bottom: 8px;
+		}
+
+		.cui-box .wdp-wishes__scroll {
+			max-height: 320px;
+			overflow-y: auto;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.cui-box .wdp-wishes__scroll.is-expanded {
+			max-height: none;
+			overflow-y: visible;
+		}
+
+		.cui-box .wdp-wishes__status,
+		.cui-box .wdp-wishes__empty {
+			font-size: .75rem;
+			color: #FFF1D4;
+			opacity: .8;
+			text-align: center;
+			padding: 6px 0;
+		}
+
+
+		.cui-box .wdp-wishes__more {
+			width: 100%;
+			margin-top: 10px;
+			padding: 8px 16px;
+			border: 1px solid var(--confirm-border-color, #FFF1D4);
+			border-radius: 50px;
+			background: transparent;
+			color: var(--warna-teks-akan-hadir, #FFF1D4);
+			font-size: .8rem;
+			cursor: pointer;
+		}
+
+		.cui-box .wdp-wishes__more:hover {
+			background: rgba(255, 241, 212, .12);
 		}
 
 		/* Section visibility toggles controlled from Dashboard > Settings > Teks.
@@ -2391,9 +2610,11 @@
 										<p class="elementor-heading-title elementor-size-default">{{ $coupleName }}</p>
 									</div>
 								</div>
+								@php $galleryVideoUrl = $template->getSetting('gallery_video_url', ''); @endphp
+								@if(!empty($galleryVideoUrl))
 								<div class="elementor-element elementor-element-b2d14db jltma-glass-effect-no elementor-widget elementor-widget-video"
 									data-id="b2d14db" data-element_type="widget"
-									data-settings="{&quot;youtube_url&quot;:&quot;https:\/\/www.youtube.com\/watch?v=Cr2-xNK2xJk&quot;,&quot;autoplay&quot;:&quot;yes&quot;,&quot;play_on_mobile&quot;:&quot;yes&quot;,&quot;mute&quot;:&quot;yes&quot;,&quot;loop&quot;:&quot;yes&quot;,&quot;video_type&quot;:&quot;youtube&quot;}"
+									data-settings="{{ json_encode(['youtube_url' => $galleryVideoUrl, 'autoplay' => 'yes', 'play_on_mobile' => 'yes', 'mute' => 'yes', 'loop' => 'yes', 'video_type' => 'youtube']) }}"
 									data-widget_type="video.default">
 									<div class="elementor-widget-container">
 										<div class="elementor-wrapper elementor-open-inline">
@@ -2401,6 +2622,7 @@
 										</div>
 									</div>
 								</div>
+								@endif
 								{{-- Pilihan tampilan galeri: Slide (swiper) atau Grid (bisa diklik) --}}
 								<div class="wdp-gallery-switch" data-gallery-switch role="tablist"
 									aria-label="Tampilan galeri">
@@ -2414,28 +2636,42 @@
 									data-settings="{&quot;slides_to_show_mobile&quot;:&quot;2&quot;,&quot;navigation&quot;:&quot;dots&quot;,&quot;autoplay_speed&quot;:3000,&quot;speed&quot;:2000,&quot;image_spacing_custom_mobile&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:10,&quot;sizes&quot;:[]},&quot;autoplay&quot;:&quot;yes&quot;,&quot;pause_on_hover&quot;:&quot;yes&quot;,&quot;pause_on_interaction&quot;:&quot;yes&quot;,&quot;infinite&quot;:&quot;yes&quot;,&quot;image_spacing_custom&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:20,&quot;sizes&quot;:[]},&quot;image_spacing_custom_tablet&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:&quot;&quot;,&quot;sizes&quot;:[]}}"
 									data-widget_type="image-carousel.default">
 									<div class="elementor-widget-container">
+										{{-- Panah navigasi mode Slide: pindah foto tanpa membuka lightbox.
+										     Tombolnya disambungkan ke instance Swiper di script
+										     galeri di bagian bawah halaman. --}}
+										<button type="button" class="wdp-gallery-nav wdp-gallery-nav--prev"
+											data-gallery-nav="-1" aria-label="Foto sebelumnya">&#8249;</button>
+										<button type="button" class="wdp-gallery-nav wdp-gallery-nav--next"
+											data-gallery-nav="1" aria-label="Foto berikutnya">&#8250;</button>
 										<div class="elementor-image-carousel-wrapper swiper" role="region"
 											aria-roledescription="carousel" aria-label="Image Carousel" dir="ltr">
 											<div class="elementor-image-carousel swiper-wrapper" aria-live="off">
-												@forelse($galleryImages as $index => $image)
-													@if($template->getGalleryImageUrl($image))
+												@forelse($galleryItems as $index => $item)
+													@if($item['url'])
 														<div class="swiper-slide" role="group" aria-roledescription="slide"
-															aria-label="{{ $index + 1 }} of {{ count($galleryImages) }}">
+															aria-label="{{ $index + 1 }} of {{ count($galleryItems) }}"
+															data-gallery-index="{{ $index }}"
+															data-gallery-src="{{ $item['url'] }}"
+															data-gallery-caption="{{ $item['caption'] }}">
 															<figure class="swiper-slide-inner"><img decoding="async"
 																	class="swiper-slide-image"
-																	src="{{ $template->getGalleryImageUrl($image) }}"
-																	alt="{{ $image['caption'] ?? '' }}" /></figure>
+																	src="{{ $item['url'] }}"
+																	alt="{{ $item['caption'] }}" /></figure>
 														</div>
 													@endif
 												@empty
 													<div class="swiper-slide" role="group" aria-roledescription="slide"
-														aria-label="1 of 2">
+														aria-label="1 of 2"
+														data-gallery-index="0" data-gallery-src="{{ $bridePhotoUrl }}"
+													data-gallery-caption="{{ $brideFullName }}">
 														<figure class="swiper-slide-inner"><img decoding="async"
 																class="swiper-slide-image" src="{{ $bridePhotoUrl }}"
 																alt="{{ $brideFullName }}" /></figure>
 													</div>
 													<div class="swiper-slide" role="group" aria-roledescription="slide"
-														aria-label="2 of 2">
+														aria-label="2 of 2"
+														data-gallery-index="1" data-gallery-src="{{ $groomPhotoUrl }}"
+													data-gallery-caption="{{ $groomFullName }}">
 														<figure class="swiper-slide-inner"><img decoding="async"
 																class="swiper-slide-image" src="{{ $groomPhotoUrl }}"
 																alt="{{ $groomFullName }}" /></figure>
@@ -2815,11 +3051,21 @@
 														const theCuiSelect = document.querySelector('.cui-select');
 														let txtValiditySelect = 'Mohon konfirmasi kehadiran anda';
 														let txtValidityHubungan = 'Mohon isi hubungan anda dengan mempelai';
-														const ckForm = document.querySelector('form[id^=commentform-]');
-														ckForm.addEventListener('submit', listenSubmit, false);
-														theCuiSelect.required = true;
-														theCuiSelect.setAttribute('oninvalid', `this.setCustomValidity('${txtValiditySelect}')`);
-														theCuiSelect.setAttribute('oninput', "this.setCustomValidity('')");
+														// Formulir di template ini memakai id `bestWishesForm` (bukan
+														// `commentform-*` bawaan plugin), dan pada saat skrip ini jalan
+														// markup form-nya belum tentu sudah ada di DOM. Dulu baris
+														// `ckForm.addEventListener` melempar error karena ckForm null,
+														// sehingga seluruh blok di bawahnya (termasuk select jumlah
+														// tamu) tidak pernah dijalankan.
+														const ckForm = document.querySelector('form#bestWishesForm');
+														if (ckForm) {
+															ckForm.addEventListener('submit', listenSubmit, false);
+														}
+														// Select ini disembunyikan dan diganti tombol ber-icon, jadi
+														// `required` bawaan HTML justru memblokir submit (field
+														// tersembunyi tidak bisa difokus browser). Validasinya
+														// dikerjakan di `submitBestWishes()`.
+														theCuiSelect.removeAttribute('required');
 														let ck_add_input = 0;
 														let ck_new_input;
 														if (ck_add_input) {
@@ -2827,15 +3073,20 @@
 															document.querySelector('form[id^=commentform-] p.comment-form-author').appendChild(ck_new_input);
 															document.querySelector('select[id=konfirmasi]').disabled = true;
 														}
+														// Pilihan jumlah tamu yang hadir (1–4 orang), sesuai mode
+														// Konfirmasi Kehadiran = "Akan Hadir".
 														const _optionHadir = [];
-														const qtyPeople = 2;
+														const qtyPeople = 4;
 														for (let iii = 0; iii < qtyPeople; iii++) {
-															if (qtyPeople === 1) continue;
 															_optionHadir.push(`${iii + 1} Orang`);
 														}
 
-														const optDataHadir = createSelectEl(_optionHadir, '1 Orang', '-------');
-														e(optDataHadir).insertAfter('div.cui-select-attending .cui-error-info')
+														const savedAttends = {{ (int) ($guestData->guest_attends ?? 1) }};
+														const optDataHadir = createSelectEl(_optionHadir, `${savedAttends} Orang`, '-------');
+														// Jadikan select ini sumber nilai `guest_attends` yang dikirim
+														// ke server (dulu elemennya hanya di-append ke DOM dan tidak
+														// punya `name`, jadi jumlah tamu tidak pernah terkirim).
+														e(optDataHadir).appendTo('div.cui-select-attending')
 														if (ck_add_input) {
 															ck_new_input.onchange = function () {
 																document.querySelector('select[id=konfirmasi]').disabled = false;
@@ -2889,7 +3140,9 @@
 														const selEl = document.createElement('select');
 														options.forEach((o) => {
 															const option = document.createElement('option');
-															option.value = o;
+															// Nilai dikirim sebagai angka murni ("1".."4") karena
+															// `guest_attends` divalidasi `integer` di server.
+															option.value = String(o).replace(/[^0-9]/g, '') || o;
 															option.innerText = o;
 
 															if (selected && (o.toLowerCase() === selected.toLowerCase())) {
@@ -2903,6 +3156,7 @@
 														});
 
 														selEl.className = 'qty-jumlah-kehadiran';
+														selEl.setAttribute('name', 'guest_attends');
 														selEl.style.width = '100%';
 														selEl.style.marginTop = '10px';
 														selEl.style.display = 'none';
@@ -2923,28 +3177,20 @@
 												</script>
 												<div class='cui-wrapper cui-golden cui-border'
 													style='overflow: hidden;'>
+													{{-- Tautan jumlah ucapan. Kelas `auto-load-true` sengaja dilepas:
+													     skrip bawaan plugin komentar akan menarik data dari
+													     ourinvidigi.com (situs WordPress lama) dan menimpa daftar
+													     ucapan yang kita render dari database sendiri. --}}
 													<div class='cui-wrap-link'>
 														<div class='header-cui'><a id='cui-link-31261'
-																class='cui-link cui-icon-link cui-icon-link-true auto-load-true'
-																href='?post_id=31261&amp;comments=0&amp;get=500&amp;order=DESC'
-																title='0 Comments'><span>0</span> Comments</a></div>
+																class='cui-link cui-icon-link cui-icon-link-true'
+																href='#cui-wrap-commnent-31261'
+																title='{{ $messages->count() }} Ucapan'><span>{{ $messages->count() }}</span>
+																Ucapan</a></div>
 													</div><!--.cui-wrap-link-->
 													<div id='cui-wrap-commnent-31261' class='cui-wrap-comments'
 														style='display:block;'>
 														<div id='cui-wrap-form-31261' class='cui-clearfix'>
-															<div class="cui-comment-attendence">
-																<div id="invitation-count-31261"
-																	class="cui_comment_count_card_wrap">
-																	<div class="cui_comment_count_card_row_2">
-																		<div
-																			class="cui_comment_count_card cui_card-hadir">
-																			<span>0</span><span>Hadir</span></div>
-																		<div
-																			class="cui_comment_count_card cui_card-tidak_hadir">
-																			<span>0</span><span>Tidak hadir</span></div>
-																	</div>
-																</div>
-															</div>
 															<div class="cui-clearfix cui-wrap-form ">
 																<div id='cui-container-form-31261'
 																	class='cui-container-form cui-no-login'>
@@ -2959,8 +3205,8 @@
 																				value="{{ $guestData->code ?? '' }}">
 																			<input type="hidden" name="guest_id"
 																				value="{{ $guestData->id ?? '' }}">
-																			<input type="hidden" name="guest_attends"
-																				value="{{ $guestData->guest_attends ?? 1 }}">
+															{{-- Jumlah tamu diisi oleh select `guest_attends` yang dibuat
+															     oleh skrip konfirmasi kehadiran di bawah. --}}
 																			<p class="comment-form-author cui-field-1">
 																				<input id="author" name="name"
 																					type="text" required
@@ -2977,15 +3223,19 @@
 																			</div>
 																			<div
 																				class="cui-clearfix cui-wrap-select cui-field-wrap cui-select-attending">
-																				<select class="waci_comment cui-select"
-																					name="attendance" id="konfirmasi"
-																					required>
-																					<option value="" disabled selected>
-																						Konfirmasi Kehadiran</option>
-																					<option value="Hadir">Hadir</option>
-																					<option value="Tidak Hadir">Tidak
-																						Hadir</option>
-																				</select>
+																{{-- `required` dilepas: select ini disembunyikan dan digantikan
+																     tombol "Akan Hadir"/"Tidak Hadir". Kontrol `required`
+																     yang `display:none` membuat form tidak bisa disubmit
+																     (browser menolak fokus ke field tersembunyi), jadi
+																     validasinya dilakukan di JS. --}}
+																<select class="waci_comment cui-select"
+																	name="attendance" id="konfirmasi">
+																	<option value="" disabled selected>
+																		Konfirmasi Kehadiran</option>
+																	<option value="Hadir">Hadir</option>
+																	<option value="Tidak Hadir">Tidak
+																		Hadir</option>
+																</select>
 																				<span class="cui-required">*</span>
 																			</div>
 																			<div class="cui-wrap-submit cui-clearfix">
@@ -3003,10 +3253,46 @@
 														</div><!--.cui-wrap-form-->
 														<div id='cui-comment-status-31261' class='cui-comment-status'>
 														</div>
+														{{-- Daftar ucapan tamu: 5 terbaru dirender dari database, sisanya
+														     diambil otomatis saat daftar di-scroll ke bawah atau
+														     tombol "Lihat semua ucapan" ditekan. --}}
 														<div id='cui-box' class='cui-box'>
-															<ul id='cui-container-comment-31261'
-																class='cui-container-comments cui-order-DESC '
-																data-order='DESC'></ul>
+															<div class="wdp-wishes" data-wishes
+																data-endpoint="{{ route('wedding.messages') }}"
+																data-total="{{ $messages->count() }}"
+																data-loaded="{{ min(5, $messages->count()) }}">
+																<div class="wdp-wishes__head">
+																	<span data-wishes-count>{{ $messages->count() }}</span> Ucapan
+																</div>
+																<div class="wdp-wishes__scroll" data-wishes-scroll>
+																	<ul id='cui-container-comment-31261'
+																		class='cui-container-comments cui-order-DESC '
+																		data-order='DESC'>
+																		@forelse($messages->take(5) as $message)
+																			<li class="cui-item-comment">
+																				<div class="cui-comment-content">
+																					<div class="cui-comment-info">
+																						<span
+																							class="cui-commenter-name">{{ $message->name ?: 'Tamu Undangan' }}</span>
+																						<span
+																								class="cui-comment-time">{{ $message->created_at?->locale('id')->translatedFormat('d M Y H:i') }}</span>
+																					</div>
+																					<div class="cui-comment-text">
+																									<p>{{ $message->message }}</p>
+																								</div>
+																				</div>
+																			</li>
+																		@empty
+																			<li class="wdp-wishes__empty">Belum ada ucapan. Jadilah yang
+																				pertama memberikan doa restu!</li>
+																		@endforelse
+																	</ul>
+																</div>
+																<div class="wdp-wishes__status" data-wishes-status hidden>Memuat
+																	ucapan…</div>
+																<button type="button" class="wdp-wishes__more" data-wishes-more
+																	hidden>Lihat semua ucapan</button>
+															</div>
 														</div>
 														<div id='cui-holder-id-31261'
 															class='cui-holder-31261 cui-holder'></div>
@@ -3026,13 +3312,6 @@
 													var pos = txt
 														.replace(/Comments/g, "Wishes")
 													document.getElementById('cui-link-31261').innerHTML = pos;
-
-													var txt1 = document.getElementById('invitation-count-31261').innerHTML;
-													var pos1 = txt1
-														.replace(/Hadir/g, "Hadir")
-														.replace(/Tidak hadir/g, "Tidak Hadir")
-														.replace(/Masih Ragu/g, "Masih Ragu");
-													document.getElementById('invitation-count-31261').innerHTML = pos1;
 
 													var txt2 = document.getElementById('commentform-31261').innerHTML;
 													var pos2 = txt2
@@ -3239,7 +3518,9 @@
 																			yesSelected = true
 																			jQuery('.jumlah-hadir-wrapper').slideToggle();
 																			jQuery('.qty-jumlah-kehadiran').show()
-																			jQuery('.qty-jumlah-kehadiran').val(jQuery('.qty-jumlah-kehadiran option:first-child').val()).trigger('change');
+																			// Jangan reset ke opsi pertama: biarkan nilai yang tersimpan
+																			// untuk tamu ini tetap terpilih.
+																			jQuery('.qty-jumlah-kehadiran').trigger('change');
 																		}
 																	}
 																	wdpSelectOpt[1].selected = 'selected'
@@ -3742,11 +4023,15 @@
 
 
 
-													<audio id="song" loop>
-														<source
-															src="{{ asset('assets/vintage/vendor/Brisia-Jodie-Fabio-Asher-Aku-Memilihmu-Official-Lyric-Video-128-kbps-1.mp3') }}"
-															type="audio/mp3">
-													</audio>
+							{{-- Elemen <audio> selalu ada — skrip bawaan (wdp.min.js & Smart Audio
+							     Control) mencari `#song` lewat id ini. Saat backsound dimatikan,
+							     <source> tidak dirender dan tombol speaker disembunyikan lewat
+							     CSS di bagian atas. --}}
+							<audio id="song" loop>
+								@if($backsoundUrl)
+									<source src="{{ $backsoundUrl }}">
+								@endif
+							</audio>
 
 
 
@@ -3809,13 +4094,6 @@
 		var pos = txt
 			.replace(/Comments/g, "Wishes")
 		document.getElementById('cui-link-31261').innerHTML = pos;
-
-		var txt1 = document.getElementById('invitation-count-31261').innerHTML;
-		var pos1 = txt1
-			.replace(/Hadir/g, "Hadir")
-			.replace(/Tidak hadir/g, "Tidak Hadir")
-			.replace(/Masih Ragu/g, "Masih Ragu");
-		document.getElementById('invitation-count-31261').innerHTML = pos1;
 
 		var txt2 = document.getElementById('commentform-31261').innerHTML;
 		var pos2 = txt2
@@ -4084,9 +4362,30 @@
 				});
 			}
 
+			// --- Panah navigasi mode Slide
+			// Menggerakkan instance Swiper yang sudah ada (dibuat Elementor, atau
+			// oleh fallback di template ini) supaya tamu bisa pindah foto tanpa
+			// harus membuka lightbox lebih dulu.
+			Array.prototype.forEach.call(document.querySelectorAll('[data-gallery-nav]'), function (btn) {
+				btn.addEventListener('click', function () {
+					var swiper = carousel && carousel.swiper;
+					if (!swiper) return;
+
+					// Sama seperti panah bawaan Elementor: geser satu foto. Autoplay
+					// ditangani Swiper sendiri (template ini memakai
+					// `pause_on_interaction: yes`, jadi autoplay berhenti setelah tamu
+					// menggeser foto secara manual).
+					if ((parseInt(btn.getAttribute('data-gallery-nav'), 10) || 1) < 0) {
+						swiper.slidePrev();
+					} else {
+						swiper.slideNext();
+					}
+				});
+			});
+
 			// --- Lightbox
 			var box = document.getElementById('wdpGalleryLightbox');
-			if (!grid || !box) return;
+			if (!box) return;
 
 			var image = box.querySelector('[data-lb-image]');
 			var caption = box.querySelector('[data-lb-caption]');
@@ -4094,8 +4393,11 @@
 			var current = 0;
 			var previousOverflow = '';
 
+			// Daftar foto untuk lightbox (urutannya sama dengan grid: 0..n-1).
 			function thumbs() {
-				return Array.prototype.slice.call(grid.querySelectorAll('[data-gallery-src]'));
+				return Array.prototype.slice.call(
+					(grid || document).querySelectorAll('[data-gallery-src]')
+				);
 			}
 
 			function show(index) {
@@ -4108,11 +4410,31 @@
 				image.setAttribute('alt', text);
 				if (caption) caption.textContent = text;
 				if (counter) counter.textContent = (current + 1) + ' / ' + list.length;
+			}			// Autoplay carousel dihentikan selama lightbox terbuka supaya foto di
+			// belakang tidak terus bergeser, lalu dilanjutkan lagi saat lightbox
+			// ditutup. `carousel` bisa null kalau widget-nya tidak dirender.
+			var wasAutoplaying = false;
+
+			function pauseCarousel() {
+				var swiper = carousel && carousel.swiper;
+				if (!swiper || !swiper.autoplay) return;
+				wasAutoplaying = !!swiper.autoplay.running;
+				swiper.autoplay.stop();
+			}
+
+			function resumeCarousel() {
+				var swiper = carousel && carousel.swiper;
+				if (!swiper || !swiper.autoplay || !wasAutoplaying) return;
+				wasAutoplaying = false;
+				swiper.autoplay.start();
 			}
 
 			function open(index) {
 				previousOverflow = document.body.style.overflow;
 				show(index);
+				// Status autoplay hanya dicatat saat lightbox benar-benar baru
+				// dibuka, supaya berpindah-pindah foto tidak menghilangkannya.
+				if (!box.classList.contains('is-open')) pauseCarousel();
 				box.classList.add('is-open');
 				box.setAttribute('aria-hidden', 'false');
 				document.body.style.overflow = 'hidden';
@@ -4122,12 +4444,33 @@
 				box.classList.remove('is-open');
 				box.setAttribute('aria-hidden', 'true');
 				document.body.style.overflow = previousOverflow;
+				resumeCarousel();
 			}
 
-			grid.addEventListener('click', function (e) {
-				var thumb = e.target.closest('[data-gallery-index]');
-				if (!thumb) return;
-				open(Array.prototype.slice.call(grid.querySelectorAll('[data-gallery-index]')).indexOf(thumb));
+			// Foto di mode Slide maupun Grid sama-sama bisa diklik untuk membuka
+			// lightbox. Tiap foto membawa `data-gallery-index` yang sama dengan
+			// urutannya di daftar (grid), jadi index itu dipakai langsung.
+			var pointerStart = null;
+			document.addEventListener('pointerdown', function (e) {
+				pointerStart = { x: e.clientX, y: e.clientY };
+			}, true);
+
+			document.addEventListener('click', function (e) {
+				var target = e.target.closest('[data-gallery-index]');
+				if (!target) return;
+
+				// Geseran/gesekan carousel tidak dianggap klik: kalau posisi pointer
+				// bergeser cukup jauh antara pointerdown dan click, biarkan Swiper
+				// yang menanganinya. `detail === 0` berarti klik dari keyboard
+				// (Enter/Spasi) — tidak ada koordinat pointer, jadi selalu dibuka.
+				if (e.detail > 0 && pointerStart &&
+					(Math.abs(e.clientX - pointerStart.x) > 10 ||
+						Math.abs(e.clientY - pointerStart.y) > 10)) {
+					return;
+				}
+
+				var index = parseInt(target.getAttribute('data-gallery-index'), 10);
+				open(isNaN(index) ? 0 : index);
 			});
 
 			box.addEventListener('click', function (e) {
@@ -4158,6 +4501,16 @@
 		function submitBestWishes(e) {
 			e.preventDefault();
 			var form = document.getElementById('bestWishesForm');
+			if (!form) return;
+
+			// Select kehadiran disembunyikan dan digantikan tombol Hadir/Tidak
+			// Hadir, jadi `required` bawaan HTML tidak dipakai — divalidasi di sini.
+			var attendanceField = form.querySelector('[name="attendance"]');
+			if (attendanceField && !attendanceField.value) {
+				alert('Mohon konfirmasi kehadiran anda terlebih dahulu.');
+				return;
+			}
+
 			var btn = form.querySelector('input[type="submit"]');
 			var origText = btn.value;
 			btn.value = 'Mengirim...';
@@ -4167,22 +4520,18 @@
 				method: 'POST',
 				headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
 				body: formData
-			}).then(function (r) { return r.json(); }).then(function (d) {
-				if (d.success) {
-					btn.value = 'Terkirim!';
-					form.reset();
-					if (d.messages) {
-						var list = document.querySelector('.cui-container-comments');
-						if (list) {
-							list.innerHTML = '';
-							d.messages.forEach(function (m) {
-								var li = document.createElement('li');
-								li.className = 'cui-item-comment';
-								li.innerHTML = '<div class="cui-comment-content"><div class="cui-comment-info"><span class="cui-commenter-name">' + (m.name || 'Anonymous') + '</span></div><p class="cui-comment-text">' + (m.message || '') + '</p></div>';
-								list.appendChild(li);
-							});
-						}
+			}).then(function (r) { return r.json(); }).then(function (d) {					if (d.success) {
+						btn.value = 'Terkirim!';
+
+						// Hanya ucapan yang dikosongkan; nama, kehadiran, dan jumlah
+						// tamu dibiarkan supaya tamu bisa menambah ucapan lain.
+						var textarea = form.querySelector('textarea[name="message"]');
+						if (textarea) textarea.value = '';
+
+					if (d.message_data && window.wdpWishes) {
+						window.wdpWishes.push(d.message_data);
 					}
+
 					setTimeout(function () { btn.value = origText; btn.disabled = false; }, 2000);
 				} else {
 					alert(d.message || 'Gagal mengirim');
@@ -4195,7 +4544,123 @@
 				btn.disabled = false;
 			});
 		}
+
+		// ============ DAFTAR UCAPAN: 5 terbaru + auto load sisanya ============
+		// 5 ucapan terbaru sudah dirender dari server. Sisa ucapan diambil
+		// bertahap dari endpoint JSON saat daftar di-scroll ke bawah atau saat
+		// tombol "Lihat semua ucapan" ditekan.
+		window.wdpWishes = (function () {
+			var box = document.querySelector('[data-wishes]');
+			if (!box) return { push: function () { } };
+
+			var list = box.querySelector('.cui-container-comments');
+			var scroller = box.querySelector('[data-wishes-scroll]');
+			var status = box.querySelector('[data-wishes-status]');
+			var moreBtn = box.querySelector('[data-wishes-more]');
+			var countEl = box.querySelector('[data-wishes-count]');
+			var endpoint = box.getAttribute('data-endpoint');
+			var pageSize = 5;
+			var total = parseInt(box.getAttribute('data-total'), 10) || 0;
+			var loaded = parseInt(box.getAttribute('data-loaded'), 10) || 0;
+			var loading = false;
+
+			function escapeHtml(value) {
+				return String(value === null || value === undefined ? '' : value)
+					.replace(/&/g, '&amp;')
+					.replace(/</g, '&lt;')
+					.replace(/>/g, '&gt;')
+					.replace(/"/g, '&quot;')
+					.replace(/'/g, '&#39;');
+			}
+
+			function itemHtml(message) {
+				return '<li class="cui-item-comment"><div class="cui-comment-content">' +
+					'<div class="cui-comment-info"><span class="cui-commenter-name">' + escapeHtml(message.name || 'Tamu Undangan') + '</span>' +
+					'<span class="cui-comment-time">' + escapeHtml(message.date || '') + '</span></div>' +
+					'<div class="cui-comment-text"><p>' + escapeHtml(message.message || '') + '</p></div>' +
+					'</div></li>';
+			}
+
+			function syncControls() {
+				if (countEl) countEl.textContent = total;
+				if (moreBtn) moreBtn.hidden = loaded >= total;
+			}
+
+			function insert(messages, position) {
+				if (!messages.length) return;
+				var empty = list.querySelector('.wdp-wishes__empty');
+				if (empty) empty.parentNode.removeChild(empty);
+				messages.forEach(function (message) {
+					list.insertAdjacentHTML(position, itemHtml(message));
+				});
+			}
+
+			function loadMore(loadAll) {
+				if (loading || !endpoint || loaded >= total) return;
+				loading = true;
+				if (status) status.hidden = false;
+
+				var limit = loadAll ? (total - loaded) : pageSize;
+
+				fetch(endpoint + '?offset=' + loaded + '&limit=' + limit, {
+					headers: { 'Accept': 'application/json' }
+				}).then(function (response) { return response.json(); }).then(function (data) {
+					var messages = (data && data.messages) || [];
+					if (typeof data.total === 'number') total = data.total;
+					insert(messages, 'beforeend');
+					loaded += messages.length;
+					loading = false;
+					if (status) status.hidden = true;
+					if (loaded >= total && scroller) scroller.classList.add('is-expanded');
+					syncControls();
+					if (loadAll && messages.length && loaded < total) loadMore(true);
+				}).catch(function () {
+					loading = false;
+					if (status) status.hidden = true;
+				});
+			}
+
+			if (scroller) {
+				scroller.addEventListener('scroll', function () {
+					if (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 32) {
+						loadMore(false);
+					}
+				});
+			}
+
+			if (moreBtn) {
+				moreBtn.addEventListener('click', function () { loadMore(true); });
+			}
+
+			syncControls();
+
+			return {
+				push: function (message) {
+					if (!message) return;
+					insert([message], 'afterbegin');
+					total += 1;
+					loaded += 1;
+					syncControls();
+					if (scroller) scroller.scrollTop = 0;
+				}
+			};
+		})();
 	</script>
+
+	{{-- Footer / penutup undangan. Sengaja diletakkan di luar struktur Elementor
+	     yang di-export (yang sarang-nya mudah bergeser) dan diatur lewat CSS
+	     `.wdp-footer-section` supaya tidak tertutup kolom kiri yang `fixed`.
+
+	     Bisa disembunyikan dari Dashboard > Settings > Teks
+	     (switch "Section Footer (penutup)"). --}}
+	@if(($showFooter ?? '1') !== '0')
+		<section class="wdp-footer-section" aria-label="Penutup undangan">
+			<p class="wdp-footer-eyebrow">Kami Yang Berbahagia</p>
+			<h2 class="wdp-footer-couple">{{ $coupleName }}</h2>
+			<p class="wdp-footer-thanks">{{ $template->getSetting('footer_message', 'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.') }}</p>
+			<p class="wdp-footer-copy">&copy; {{ date('Y') }} {{ $coupleName }} Wedding</p>
+		</section>
+	@endif
 
 </body>
 

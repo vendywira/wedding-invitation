@@ -1,9 +1,14 @@
+@php
+    $savedAttends = (int) ($guestData->guest_attends ?? 1);
+    $savedAttends = $savedAttends >= 1 && $savedAttends <= 4 ? $savedAttends : 1;
+    $savedAttendance = $guestData->attendance ?? '';
+@endphp
 <!-- Konfirmasi Tamu Section -->
 <br>
 <div class="text-center">
     <img src="{{ asset('assets/images/tittle-section.png') }}" width="134" height="23" data-aos="zoom-in-down">
 </div>
-<div class="tittle-section" data-aos="zoom-in-down">Konfirmasi Tamu</div>
+<div class="tittle-section" data-aos="zoom-in-down">{{ $template->getSetting('rsvp_title', 'Konfirmasi Tamu') }}</div>
 
 <section id="konfirmasi" data-aos="zoom-in">
     <div class="konfirmasi-container">
@@ -16,7 +21,7 @@
 
                     <div class="text-center mb-4">
                         <h3 class="form-title">Konfirmasi Kehadiran</h3>
-                        <p class="form-subtitle">Dimohon kesediaannya untuk mengisi form kehadiran undangan kami</p>
+                        <p class="form-subtitle">{{ $template->getSetting('rsvp_subtitle', 'Dimohon kesediaannya untuk mengisi form kehadiran undangan kami') }}</p>
                     </div>
 
                     <div class="form-group-row">
@@ -29,22 +34,24 @@
 
                     <div class="form-group-row">
                         <div class="col-12">
-                            <select class="form-control custom-select" name="guest_attends" id="jumlah-fm" required>
-                                <option value="" disabled selected>Pilih Jumlah Tamu</option>
-                                <option value="1">1 Orang</option>
-                                <option value="2">2 Orang</option>
-                                <option value="3">3 Orang</option>
-                                <option value="4">4 Orang</option>
+                            <select class="form-control custom-select" name="attendance" id="kehadiran-fm" required>
+                                <option value="" disabled @if($savedAttendance === '') selected @endif>Konfirmasi Kehadiran</option>
+                                <option value="Hadir" @if($savedAttendance === 'Hadir') selected @endif>Iya, Saya Hadir</option>
+                                <option value="Tidak Hadir" @if($savedAttendance === 'Tidak Hadir') selected @endif>Maaf, Saya Tidak Hadir</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="form-group-row">
+                    {{-- Jumlah tamu hanya relevan kalau hadir. Nilainya sengaja tidak
+                         dikosongkan saat disembunyikan supaya `guest_attends` tetap
+                         terkirim (server memvalidasinya sebagai integer 1-10). --}}
+                    <div class="form-group-row" id="jumlah-tamu-row">
                         <div class="col-12">
-                            <select class="form-control custom-select" name="attendance" id="kehadiran-fm" required>
-                                <option value="" disabled selected>Konfirmasi Kehadiran</option>
-                                <option value="Hadir">Iya, Saya Hadir</option>
-                                <option value="Tidak Hadir">Maaf, Saya Tidak Hadir</option>
+                            <select class="form-control custom-select" name="guest_attends" id="jumlah-fm">
+                                <option value="1" @if($savedAttends === 1) selected @endif>1 Orang</option>
+                                <option value="2" @if($savedAttends === 2) selected @endif>2 Orang</option>
+                                <option value="3" @if($savedAttends === 3) selected @endif>3 Orang</option>
+                                <option value="4" @if($savedAttends === 4) selected @endif>4 Orang</option>
                             </select>
                         </div>
                     </div>
@@ -85,3 +92,27 @@
         <div align="center">Mohon menunggu kami sedang memproses data anda</div>
     </div>
 </section>
+
+<script>
+    // Pilihan jumlah tamu muncul hanya saat memilih "Iya, Saya Hadir".
+    (function () {
+        var attendance = document.getElementById('kehadiran-fm');
+        var row = document.getElementById('jumlah-tamu-row');
+        var jumlah = document.getElementById('jumlah-fm');
+
+        if (!attendance || !row || !jumlah) {
+            return;
+        }
+
+        function syncJumlahTamu() {
+            var hadir = attendance.value === 'Hadir';
+            row.style.display = hadir ? '' : 'none';
+            // `required` hanya saat terlihat: field tersembunyi yang required
+            // membuat browser menolak submit tanpa pesan yang jelas.
+            jumlah.required = hadir;
+        }
+
+        attendance.addEventListener('change', syncJumlahTamu);
+        syncJumlahTamu();
+    })();
+</script>

@@ -69,8 +69,11 @@ class WeddingController extends Controller
             ]);
         }
 
-        $messages = Message::orderBy('created_at', 'desc')->get();
-        $metaData = $this->generateMetaData($request, $event, $guestData, $eventKey);
+        // `id` dipakai sebagai tie-breaker supaya urutan ucapan stabil — tanpa
+        // itu ucapan yang `created_at`-nya sama bisa tertukar antar halaman
+        // saat daftar ucapan diambil bertahap.
+        $messages = Message::orderByDesc('created_at')->orderByDesc('id')->get();
+        $metaData = $this->generateMetaData($request, $event, $guestData, $eventKey, $template);
 
         $viewPath = "wedding.templates.{$template->slug}.index";
 
@@ -99,7 +102,7 @@ class WeddingController extends Controller
         return Event::defaultGroup();
     }
 
-    private function generateMetaData(Request $request, $event, $guestData, $eventKey)
+    private function generateMetaData(Request $request, $event, $guestData, $eventKey, $template = null)
     {
         $currentUrl = url()->current();
         $hasToParam = $request->has('to');
@@ -107,20 +110,25 @@ class WeddingController extends Controller
         $location = $event->location ?? '';
         $eventDateFormatted = $event->event_date ?
             Carbon::parse($event->event_date)->locale('id')->translatedFormat('l, j F Y') :
-            'Rabu, 12 November 2025';
+            'Tanggal belum ditentukan';
         $path = $event->event_key;
-        $weddingEmoji = '🤵🏻💍👰🏻';
+        $weddingEmoji = '💍';
+
+        // Get couple names from template
+        $brideName = $template ? $template->getSetting('bride_name', 'Mempelai') : 'Mempelai';
+        $groomName = $template ? $template->getSetting('groom_name', '') : '';
+        $coupleName = $groomName ? "{$brideName} & {$groomName}" : $brideName;
 
         if ($hasToParam && $guestName !== 'Tamu Undangan') {
-            $title = "{$weddingEmoji} Undangan Untuk $guestName";
-            $description = "$guestName, Anda diundang secara khusus! 🎉 Dalam pernikahan Vendy & Margareth, $eventDateFormatted. Konfirmasi kehadiran Anda!";
+            $title = "{$weddingEmoji} Undangan Untuk {$guestName}";
+            $description = "{$guestName}, Anda diundang secara khusus! 🎉 Dalam pernikahan {$coupleName}, {$eventDateFormatted}. Konfirmasi kehadiran Anda!";
             $ogTitle = "{$weddingEmoji} Undangan Untuk {$guestName}";
-            $ogDescription = "🎊 $guestName, Anda diundang! Dalam pernikahan Vendy & Margareth. $eventDateFormatted. Buka undangan untuk info lengkapnya.";
+            $ogDescription = "🎊 {$guestName}, Anda diundang! Dalam pernikahan {$coupleName}. {$eventDateFormatted}. Buka undangan untuk info lengkapnya.";
         } else {
-            $title = "{$weddingEmoji} Undangan Pernikahan Vendy & Margareth";
-            $description = "🎉 Undangan Pernikahan Vendy & Margareth, 12 November 2025. Dengan sukacita kami mengundang Bapak/Ibu/Saudara/i untuk hadir memberikan doa restu.";
-            $ogTitle = "{$weddingEmoji} Undangan Pernikahan Vendy & Margareth";
-            $ogDescription = "🎊 Undangan Pernikahan Vendy & Margareth. $eventDateFormatted. Buka undangan untuk info lengkapnya.";
+            $title = "{$weddingEmoji} Undangan Pernikahan {$coupleName}";
+            $description = "🎉 Undangan Pernikahan {$coupleName}, {$eventDateFormatted}. Dengan sukacita kami mengundang Bapak/Ibu/Saudara/i untuk hadir memberikan doa restu.";
+            $ogTitle = "{$weddingEmoji} Undangan Pernikahan {$coupleName}";
+            $ogDescription = "🎊 Undangan Pernikahan {$coupleName}. {$eventDateFormatted}. Buka undangan untuk info lengkapnya.";
         }
 
         $canonicalUrl = $hasToParam ? url("/$path/invitation") : $currentUrl;
@@ -142,6 +150,31 @@ class WeddingController extends Controller
             'location_emoji' => $weddingEmoji,
             'event_key' => $eventKey
         ];
+    }
+
+    /**
+     * Ucapan tamu dalam bentuk JSON.
+     *
+     * Dipakai daftar "Best Wishes" untuk mengambil sisa ucapan setelah 5
+     * terbaru dirender dari server (`offset` + `limit`).
+     */
+    public function listMessages(Request $request)
+    {
+        $offset = max(0, (int) $request->get('offset', 0));
+        $limit = (int) $request->get('limit', 5);
+        $limit = max(1, min($limit, 50));
+
+        $messages = Message::orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->skip($offset)
+            ->take($limit)
+            ->get();
+
+        return response()->json([
+            'total' => Message::count(),
+            'offset' => $offset,
+            'messages' => $messages->map(fn (Message $message) => $this->messagePayload($message))->values(),
+        ]);
     }
 
     public function storeMessage(Request $request)
@@ -166,19 +199,33 @@ class WeddingController extends Controller
         }
 
         // Create new message
-        Message::create([
+        $newMessage = Message::create([
             'name' => $request->name,
             'guest_id' => $request->get('guest_id'),
             'message' => $request->message,
         ]);
 
-        // Get updated messages for response
-        $messages = Message::orderBy('created_at', 'desc')->get();
+        $messages = Message::orderByDesc('created_at')->orderByDesc('id')->get();
 
         return response()->json([
             'success' => true,
             'message' => 'Konfirmasi kehadiran berhasil dikirim!',
-            'messages' => $messages
+            'message_data' => $this->messagePayload($newMessage),
+            'total' => $messages->count(),
+            'messages' => $messages,
         ]);
+    }
+
+    /**
+     * Bentuk data satu ucapan untuk dikirim ke halaman tamu / daftar ucapan.
+     */
+    private function messagePayload(Message $message): array
+    {
+        return [
+            'id' => $message->id,
+            'name' => $message->name,
+            'message' => $message->message,
+            'date' => optional($message->created_at)->locale('id')->translatedFormat('d M Y H:i'),
+        ];
     }
 }

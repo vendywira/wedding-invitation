@@ -8,22 +8,51 @@
     $assets = $template->assets_config ?? [];
     $gallery = $template->getGalleryImages();
 
-    // Every image the vintage-romance invitation renders. `default` is the
-    // bundled file used when nothing has been uploaded yet.
+    // Foto bawaan berbeda per template, jadi preview di panel ini mengikuti
+    // template yang sedang aktif: selama fotonya belum diupload, yang tampil
+    // memang foto bawaan template tersebut (bukan foto template lain).
+    $photoDefaults = [
+        'bride_photo' => 'assets/vintage/vendor/cewek.jpg',
+        'groom_photo' => 'assets/vintage/vendor/cowok.jpg',
+        'hero_photo' => 'assets/vintage/vendor/cewek.jpg',
+        'story_image' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM.jpg',
+        'closing_image' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_42_15-AM.jpg',
+        'desktop_cover' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM.jpg',
+        'cover_photo' => 'assets/vintage/vendor/CB-VIN-2-FIX-RE.jpg',
+        'logo_image' => 'assets/vintage/vendor/LOGO-VIN-2.png',
+        'bg_slide_1' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg',
+        'bg_slide_2' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_36_39-AM.jpg',
+    ];
+
+    $photoDefaults = array_merge($photoDefaults, [
+        'elegant-floral' => [
+            'bride_photo' => 'assets/images/gallery/bride.jpg',
+            'groom_photo' => 'assets/images/gallery/groom.jpg',
+            'hero_photo' => 'assets/images/gallery/gal-2.jpg',
+            'story_image' => 'assets/images/gallery/gal-3.jpg',
+            'closing_image' => 'assets/images/gallery/gal-4.jpg',
+            'desktop_cover' => 'assets/images/gallery/gal-1.jpg',
+            'cover_photo' => 'assets/images/og-image.jpg',
+            'logo_image' => 'assets/images/tittle-section.png',
+            'bg_slide_1' => 'assets/images/gallery/slide1.jpg',
+            'bg_slide_2' => 'assets/images/gallery/slide2.jpg',
+        ],
+    ][$template->slug] ?? []);
+
     $assetGroups = [
         'Foto' => [
-            'bride_photo' => ['label' => 'Foto Mempelai Wanita', 'default' => 'assets/vintage/vendor/cewek.jpg'],
-            'groom_photo' => ['label' => 'Foto Mempelai Pria', 'default' => 'assets/vintage/vendor/cowok.jpg'],
-            'hero_photo' => ['label' => 'Foto Journey of Love', 'default' => 'assets/vintage/vendor/cewek.jpg'],
-            'story_image' => ['label' => 'Foto Our Story', 'default' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM.jpg'],
-            'closing_image' => ['label' => 'Foto Penutup / Terima Kasih', 'default' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_42_15-AM.jpg'],
-            'desktop_cover' => ['label' => 'Cover Depan Desktop', 'default' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_40_16-AM.jpg'],
-            'cover_photo' => ['label' => 'Cover Sampul (Buka Undangan)', 'default' => 'assets/vintage/vendor/CB-VIN-2-FIX-RE.jpg'],
-            'logo_image' => ['label' => 'Logo / Monogram', 'default' => 'assets/vintage/vendor/LOGO-VIN-2.png'],
+            'bride_photo' => ['label' => 'Foto Mempelai Wanita', 'default' => $photoDefaults['bride_photo']],
+            'groom_photo' => ['label' => 'Foto Mempelai Pria', 'default' => $photoDefaults['groom_photo']],
+            'hero_photo' => ['label' => 'Foto Journey of Love', 'default' => $photoDefaults['hero_photo']],
+            'story_image' => ['label' => 'Foto Our Story', 'default' => $photoDefaults['story_image']],
+            'closing_image' => ['label' => 'Foto Penutup / Terima Kasih', 'default' => $photoDefaults['closing_image']],
+            'desktop_cover' => ['label' => 'Cover Depan Desktop', 'default' => $photoDefaults['desktop_cover']],
+            'cover_photo' => ['label' => 'Cover Sampul (Buka Undangan)', 'default' => $photoDefaults['cover_photo']],
+            'logo_image' => ['label' => 'Logo / Monogram', 'default' => $photoDefaults['logo_image']],
         ],
         'Slide Background' => [
-            'bg_slide_1' => ['label' => 'Slide 1', 'default' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_35_26-AM.jpg'],
-            'bg_slide_2' => ['label' => 'Slide 2', 'default' => 'assets/vintage/vendor/ChatGPT-Image-Jul-23-2026-08_36_39-AM.jpg'],
+            'bg_slide_1' => ['label' => 'Slide 1', 'default' => $photoDefaults['bg_slide_1']],
+            'bg_slide_2' => ['label' => 'Slide 2', 'default' => $photoDefaults['bg_slide_2']],
         ],
     ];
     $imageAssets = array_merge(...array_values($assetGroups));
@@ -42,6 +71,7 @@
         'show_live' => 'Section Live Moment',
         'show_dresscode' => 'Section Dresscode',
         'show_best_wishes' => 'Section Best Wishes (komentar)',
+        'show_footer' => 'Section Footer (penutup)',
     ];
 
     // Blank blueprint reused by window.addGiftRow() for a new gift entry.
@@ -99,6 +129,7 @@
         <li class="nav-item"><button type="button" class="nav-link" data-bs-target="#ts-texts" onclick="window.settingsTab(this)"><i class="fas fa-font me-1"></i> Teks</button></li>
         <li class="nav-item"><button type="button" class="nav-link" data-bs-target="#ts-gift" onclick="window.settingsTab(this)"><i class="fas fa-gift me-1"></i> Hadiah</button></li>
         <li class="nav-item"><button type="button" class="nav-link" data-bs-target="#ts-story" onclick="window.settingsTab(this)"><i class="fas fa-heart me-1"></i> Our Story</button></li>
+        <li class="nav-item"><button type="button" class="nav-link" data-bs-target="#ts-music" onclick="window.settingsTab(this)"><i class="fas fa-music me-1"></i> Musik</button></li>
     </ul>
 
     <div class="tab-content">
@@ -134,7 +165,7 @@
                             <div class="col-md-6">
                                 <label class="form-label">Foto Mempelai Wanita</label>
                                 <div class="asset-thumb mb-2">
-                                    <img src="{{ $template->getAssetUrl('bride_photo', 'assets/vintage/vendor/cewek.jpg') }}" alt="Bride">
+                                    <img src="{{ $template->getAssetUrl('bride_photo', $photoDefaults['bride_photo']) }}" alt="Bride">
                                 </div>
                                 <div class="d-flex gap-1">
                                     <label class="btn btn-outline-primary btn-sm mb-0"><i class="fas fa-upload me-1"></i> Upload<input type="file" class="d-none" accept="image/jpeg,image/png,image/webp,image/gif" onchange="window.uploadAsset(this, 'bride_photo')"></label>
@@ -174,7 +205,7 @@
                             <div class="col-md-6">
                                 <label class="form-label">Foto Mempelai Pria</label>
                                 <div class="asset-thumb mb-2">
-                                    <img src="{{ $template->getAssetUrl('groom_photo', 'assets/vintage/vendor/cowok.jpg') }}" alt="Groom">
+                                    <img src="{{ $template->getAssetUrl('groom_photo', $photoDefaults['groom_photo']) }}" alt="Groom">
                                 </div>
                                 <div class="d-flex gap-1">
                                     <label class="btn btn-outline-primary btn-sm mb-0"><i class="fas fa-upload me-1"></i> Upload<input type="file" class="d-none" accept="image/jpeg,image/png,image/webp,image/gif" onchange="window.uploadAsset(this, 'groom_photo')"></label>
@@ -196,6 +227,64 @@
 
         {{-- ================= FOTO & ASSET ================= --}}
         <div class="tab-pane fade" id="ts-photos">
+            @php
+                // Video hasil upload disimpan di `template-assets/…`; nilai lama
+                // (`assets/videos/…`, video bawaan template) bukan file upload,
+                // jadi badge & tombol hapus tidak boleh menganggapnya ada.
+                $heroVideoUploaded = str_starts_with((string) ($assets['hero_video'] ?? ''), 'template-assets/');
+            @endphp
+            <div class="settings-card">
+                <div class="settings-card-header"><i class="fas fa-video me-2"></i>Video Pembuka (Hero)</div>
+                <div class="settings-card-body">
+                    <form id="tsHeroVideoForm" onsubmit="event.preventDefault(); window.saveSettingsForm('tsHeroVideoForm');">
+                        @csrf
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Video yang Diputar</label>
+                                <select class="form-select" name="template_settings[hero_video_source]">
+                                    <option value="default" @selected(($settings['hero_video_source'] ?? 'default') === 'default')>Video bawaan template</option>
+                                    <option value="custom" @selected(($settings['hero_video_source'] ?? '') === 'custom')>Video yang saya upload</option>
+                                    <option value="none" @selected(($settings['hero_video_source'] ?? '') === 'none')>Tanpa video</option>
+                                </select>
+                                <div class="form-text" style="font-size:.78rem;">
+                                    Pilih <strong>Video yang saya upload</strong> setelah mengunggah videonya di samping.
+                                    Kalau filenya belum ada, undangan memakai video bawaan. Pilihan
+                                    <strong>Tanpa video</strong> membuat popup pembuka hanya memakai foto hero.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Upload Video (MP4 / WebM / MOV / OGV, maks 20MB)</label>
+                                <div class="asset-thumb mb-2" style="height:150px;">
+                                    @if(!empty($assets['hero_video']))
+                                        <video src="{{ $template->getAssetUrl('hero_video') }}" controls muted playsinline preload="metadata" style="max-height:150px;max-width:100%;"></video>
+                                    @else
+                                        <span class="badge-default">Belum ada file — memakai video bawaan</span>
+                                    @endif
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <label class="btn btn-outline-primary btn-sm mb-0">
+                                        <i class="fas fa-upload me-1"></i> Upload Video
+                                        <input type="file" class="d-none"
+                                            accept="video/mp4,video/webm,video/ogg,video/quicktime,video/*"
+                                            onchange="window.uploadVideo(this, 'hero_video')">
+                                    </label>
+                                    @if($heroVideoUploaded)
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="window.deleteAsset('hero_video')">
+                                            <i class="fas fa-trash"></i> Hapus
+                                        </button>
+                                    @endif
+                                </div>
+                                <div class="asset-key mt-1">{{ $assets['hero_video'] ?? 'belum ada file' }}</div>
+                                <div class="form-text" style="font-size:.78rem;">
+                                    Format <strong>MP4 (H.264)</strong> paling aman untuk semua HP. Idealnya di bawah
+                                    <strong>10MB</strong> supaya undangan tidak lama dibuka.
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom mt-3"><i class="fas fa-save me-1"></i> Simpan Pilihan Video</button>
+                    </form>
+                </div>
+            </div>
             <div class="settings-card">
                 <div class="settings-card-header d-flex justify-content-between align-items-center">
                     <span><i class="fas fa-image me-2"></i>Semua Foto Template</span>
@@ -252,6 +341,19 @@
 
         {{-- ================= GALLERY ================= --}}
         <div class="tab-pane fade" id="ts-gallery">
+            <div class="settings-card">
+                <div class="settings-card-header"><i class="fas fa-video me-2"></i>Video Gallery</div>
+                <div class="settings-card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Link YouTube Video</label>
+                            <input type="text" class="form-control" id="galleryVideoUrl" value="{{ $settings['gallery_video_url'] ?? '' }}" placeholder="https://www.youtube.com/watch?v=...">
+                            <small class="text-muted">Kosongkan jika tidak ingin menampilkan video</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary-custom btn-sm mt-2" onclick="window.saveVideoUrl()"><i class="fas fa-save me-1"></i> Simpan Video</button>
+                </div>
+            </div>
             <div class="settings-card">
                 <div class="settings-card-header d-flex justify-content-between align-items-center">
                     <span><i class="fas fa-images me-2"></i>Gallery Foto</span>
@@ -678,6 +780,60 @@
                         </div>
                         <small class="text-muted d-block mt-2">Matikan switch untuk menyembunyikan bagian tersebut dari undangan.</small>
                         <button type="submit" class="btn btn-primary-custom mt-3"><i class="fas fa-save me-1"></i> Simpan Semua Teks</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {{-- ================= MUSIK / BACKSOUND ================= --}}
+        <div class="tab-pane fade" id="ts-music">
+            <form id="tsMusicForm" onsubmit="event.preventDefault(); window.saveSettingsForm('tsMusicForm');">
+                @csrf
+                <div class="settings-card">
+                    <div class="settings-card-header"><i class="fas fa-music me-2"></i>Backsound Undangan</div>
+                    <div class="settings-card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Musik yang Diputar</label>
+                                <select class="form-select" name="template_settings[backsound]">
+                                    <option value="default" @selected(($settings['backsound'] ?? 'default') === 'default')>Musik bawaan template</option>
+                                    <option value="custom" @selected(($settings['backsound'] ?? '') === 'custom')>File yang saya upload</option>
+                                    <option value="none" @selected(($settings['backsound'] ?? '') === 'none')>Tanpa musik</option>
+                                </select>
+                                <div class="form-text" style="font-size:.78rem;">
+                                    Pilih <strong>File yang saya upload</strong> setelah mengunggah MP3 di bawah. Kalau filenya belum ada,
+                                    undangan memakai musik bawaan. Pilihan <strong>Tanpa musik</strong> menyembunyikan tombol speakernya juga.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Upload Backsound (MP3 / M4A / OGG / WAV, maks 20MB)</label>
+                                <div class="asset-thumb mb-2" style="height:70px;">
+                                    @if(!empty($assets['backsound_file']))
+                                        <span class="badge-uploaded"><i class="fas fa-check me-1"></i>File sudah diupload</span>
+                                    @else
+                                        <span class="badge-default">Belum ada file — memakai musik bawaan</span>
+                                    @endif
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <label class="btn btn-outline-primary btn-sm mb-0">
+                                        <i class="fas fa-upload me-1"></i> Upload Audio
+                                        <input type="file" class="d-none"
+                                            accept="audio/mpeg,audio/mp3,audio/mp4,audio/x-m4a,audio/aac,audio/ogg,audio/wav,audio/flac,audio/*"
+                                            onchange="window.uploadAudio(this, 'backsound_file')">
+                                    </label>
+                                    @if(!empty($assets['backsound_file']))
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="window.deleteAsset('backsound_file')">
+                                            <i class="fas fa-trash"></i> Hapus
+                                        </button>
+                                    @endif
+                                </div>
+                                <div class="asset-key mt-1">{{ $assets['backsound_file'] ?? 'belum ada file' }}</div>
+                                @if(!empty($assets['backsound_file']))
+                                    <audio controls preload="none" class="w-100 mt-2" src="{{ asset('storage/'.$assets['backsound_file']) }}"></audio>
+                                @endif
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom mt-3"><i class="fas fa-save me-1"></i> Simpan Pilihan Musik</button>
                     </div>
                 </div>
             </form>

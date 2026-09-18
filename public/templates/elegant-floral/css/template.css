@@ -1649,3 +1649,379 @@ body {
     flex-basis: 100%;
     height: 0;
 }
+
+/* ============================================================
+   SECTION DARI SETTINGS
+   Gaya untuk section yang diisi dari dashboard (Info Acara,
+   Kado Digital, Kiriman Ucapan). Sebelumnya markup section ini
+   memakai class yang belum punya aturan CSS sama sekali.
+   ============================================================ */
+
+/* INFO ACARA */
+#acara .ceremony-detail h3 {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 17px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+#acara .ceremony-detail p {
+    font-size: 15px;
+    line-height: 26px;
+}
+
+#acara .ceremony-detail .btn-map {
+    margin-top: 5px;
+}
+
+/* KADO DIGITAL */
+.gift-section {
+    padding: 20px 0 40px;
+}
+
+.gift-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.gift-subtitle {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #666;
+    font-size: 15px;
+    line-height: 24px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.gift-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.gift-card {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
+    padding: 25px;
+    width: 100%;
+    max-width: 350px;
+    transition: all .3s ease;
+    border: 1px solid #f0f0f0;
+    text-align: left;
+}
+
+.gift-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, .12);
+}
+
+.gift-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.gift-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-right: 15px;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .08);
+    background: #fff;
+}
+
+.gift-logo-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #fff;
+    background: linear-gradient(135deg, #e44d26 0%, #f26161 100%);
+}
+
+.gift-bank-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.gift-details {
+    margin-bottom: 20px;
+}
+
+.gift-account-number {
+    font-size: 22px;
+    font-weight: 700;
+    color: #e44d26;
+    margin: 10px 0;
+    letter-spacing: 1px;
+    word-break: break-all;
+    line-height: 28px;
+}
+
+.gift-account-name {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.gift-account-holder {
+    font-weight: 600;
+    color: #333;
+    line-height: 22px;
+}
+
+.gift-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.gift-copy-btn {
+    flex: 1;
+    background: linear-gradient(135deg, #e44d26 0%, #f26161 100%);
+    color: #fff;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: .5px;
+    cursor: pointer;
+    transition: all .3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.gift-copy-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(228, 77, 38, .3);
+    color: #fff;
+}
+
+.gift-copy-btn:active {
+    transform: translateY(0);
+}
+
+.gift-note {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    line-height: 22px;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 15px;
+    background: rgba(228, 77, 38, .05);
+    border-radius: 10px;
+}
+
+/* Toast notifikasi salin nomor rekening */
+.copy-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #333;
+    color: #fff;
+    padding: 12px 25px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .2);
+    z-index: 10000;
+    opacity: 0;
+    transition: all .3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.copy-toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* KIRIMAN UCAPAN */
+#komentar .comments-scrollable-container {
+    position: relative;
+    margin-top: 20px;
+}
+
+#komentar .comments-scrollable {
+    padding: 10px;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    background: #fff;
+    transition: all .3s ease;
+}
+
+#komentar .comments-scrollable.scroll-enabled {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#komentar .comments-scrollable.scroll-enabled::-webkit-scrollbar {
+    width: 6px;
+}
+
+#komentar .comments-scrollable.scroll-enabled::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#komentar .comments-scrollable.scroll-enabled::-webkit-scrollbar-thumb {
+    background: #e44d26;
+    border-radius: 10px;
+}
+
+#komentar .comments-scrollable.no-scroll {
+    max-height: none;
+    overflow-y: visible;
+}
+
+#komentar .comment-item {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 4px solid #e44d26;
+    transition: all .3s ease;
+    text-align: left;
+}
+
+#komentar .comment-item:last-child {
+    margin-bottom: 0;
+}
+
+#komentar .comment-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, .1);
+}
+
+#komentar .comment-item strong {
+    color: #333;
+    font-size: 15px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+#komentar .comment-item small {
+    color: #666;
+    font-size: 12px;
+    margin-left: 0;
+}
+
+#komentar .comment-item p {
+    margin: 10px 0 0 0;
+    color: #555;
+    line-height: 22px;
+    font-style: italic;
+}
+
+#komentar .no-comments {
+    padding: 40px 20px;
+    color: #666;
+    font-style: italic;
+}
+
+#totalDoa-view strong {
+    font-size: 15px;
+}
+
+.scroll-indicator {
+    text-align: center;
+    padding: 10px;
+    color: #e44d26;
+    font-size: 13px;
+    background: rgba(228, 77, 38, .1);
+    border-radius: 0 0 10px 10px;
+    margin-top: -1px;
+    animation: bounce 2s infinite;
+}
+
+.scroll-indicator i {
+    margin-right: 8px;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-5px);
+    }
+    60% {
+        transform: translateY(-3px);
+    }
+}
+
+#showallcomment-btn {
+    background: linear-gradient(135deg, #e44d26, #f26161);
+    color: #fff;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: 500;
+    font-size: 14px;
+    margin-top: 20px;
+    transition: all .3s ease;
+}
+
+#showallcomment-btn:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(228, 77, 38, .3);
+}
+
+/* Modal konfirmasi berhasil */
+#successModal .modal-content {
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+}
+
+@media (max-width: 768px) {
+    .gift-cards {
+        gap: 20px;
+    }
+
+    .gift-card {
+        max-width: 100%;
+    }
+
+    .gift-account-number {
+        font-size: 20px;
+    }
+
+    #komentar .comments-scrollable.scroll-enabled {
+        max-height: 350px;
+    }
+
+    #komentar .comment-item {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .gift-card {
+        padding: 20px;
+    }
+
+    .gift-account-number {
+        font-size: 18px;
+    }
+
+    .gift-logo {
+        width: 50px;
+        height: 50px;
+        margin-right: 12px;
+    }
+}

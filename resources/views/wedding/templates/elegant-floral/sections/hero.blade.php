@@ -1,18 +1,34 @@
+@php
+    $heroTitle = $template->getSetting('hero_title', 'THE WEDDING OF');
+@endphp
 <!-- Popup Modal -->
 @if(isset($guestData) && $guestData)
 <div id="modal" style="opacity: 1; top: 0;">
     <section class="popup">
+        {{-- Video pembuka dari Settings → Foto ("Video Pembuka (Hero)"). Kalau
+             videonya belum diupload atau switch-nya dimatikan, yang tampil foto
+             hero saja — elemen <video> tetap ada (kosong & disembunyikan) karena
+             template.js mencari #popupVideo. --}}
         <div class="video-container">
-            <video autoplay muted loop playsinline id="popupVideo" class="video-background" preload="auto" webkit-playsinline>
-                <source src="{{ asset($template->getAsset('hero_video', 'assets/videos/wedding-bg-2.mp4')) }}" type="video/mp4">
-                <img src="{{ asset($template->getAsset('hero_image', 'assets/images/gallery/gal-2.jpg')) }}" alt="Wedding Background" class="fallback-image">
+            <video autoplay muted loop playsinline id="popupVideo" class="video-background" preload="auto"
+                   webkit-playsinline poster="{{ $heroPhotoUrl }}"
+                   @if(empty($heroVideoUrl)) style="display: none;" @endif>
+                @if(!empty($heroVideoUrl))
+                    <source src="{{ $heroVideoUrl }}" type="{{ $heroVideoType }}">
+                @endif
             </video>
+            <img src="{{ $heroPhotoUrl }}" alt="Wedding Background" class="fallback-image"
+                 @if(empty($heroVideoUrl)) style="display: block;" @endif>
         </div>
         <div class="popup-content" style="margin-top: -60px;">
-            <h1>THE WEDDING OF</h1>
-            <h2>Vendy & Margareth</h2>
-            <span class="h3"><strong>#loVENDYngnyaMARGARETH</strong></span>
-            <span class="h3">{{ Carbon\Carbon::parse($event->event_date)->format('d / m / y') }}</span>
+            <h1>{{ $heroTitle }}</h1>
+            <h2>{{ $coupleName }}</h2>
+            @if($hashtag)
+                <span class="h3"><strong>{{ $hashtag }}</strong></span>
+            @endif
+            @if($eventDateShort)
+                <span class="h3">{{ $eventDateShort }}</span>
+            @endif
             <br><br><br><br><br><br><br><br><br><br><br><br>
             <div class="yth">
                 Kepada Yth Bapak/Ibu/Saudara/i:<br>
@@ -29,21 +45,21 @@
 <!-- Carousel Section -->
 <div id="carousel" class="carousel slide carousel-fade" data-ride="carousel" data-interval="3000" data-pause="false">
     <div class="carousel-inner carousel-zoom">
-        <div class="item"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide1.jpg') }}"></div>
-        <div class="item"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide2.jpg') }}"></div>
-        <div class="item active"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide3.jpg') }}"></div>
-        <div class="item"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide4.jpg') }}"></div>
-        <div class="item"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide5.jpg') }}"></div>
-        <div class="item"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide6.jpg') }}"></div>
-        <div class="item"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide7.jpg') }}"></div>
-        <div class="item"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide8.jpg') }}"></div>
-        <div class="item"><img class="img-responsive" src="{{ asset('assets/images/gallery/slide9.jpg') }}"></div>
+        @foreach($heroSlides as $slideUrl)
+            <div class="item @if($loop->first) active @endif">
+                <img class="img-responsive" src="{{ $slideUrl }}" alt="{{ $coupleName }}">
+            </div>
+        @endforeach
         <div class="gradient"></div>
         <div id="header">
-            <h1>PERNIKAHAN</h1>
-            <h2>Vendy & Margareth</h2>
-            <h3><strong>#loVENDYngnyaMARGARETH</strong></h3>
-            <h3>{{ Carbon\Carbon::parse($event->event_date)->format('d / m / y') }}</h3>
+            <h1>{{ $heroTitle }}</h1>
+            <h2>{{ $coupleName }}</h2>
+            @if($hashtag)
+                <h3><strong>{{ $hashtag }}</strong></h3>
+            @endif
+            @if($eventDateShort)
+                <h3>{{ $eventDateShort }}</h3>
+            @endif
         </div>
         <svg class="bg-wave1" version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 500 100" xml:space="preserve">
             <style type="text/css">.st0 { opacity: .5 }</style>

@@ -25,6 +25,9 @@ Route::get('/{eventSlug}/invitation', [WeddingController::class, 'show'])
 // Route untuk menyimpan RSVP
 Route::post('/store-message', [WeddingController::class, 'storeMessage'])->name('wedding.store-message');
 
+// Ucapan tamu (dipanggil daftar "Best Wishes" saat tamu men-scroll)
+Route::get('/messages', [WeddingController::class, 'listMessages'])->name('wedding.messages');
+
 Auth::routes();
 
 Route::get('/register', function () {
@@ -75,6 +78,12 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/template-settings/gifts', [TemplateSettingController::class, 'updateGifts'])->name('admin.template-settings.gifts.update');
     Route::delete('/template-settings/groups', [TemplateSettingController::class, 'destroyGroup'])->name('admin.template-settings.groups.destroy');
     Route::post('/template-settings/upload-asset', [TemplateSettingController::class, 'uploadAsset'])->name('admin.template-settings.upload-asset');
+    // Backsound (audio) memakai endpoint sendiri: validasi & pemrosesannya
+    // berbeda dengan gambar.
+    Route::post('/template-settings/upload-audio', [TemplateSettingController::class, 'uploadAudio'])->name('admin.template-settings.upload-audio');
+    // Video pembuka (hero) juga punya endpoint sendiri: batas ukurannya jauh
+    // lebih besar daripada gambar dan tidak ada proses resize.
+    Route::post('/template-settings/upload-video', [TemplateSettingController::class, 'uploadVideo'])->name('admin.template-settings.upload-video');
     Route::delete('/template-settings/delete-asset', [TemplateSettingController::class, 'deleteAsset'])->name('admin.template-settings.delete-asset');
     Route::post('/template-settings/upload-gallery', [TemplateSettingController::class, 'uploadGallery'])->name('admin.template-settings.upload-gallery');
     // Gallery photos are addressed by their storage path (the numeric position

@@ -1073,6 +1073,139 @@ class TemplateSettingController extends Controller
     }
 
     /**
+     * Upload backsound (file audio) untuk template.
+     *
+     * Terpisah dari uploadAsset() karena endpoint itu memvalidasi gambar
+     * (`image|mimes:jpeg,...`) sekaligus mengukur dimensi/resize — semuanya
+     * tidak berlaku untuk audio.
+     */
+    public function uploadAudio(Request $request)
+    {
+        $template = WeddingTemplate::where('is_active', true)->first();
+
+        if (! $template) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak ada template aktif',
+            ], 404);
+        }
+
+        $request->validate([
+            'file' => 'required|file|mimes:mp3,m4a,m4b,aac,ogg,oga,wav,flac|max:20480',
+            'asset_key' => 'required|string|max:255',
+        ], [
+            'file.required' => 'Tidak ada file audio yang terkirim. Coba pilih file sekali lagi.',
+            'file.mimes' => 'Format audio harus MP3, M4A, AAC, OGG, WAV, atau FLAC.',
+            'file.max' => 'Ukuran file audio maksimal 20MB. Perkecil/kompres dulu filenya.',
+        ]);
+
+        $file = $request->file('file');
+        $assetKey = $request->input('asset_key');
+
+        // Nama file di-slug supaya aman dipakai di URL; kalau namanya tidak
+        // menghasilkan slug (mis. judul non-latin), pakai nama generik.
+        $baseName = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) ?: 'backsound';
+        $filename = $baseName.'-'.time().'.'.strtolower($file->getClientOriginalExtension());
+
+        $path = $file->storeAs(
+            'template-assets/'.$template->slug,
+            $filename,
+            'public'
+        );
+
+        $currentAssets = $template->assets_config ?? [];
+
+        // File backsound lama diganti supaya storage tidak menumpuk file besar.
+        if (isset($currentAssets[$assetKey]) && Storage::disk('public')->exists($currentAssets[$assetKey])) {
+            Storage::disk('public')->delete($currentAssets[$assetKey]);
+        }
+
+        $currentAssets[$assetKey] = $path;
+        $template->update(['assets_config' => $currentAssets]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Backsound berhasil diupload',
+            'path' => $path,
+            'url' => asset('storage/'.$path),
+            'asset_key' => $assetKey,
+            'size' => $file->getSize(),
+        ]);
+    }
+
+    /**
+     * Upload video pembuka (hero) untuk template.
+     *
+     * Terpisah dari uploadAsset() karena endpoint itu mewajibkan file gambar
+     * sekaligus mengukur dimensi/resize — semuanya tidak berlaku untuk video.
+     */
+    public function uploadVideo(Request $request)
+    {
+        $template = WeddingTemplate::where('is_active', true)->first();
+
+        if (! $template) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak ada template aktif',
+            ], 404);
+        }
+
+        $request->validate([
+            'file' => 'required|file|mimes:mp4,m4v,webm,ogv,mov|max:20480',
+            'asset_key' => 'required|string|max:255',
+        ], [
+            'file.required' => 'Tidak ada file video yang terkirim. Coba pilih file sekali lagi.',
+            'file.mimes' => 'Format video harus MP4, M4V, WebM, OGV, atau MOV (H.264 MP4 paling aman).',
+            'file.max' => 'Ukuran video maksimal 20MB. Kompres dulu videonya (mis. MP4 720p, 10-15 detik).',
+        ]);
+
+        $file = $request->file('file');
+        $assetKey = $request->input('asset_key');
+
+        // Nama file di-slug supaya aman dipakai di URL; kalau namanya tidak
+        // menghasilkan slug (mis. judul non-latin), pakai nama generik.
+        $baseName = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) ?: 'video-pembuka';
+        $filename = $baseName.'-'.time().'.'.strtolower($file->getClientOriginalExtension());
+
+        $path = $file->storeAs(
+            'template-assets/'.$template->slug,
+            $filename,
+            'public'
+        );
+
+        $currentAssets = $template->assets_config ?? [];
+
+        // Video lama diganti supaya storage tidak menumpuk file besar.
+        if (isset($currentAssets[$assetKey]) && Storage::disk('public')->exists($currentAssets[$assetKey])) {
+            Storage::disk('public')->delete($currentAssets[$assetKey]);
+        }
+
+        $currentAssets[$assetKey] = $path;
+        $template->update(['assets_config' => $currentAssets]);
+
+        $size = (int) $file->getSize();
+
+        $response = [
+            'success' => true,
+            'message' => 'Video pembuka berhasil diupload',
+            'path' => $path,
+            'url' => asset('storage/'.$path),
+            'asset_key' => $assetKey,
+            'size' => $size,
+        ];
+
+        // Video besar membuat undangan lambat dibuka di koneksi seluler, jadi
+        // diingatkan (filenya tetap dipakai).
+        if ($size > 10 * 1024 * 1024) {
+            $response['warnings'] = [
+                'Ukuran video '.round($size / 1048576, 1).'MB — tamu dengan koneksi lambat akan menunggu lama saat membuka undangan. Idealnya di bawah 10MB.',
+            ];
+        }
+
+        return response()->json($response);
+    }
+
+    /**
      * Upload gallery images
      */
     public function uploadGallery(Request $request)

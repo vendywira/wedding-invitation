@@ -1342,6 +1342,108 @@
     window.compressForUpload = compressForUpload;
     window.isSupportedImage = isSupportedImage;
 
+    // Backsound: file audio dikirim apa adanya (kompresi gambar tidak berlaku),
+    // jadi validasinya hanya format + ukuran sebelum dikirim ke endpoint audio.
+    var AUDIO_EXTENSIONS = ['mp3', 'm4a', 'm4b', 'aac', 'ogg', 'oga', 'wav', 'flac'];
+    var AUDIO_MAX_BYTES = 20 * 1024 * 1024;
+
+    window.uploadAudio = async function(input, assetKey) {
+        var file = input.files[0];
+        input.value = '';
+        if (!file) return;
+
+        var ext = (file.name.split('.').pop() || '').toLowerCase();
+        var typeOk = (file.type || '').indexOf('audio/') === 0 || (file.type || '').indexOf('application/ogg') === 0;
+
+        if (AUDIO_EXTENSIONS.indexOf(ext) === -1 && !typeOk) {
+            showToast('Format "' + (file.type || ext || 'tidak dikenal') + '" tidak didukung.\nGunakan MP3, M4A, AAC, OGG, WAV, atau FLAC.', 'error');
+            return;
+        }
+
+        if (file.size > AUDIO_MAX_BYTES) {
+            showToast('Ukuran file audio maksimal 20MB. File ini ' + formatFileSizeShort(file.size) + '. Kompres dulu filenya.', 'error');
+            return;
+        }
+
+        try {
+            var fd = new FormData();
+            fd.append('asset_key', assetKey);
+            fd.append('file', file);
+
+            var r = await fetch('{{ route("admin.template-settings.upload-audio") }}', {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                body: fd
+            });
+
+            var result = await readJsonResponse(r);
+
+            if (result.data && result.data.success) {
+                showToast('Backsound berhasil diupload (' + formatFileSizeShort(result.data.size || file.size) + ')!');
+                refreshSettingsPane();
+            } else {
+                showToast(uploadHint(result), 'error');
+            }
+        } catch (e) {
+            showToast('Upload gagal: ' + (e && e.message ? e.message : 'kesalahan tidak diketahui'), 'error');
+        }
+    };
+
+    // Video pembuka (hero): file dikirim apa adanya. Ukurannya jauh lebih
+    // besar dari foto/audio, jadi format + ukuran diperiksa dulu di browser
+    // supaya tidak menunggu upload penuh hanya untuk ditolak server.
+    var VIDEO_EXTENSIONS = ['mp4', 'm4v', 'webm', 'ogv', 'mov'];
+    var VIDEO_MAX_BYTES = 20 * 1024 * 1024;
+
+    window.uploadVideo = async function(input, assetKey) {
+        var file = input.files[0];
+        input.value = '';
+        if (!file) return;
+
+        var ext = (file.name.split('.').pop() || '').toLowerCase();
+        var typeOk = (file.type || '').indexOf('video/') === 0;
+
+        if (VIDEO_EXTENSIONS.indexOf(ext) === -1 && !typeOk) {
+            showToast('Format "' + (file.type || ext || 'tidak dikenal') + '" tidak didukung.\nGunakan MP4 (H.264), WebM, OGV, atau MOV.', 'error');
+            return;
+        }
+
+        if (file.size > VIDEO_MAX_BYTES) {
+            showToast('Ukuran video maksimal 20MB. File ini ' + formatFileSizeShort(file.size) + '. Kompres dulu ke MP4 720p.', 'error');
+            return;
+        }
+
+        try {
+            var fd = new FormData();
+            fd.append('asset_key', assetKey);
+            fd.append('file', file);
+
+            showToast('Mengunggah video ' + formatFileSizeShort(file.size) + '… jangan tutup halaman ini.', 'info');
+
+            var r = await fetch('{{ route("admin.template-settings.upload-video") }}', {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                body: fd
+            });
+
+            var result = await readJsonResponse(r);
+
+            if (result.data && result.data.success) {
+                showToast('Video pembuka berhasil diupload (' + formatFileSizeShort(result.data.size || file.size) + ')!');
+
+                if (result.data.warnings && result.data.warnings.length) {
+                    showToast(result.data.warnings.join('\n'), 'warning');
+                }
+
+                refreshSettingsPane();
+            } else {
+                showToast(uploadHint(result), 'error');
+            }
+        } catch (e) {
+            showToast('Upload gagal: ' + (e && e.message ? e.message : 'kesalahan tidak diketahui'), 'error');
+        }
+    };
+
     window.deleteAsset = async function(ak) {
         if (!confirm('Yakin ingin menghapus asset ini?')) return;
         try {
@@ -2013,6 +2115,20 @@
             body: formData
         }).then(function(r) { return r.json(); }).then(function(d) {
             showToast(d.success ? 'Our Story tersimpan!' : (d.message || 'Error'), d.success ? 'success' : 'error');
+        }).catch(function() { showToast('Terjadi kesalahan', 'error'); });
+    };
+
+    window.saveVideoUrl = function() {
+        var url = document.getElementById('galleryVideoUrl').value.trim();
+        var formData = new FormData();
+        formData.append('_method', 'PUT');
+        formData.append('template_settings[gallery_video_url]', url);
+        fetch('{{ route("admin.template-settings.update") }}', {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+            body: formData
+        }).then(function(r) { return r.json(); }).then(function(d) {
+            showToast(d.success ? 'Video tersimpan!' : (d.message || 'Error'), d.success ? 'success' : 'error');
         }).catch(function() { showToast('Terjadi kesalahan', 'error'); });
     };
 
