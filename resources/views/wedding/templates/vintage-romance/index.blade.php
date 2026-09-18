@@ -921,8 +921,8 @@
 	<meta name="generator"
 		content="Elementor 3.30.3; features: e_font_icon_svg, additional_custom_breakpoints; settings: css_print_method-external, google_font-enabled, font_display-swap">
 	<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-	<link rel="icon" href="/assets/vintage/vendor/invidigi-logo-150x150.png" sizes="32x32" />
-	<link rel="icon" href="/assets/vintage/vendor/invidigi-logo-300x300.png" sizes="192x192" />
+	<link rel="icon" href="/assets/vintage/vendor/wedding.png" sizes="32x32" />
+	<link rel="icon" href="/assets/vintage/vendor/wedding.png" sizes="192x192" />
 	<link rel="apple-touch-icon" href="/assets/vintage/vendor/invidigi-logo-300x300.png" />
 	<meta name="msapplication-TileImage" content="/assets/vintage/vendor/invidigi-logo-300x300.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -4106,6 +4106,7 @@
 			.replace(/Kirim/g, "KIRIM");
 		document.getElementById('commentform-31261').innerHTML = pos2;
 	</script>
+	<script id="swiper-js" src="/assets/vintage/vendor/swiper.min.js?ver=8.4.5"></script>
 	<script id="wdp-swiper-js-js" src="/assets/vintage/vendor/wdp-swiper.min.js"></script>
 	<script id="weddingpress-qr-js" src="/assets/vintage/vendor/qr-code.js"></script>
 	<script id="exad-main-script-js" src="/assets/vintage/vendor/exad-scripts.min.js?ver=3.1.12"></script>
@@ -4134,7 +4135,6 @@
 	<script id="elementor-frontend-js" src="/assets/vintage/vendor/elementor-frontend.min.js?ver=3.30.3"></script>
 	<script id="e-sticky-js" src="/assets/vintage/vendor/jquery.sticky.min.js?ver=3.29.2"></script>
 	<script id="lottie-js" src="/assets/vintage/vendor/lottie.min.js?ver=5.6.6"></script>
-	<script id="swiper-js" src="/assets/vintage/vendor/swiper.min.js?ver=8.4.5"></script>
 	<script id="elementor-gallery-js" src="/assets/vintage/vendor/e-gallery.min.js?ver=1.2.0"></script>
 	<script id="master-addons-plugins-js" src="/assets/vintage/vendor/plugins.js?ver=2.0.7.5"></script>
 	<script id="master-addons-scripts-js-extra">
@@ -4276,10 +4276,16 @@
 				});
 			});
 
-			// 4. Fallback Swiper initialization for 'The Moments Of' carousel
+			// 4. Fallback Swiper initialization for 'The Moments Of' carousel.
+			// If Elementor/WDP already initialised a Swiper instance without
+			// autoplay, destroy it and recreate with correct settings so the
+			// carousel always auto-plays consistently.
 			if (typeof Swiper !== 'undefined') {
 				var carouselEl = document.querySelector('.elementor-image-carousel-wrapper.swiper');
-				if (carouselEl && !carouselEl.swiper) {
+				if (carouselEl) {
+					if (carouselEl.swiper) {
+						carouselEl.swiper.destroy(true, true);
+					}
 					new Swiper(carouselEl, {
 						slidesPerView: 2,
 						spaceBetween: 10,
