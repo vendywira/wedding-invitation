@@ -2,14 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\MessageTemplate;
+use Illuminate\Database\Seeder;
 
 class MessageTemplateSeeder extends Seeder
 {
     public function run()
     {
-        MessageTemplate::truncate();
         $templates = [
             [
                 'name' => 'Template Formal',
@@ -31,7 +30,7 @@ Bantu kami mempersiapkan tempat terbaik untuk anda dengan konfirmasi kehadiran: 
 *Terima kasih,*
 *{groom_name} & {bride_name}*',
                 'is_active' => true,
-                'is_default' => true
+                'is_default' => true,
             ],
             [
                 'name' => 'Template Casual',
@@ -50,7 +49,7 @@ Bantu kami persiapkan semuanya dengan konfirmasi kehadiran kamu di:
 
 Cant wait to see you! 💕',
                 'is_active' => true,
-                'is_default' => false
+                'is_default' => false,
             ],
             [
                 'name' => 'Template Simple',
@@ -67,12 +66,15 @@ Link konfirmasi: {invitation_link}
 
 Terima kasih',
                 'is_active' => true,
-                'is_default' => false
-            ]
+                'is_default' => false,
+            ],
         ];
 
         foreach ($templates as $template) {
-            MessageTemplate::create($template);
+            MessageTemplate::updateOrCreate(
+                ['name' => $template['name']],
+                $template
+            );
         }
     }
 }

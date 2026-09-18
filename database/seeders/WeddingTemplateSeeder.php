@@ -9,10 +9,52 @@ class WeddingTemplateSeeder extends Seeder
 {
     public function run(): void
     {
-        // Vintage Romance - the main template
-        $vintage = WeddingTemplate::where('slug', 'vintage-romance')->first();
-        if ($vintage) {
-            $vintage->update([
+        WeddingTemplate::updateOrCreate(
+            ['slug' => 'vintage-romance'],
+            [
+                'name' => 'Vintage Romance',
+                'description' => 'Template undangan pernikahan dengan nuansa vintage yang elegan.',
+                'thumbnail' => 'assets/vintage/vendor/PAPER-BG-FLORAL-Q.jpg',
+                'is_active' => true,
+                'sections_config' => [
+                    'enabled' => [
+                        'hero' => true,
+                        'couple' => true,
+                        'story' => true,
+                        'events' => true,
+                        'gallery' => true,
+                        'countdown' => true,
+                        'gift' => true,
+                        'rsvp' => true,
+                        'live' => true,
+                        'dresscode' => true,
+                        'best_wishes' => true,
+                        'thanks' => true,
+                    ],
+                    'order' => [
+                        'hero',
+                        'couple',
+                        'story',
+                        'events',
+                        'gallery',
+                        'countdown',
+                        'gift',
+                        'rsvp',
+                        'live',
+                        'dresscode',
+                        'best_wishes',
+                        'thanks',
+                    ],
+                ],
+                'styling_config' => [
+                    'primary_color' => '#8B7355',
+                    'secondary_color' => '#D4C5A9',
+                    'font_heading' => 'Caudex',
+                    'font_body' => 'Catamaran',
+                    'background_style' => 'floral',
+                ],
+                'assets_config' => [],
+                'gallery' => [],
                 'template_settings' => [
                     'bride_name' => 'Isabel',
                     'groom_name' => 'Jefry',
@@ -48,7 +90,6 @@ class WeddingTemplateSeeder extends Seeder
                     'footer_message' => 'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu kepada kami.',
                     'wassalam_text' => "Wassalamu'alaikum Warahmatullahi Wabarakatuh",
                     'live_stream_url' => '',
-                    // Section toggles used by the invitation template
                     'show_bride_photo' => '1',
                     'show_groom_photo' => '1',
                     'show_story_image' => '1',
@@ -60,13 +101,6 @@ class WeddingTemplateSeeder extends Seeder
                     'show_story' => '1',
                     'show_best_wishes' => '1',
                 ],
-                // Text based assets (not uploads). The bank/address values used
-                // to live here; they now belong to the `gifts` list below.
-                'assets_config' => $vintage->assets_config ?? [],
-                'gallery' => [],
-                // Default gift entries (two banks + a gift shipping address).
-                // The list is fully editable from Dashboard → Settings → Hadiah,
-                // so a fresh install matches what the migration used to seed.
                 'gifts' => [
                     [
                         'id' => 'gift-1',
@@ -96,9 +130,9 @@ class WeddingTemplateSeeder extends Seeder
                         'default_logo' => null,
                     ],
                 ],
-            ]);
+            ]
+        );
 
-            $this->command->info('✅ Vintage Romance template settings seeded.');
-        }
+        $this->command->info('✅ Vintage Romance template seeded.');
     }
 }
