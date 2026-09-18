@@ -52,12 +52,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/guests/export-filtered', [AdminController::class, 'exportFiltered'])->name('admin.guests.export.filtered');
     Route::post('/guests/check', [AdminController::class, 'checkGuestExists'])->name('admin.guests.check');
 
-    Route::get('/templates', [MessageTemplateController::class, 'index'])->name('admin.templates.index');
-    Route::post('/templates', [MessageTemplateController::class, 'store'])->name('admin.templates.store');
-    Route::put('/templates/{id}', [MessageTemplateController::class, 'update'])->name('admin.templates.update');
-    Route::delete('/templates/{id}', [MessageTemplateController::class, 'destroy'])->name('admin.templates.destroy');
-    Route::post('/templates/{id}/set-default', [MessageTemplateController::class, 'setDefault'])->name('admin.templates.set-default');
-    Route::get('/templates/active', [MessageTemplateController::class, 'getActiveTemplates'])->name('admin.templates.active');
+    Route::get('/admin/templates', [MessageTemplateController::class, 'index'])->name('admin.templates.index');
+    Route::post('/admin/templates', [MessageTemplateController::class, 'store'])->name('admin.templates.store');
+    Route::put('/admin/templates/{id}', [MessageTemplateController::class, 'update'])->name('admin.templates.update');
+    Route::delete('/admin/templates/{id}', [MessageTemplateController::class, 'destroy'])->name('admin.templates.destroy');
+    Route::post('/admin/templates/{id}/set-default', [MessageTemplateController::class, 'setDefault'])->name('admin.templates.set-default');
+    Route::get('/admin/templates/active', [MessageTemplateController::class, 'getActiveTemplates'])->name('admin.templates.active');
 
     // Wedding Template Management Routes
     Route::get('/wedding-templates', [WeddingTemplateController::class, 'index'])->name('admin.wedding-templates.index');

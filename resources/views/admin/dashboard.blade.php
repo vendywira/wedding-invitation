@@ -2636,7 +2636,7 @@
                 if (confirmed) {
                     showLoading();
                     $.ajax({
-                        url: `{{ url("/templates") }}/${templateId}/set-default`,
+                        url: `{{ url("/admin/templates") }}/${templateId}/set-default`,
                         type: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}'
@@ -2675,7 +2675,7 @@
                 if (confirmed) {
                     showLoading();
                     $.ajax({
-                        url: `{{ url("/templates") }}/${templateId}`,
+                        url: `{{ url("/admin/templates") }}/${templateId}`,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
