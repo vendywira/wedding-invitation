@@ -22,10 +22,9 @@ class MessageTemplateController extends Controller
             'name' => 'required|string|max:255',
             'template' => 'required|string',
             'is_active' => 'boolean',
-            'is_default' => 'boolean'
+            'is_default' => 'boolean',
         ]);
 
-        // Jika di set sebagai default, non-aktifkan default lainnya
         if ($request->is_default) {
             MessageTemplate::where('is_default', true)->update(['is_default' => false]);
         }
@@ -34,22 +33,43 @@ class MessageTemplateController extends Controller
 
         return response()->json([
             'success' => true,
-            'template' => $template
+            'template' => $template,
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $template = MessageTemplate::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'template' => 'required|string',
+            'is_active' => 'boolean',
+            'is_default' => 'boolean',
+        ]);
+
+        if ($request->is_default && ! $template->is_default) {
+            MessageTemplate::where('is_default', true)->update(['is_default' => false]);
+        }
+
+        $template->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'template' => $template,
         ]);
     }
 
     public function setDefault($id)
     {
-        // Non-aktifkan semua template default
         MessageTemplate::where('is_default', true)->update(['is_default' => false]);
 
-        // Set template yang dipilih sebagai default
         $template = MessageTemplate::findOrFail($id);
         $template->update(['is_default' => true]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Template default berhasil diubah'
+            'message' => 'Template default berhasil diubah',
         ]);
     }
 
@@ -57,11 +77,10 @@ class MessageTemplateController extends Controller
     {
         $template = MessageTemplate::findOrFail($id);
 
-        // Jangan hapus template default
         if ($template->is_default) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tidak dapat menghapus template default'
+                'message' => 'Tidak dapat menghapus template default',
             ], 422);
         }
 
@@ -69,7 +88,7 @@ class MessageTemplateController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Template berhasil dihapus'
+            'message' => 'Template berhasil dihapus',
         ]);
     }
 
