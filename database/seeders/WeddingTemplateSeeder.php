@@ -100,6 +100,12 @@ class WeddingTemplateSeeder extends Seeder
                     'show_dresscode' => '1',
                     'show_story' => '1',
                     'show_best_wishes' => '1',
+                    // SEO settings
+                    'seo_meta_title' => '',
+                    'seo_meta_description' => '',
+                    'seo_og_title' => '',
+                    'seo_og_description' => '',
+                    'seo_og_image_asset' => 'cover_photo',
                 ],
                 'gifts' => [
                     [

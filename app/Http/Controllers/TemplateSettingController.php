@@ -303,6 +303,17 @@ class TemplateSettingController extends Controller
             'ratio_tolerance' => 0.5,
             'auto_resize' => true,
         ],
+        'seo_og_image' => [
+            'label' => 'Foto OG Image (Share)',
+            'min_width' => 600,
+            'min_height' => 315,
+            'max_width' => 4000,
+            'max_height' => 4000,
+            'aspect_ratio' => null,
+            'preferred_ratio' => '1200:630',
+            'ratio_tolerance' => 0.3,
+            'auto_resize' => true,
+        ],
     ];
 
     /**
@@ -572,6 +583,9 @@ class TemplateSettingController extends Controller
             'galleryValidationRules' => $this->galleryValidationRules,
             'groups' => $this->groups(),
             'gifts' => $template->getGifts(),
+            // Preview the exact fallback text an empty SEO field resolves to
+            // on the live invitation, so the admin can copy it in one click.
+            'seoDefaults' => $template->seoDefaults(Event::defaultGroup()),
         ]);
     }
 

@@ -108,6 +108,56 @@ class WeddingTemplate extends Model
         return $this->template_settings[$key] ?? $default;
     }
 
+    /**
+     * The text used when an SEO field in the dashboard is left empty.
+     *
+     * Kept here (not inline in WeddingController) so the admin SEO tab can
+     * show the exact fallback a guest would see, and the controller renders
+     * the very same strings.
+     *
+     * @param  \App\Models\Event|null  $event  the invitation group (date/venue)
+     * @param  string  $guestName  guest name from the `?to=` link parameter
+     * @param  bool  $hasToParam  a personalised link was opened
+     * @return array{title: string, description: string, og_title: string, og_description: string}
+     */
+    public function seoDefaults($event = null, string $guestName = '', bool $hasToParam = false): array
+    {
+        // Nama mempelai & tanggal acara persis seperti yang dirender
+        // WeddingController::generateMetaData() — fallback 'Mempelai' dan
+        // 'Tanggal belum ditentukan' juga disamakan supaya kalau pengaturan
+        // belum diisi, teks default yang terlihat di panel tidak kosong.
+        $brideName = $this->getSetting('bride_name', 'Mempelai') ?: 'Mempelai';
+        $groomName = $this->getSetting('groom_name', '') ?: '';
+        $coupleName = $groomName ? "{$brideName} & {$groomName}" : $brideName;
+        $weddingEmoji = '💍';
+
+        $eventDateFormatted = ($event && $event->event_date)
+            ? \Carbon\Carbon::parse($event->event_date)->locale('id')->translatedFormat('l, j F Y')
+            : '';
+
+        // Kalau tanggal belum ada, sisipkan kalimatnya juga — kalau tidak,
+        // deskripsi jadi "Dalam pernikahan A & B, . Konfirmasi...!" (titik terbang).
+        $dateSentence = $eventDateFormatted ? " {$eventDateFormatted}." : '';
+
+        $personalised = $hasToParam && $guestName !== '' && $guestName !== 'Tamu Undangan';
+
+        if ($personalised) {
+            return [
+                'title' => "{$weddingEmoji} Undangan Untuk {$guestName}",
+                'description' => "{$guestName}, Anda diundang secara khusus! 🎉 Dalam pernikahan {$coupleName},{$dateSentence} Konfirmasi kehadiran Anda!",
+                'og_title' => "{$weddingEmoji} Undangan Untuk {$guestName}",
+                'og_description' => "🎊 {$guestName}, Anda diundang! Dalam pernikahan {$coupleName}.{$dateSentence} Buka undangan untuk info lengkapnya.",
+            ];
+        }
+
+        return [
+            'title' => "{$weddingEmoji} Undangan Pernikahan {$coupleName}",
+            'description' => "🎉 Undangan Pernikahan {$coupleName},{$dateSentence} Dengan sukacita kami mengundang Bapak/Ibu/Saudara/i untuk hadir memberikan doa restu.",
+            'og_title' => "{$weddingEmoji} Undangan Pernikahan {$coupleName}",
+            'og_description' => "🎊 Undangan Pernikahan {$coupleName}.{$dateSentence} Buka undangan untuk info lengkapnya.",
+        ];
+    }
+
     public function getGalleryImages(): array
     {
         return $this->gallery ?? [];

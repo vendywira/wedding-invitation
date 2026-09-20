@@ -1464,6 +1464,43 @@
         }
     };
 
+    // OG image picker: klik salah satu kartu foto untuk jadi gambar share.
+    // Dipanggil inline dari template-settings-content (pane di-inject via
+    // innerHTML, jadi tag <script> embed gak jalan — handler harus global).
+    var ogPickerLabels = {
+        'cover_photo': 'Cover Sampul',
+        'bride_photo': 'Foto Mempelai Wanita',
+        'groom_photo': 'Foto Mempelai Pria',
+        'hero_photo': 'Foto Hero',
+        'desktop_cover': 'Cover Depan Desktop',
+        'closing_image': 'Foto Penutup',
+        'story_image': 'Foto Our Story',
+        'seo_og_image': 'Upload Sendiri'
+    };
+    window.seoOgSelect = function(key) {
+        var grid = document.getElementById('seoOgGrid');
+        if (!grid) return;
+        grid.querySelectorAll('.og-picker-item').forEach(function(btn) {
+            btn.classList.toggle('selected', btn.getAttribute('data-og-key') === key);
+        });
+        var input = document.getElementById('seoOgImageInput');
+        if (input) input.value = key;
+        showToast('OG image dipilih: ' + (ogPickerLabels[key] || key) + '. Klik Simpan SEO untuk menerapkan.', 'info', 3500);
+    };
+
+    // SEO field "Gunakan Default": isi field dengan teks default yang
+    // dipakai kalau fieldnya kosong, lalu sembunyikan preview card-nya.
+    window.seoUseDefault = function(btn) {
+        var key = btn.getAttribute('data-seo-key');
+        var field = document.getElementById('seo-field-' + key);
+        if (!field) return;
+        field.value = field.getAttribute('data-seo-default') || '';
+        field.dispatchEvent(new Event('input'));
+        var card = field.parentElement.querySelector('.seo-preview-card');
+        if (card) card.remove();
+        showToast('Field diisi dengan teks default. Klik Simpan SEO untuk menerapkan.', 'info', 3500);
+    };
+
     // NOTE: the endpoint expects `files[]` (see TemplateSettingController@uploadGallery),
     // not `gallery[]` — sending the wrong key made every dashboard upload fail with 422.
     // Each photo is compressed in the browser first (same reason as uploadAsset).

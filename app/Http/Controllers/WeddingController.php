@@ -15,13 +15,13 @@ class WeddingController extends Controller
     {
         $template = WeddingTemplate::where('is_active', true)->first();
 
-        if (!$template) {
+        if (! $template) {
             abort(404, 'No active template found');
         }
 
         $event = $this->resolveGroup($request);
 
-        if (!$event) {
+        if (! $event) {
             abort(404, 'Undangan belum diatur');
         }
 
@@ -29,7 +29,7 @@ class WeddingController extends Controller
         $guestData = null;
 
         if ($event->event_date) {
-            $event->event_date_time_start = Carbon::parse($event->event_date . ' ' . $event->start_time)
+            $event->event_date_time_start = Carbon::parse($event->event_date.' '.$event->start_time)
                 ->format('Y/m/d H:i:s');
         }
 
@@ -38,30 +38,30 @@ class WeddingController extends Controller
         }
 
         // Jika tidak ada guest dari parameter, cek dari query string
-        if (!$guestData && $request->has('to')) {
+        if (! $guestData && $request->has('to')) {
             $guestName = urldecode($request->get('to'));
 
             // Tamu dicari di grup undangan ini dulu: satu nama bisa terdaftar
             // di beberapa grup (mis. tamu yang diundang ke gedung dan ke rumah).
             $guestData = Guest::where('event_id', $event->id)
-                ->where('name', 'like', '%' . $guestName . '%')
+                ->where('name', 'like', '%'.$guestName.'%')
                 ->first()
-                ?? Guest::where('name', 'like', '%' . $guestName . '%')->first();
+                ?? Guest::where('name', 'like', '%'.$guestName.'%')->first();
 
-            if (!$guestData) {
+            if (! $guestData) {
                 // Tamu yang membuka lewat link grup ini otomatis terdaftar di grup tersebut.
                 $guestData = new Guest([
                     'name' => $guestName,
                     'event_id' => $event->id,
                     'code' => uniqid(),
                     'guest_attends' => 1,
-                    'is_opened' => true
+                    'is_opened' => true,
                 ]);
                 $guestData->save();
             }
         }
 
-        if (!$guestData) {
+        if (! $guestData) {
             $guestData = new Guest([
                 'name' => 'Tamu Undangan',
                 'code' => uniqid(),
@@ -119,17 +119,26 @@ class WeddingController extends Controller
         $groomName = $template ? $template->getSetting('groom_name', '') : '';
         $coupleName = $groomName ? "{$brideName} & {$groomName}" : $brideName;
 
-        if ($hasToParam && $guestName !== 'Tamu Undangan') {
-            $title = "{$weddingEmoji} Undangan Untuk {$guestName}";
-            $description = "{$guestName}, Anda diundang secara khusus! 🎉 Dalam pernikahan {$coupleName}, {$eventDateFormatted}. Konfirmasi kehadiran Anda!";
-            $ogTitle = "{$weddingEmoji} Undangan Untuk {$guestName}";
-            $ogDescription = "🎊 {$guestName}, Anda diundang! Dalam pernikahan {$coupleName}. {$eventDateFormatted}. Buka undangan untuk info lengkapnya.";
-        } else {
-            $title = "{$weddingEmoji} Undangan Pernikahan {$coupleName}";
-            $description = "🎉 Undangan Pernikahan {$coupleName}, {$eventDateFormatted}. Dengan sukacita kami mengundang Bapak/Ibu/Saudara/i untuk hadir memberikan doa restu.";
-            $ogTitle = "{$weddingEmoji} Undangan Pernikahan {$coupleName}";
-            $ogDescription = "🎊 Undangan Pernikahan {$coupleName}. {$eventDateFormatted}. Buka undangan untuk info lengkapnya.";
-        }
+        // SEO settings from admin dashboard
+        $seoTitle = $template ? $template->getSetting('seo_meta_title') : '';
+        $seoDescription = $template ? $template->getSetting('seo_meta_description') : '';
+        $seoOgTitle = $template ? $template->getSetting('seo_og_title') : '';
+        $seoOgDescription = $template ? $template->getSetting('seo_og_description') : '';
+        $seoOgImageAsset = $template ? $template->getSetting('seo_og_image_asset', 'cover_photo') : 'cover_photo';
+        $ogImageUrl = $template ? $template->getAssetUrl($seoOgImageAsset, url('/assets/images/og-image.jpg')) : url('/assets/images/og-image.jpg');
+
+        // WeddingTemplate::seoDefaults() builds both branches (personalised and
+        // generic) from $hasToParam, so the admin SEO tab previews the exact
+        // fallback a guest sees. The null coalescing keeps the old hardcoded
+        // strings when no template is active at all.
+        $seoDefaults = $template
+            ? $template->seoDefaults($event, $guestName, $hasToParam)
+            : null;
+
+        $title = $seoTitle ?: ($seoDefaults['title'] ?? "{$weddingEmoji} Undangan Pernikahan {$coupleName}");
+        $description = $seoDescription ?: ($seoDefaults['description'] ?? "🎉 Undangan Pernikahan {$coupleName}, {$eventDateFormatted}. Dengan sukacita kami mengundang Bapak/Ibu/Saudara/i untuk hadir memberikan doa restu.");
+        $ogTitle = $seoOgTitle ?: ($seoDefaults['og_title'] ?? "{$weddingEmoji} Undangan Pernikahan {$coupleName}");
+        $ogDescription = $seoOgDescription ?: ($seoDefaults['og_description'] ?? "🎊 Undangan Pernikahan {$coupleName}. {$eventDateFormatted}. Buka undangan untuk info lengkapnya.");
 
         $canonicalUrl = $hasToParam ? url("/$path/invitation") : $currentUrl;
         $robotsMeta = $hasToParam ? 'noindex, follow' : 'index, follow';
@@ -139,7 +148,7 @@ class WeddingController extends Controller
             'description' => $description,
             'og_title' => $ogTitle,
             'og_description' => $ogDescription,
-            'og_image' => url('/assets/images/og-image.jpg'),
+            'og_image' => $ogImageUrl,
             'og_url' => $currentUrl,
             'canonical_url' => $canonicalUrl,
             'robots_meta' => $robotsMeta,
@@ -148,7 +157,7 @@ class WeddingController extends Controller
             'guest_name' => $guestName,
             'location' => $location,
             'location_emoji' => $weddingEmoji,
-            'event_key' => $eventKey
+            'event_key' => $eventKey,
         ];
     }
 
@@ -194,7 +203,7 @@ class WeddingController extends Controller
                 ->update([
                     'guest_attends' => $request->get('guest_attends'),
                     'is_opened' => true,
-                    'attendance' => $request->get('attendance')
+                    'attendance' => $request->get('attendance'),
                 ]);
         }
 

@@ -15,6 +15,8 @@
 	$brideMother = $template->getSetting('bride_mother', '');
 	$groomFather = $template->getSetting('groom_father', '');
 	$groomMother = $template->getSetting('groom_mother', '');
+	$brideChildLabel = $template->getSetting('bride_child_label', 'Putri dari');
+	$groomChildLabel = $template->getSetting('groom_child_label', 'Putra dari');
 	$bridePhotoUrl = $template->getAssetUrl('bride_photo', 'assets/vintage/vendor/cewek.jpg');
 	$groomPhotoUrl = $template->getAssetUrl('groom_photo', 'assets/vintage/vendor/cowok.jpg');
 	// The hero ("a journey of love begins") has its own upload slot; until one is
@@ -1060,6 +1062,14 @@
 			user-select: none;
 		}
 
+		/* Icon default Elementor: fill #1f2124 — hampir hitam, nyaris tak
+		   terlihat di section Wedding Gift yang terang, jadi tamu hanya melihat
+		   satu icon saja (minus saat terbuka). Samakan warna judul accordion
+		   supaya state collapsed/expanded jelas terbaca. */
+		.e-n-accordion-item-title-icon span > svg {
+			fill: #6b4f2a !important;
+		}
+
 		/* Configurable section backgrounds (defaults keep the original artwork) */
 		.elementor-element-14b9e42d,
 		.elementor-element-3bf6678f,
@@ -2098,8 +2108,7 @@
 												data-id="615d00b" data-element_type="widget"
 												data-widget_type="heading.default">
 												<div class="elementor-widget-container">
-													<p class="elementor-heading-title elementor-size-default">Putri
-														dari<br>Bapak {{ $brideFather }} &amp; Ibu {{ $brideMother }}
+													<p class="elementor-heading-title elementor-size-default">{{ $brideChildLabel }}<br>Bapak {{ $brideFather }} &amp; Ibu {{ $brideMother }}
 													</p>
 												</div>
 											</div>
@@ -2168,8 +2177,7 @@
 												data-id="2c9e35ea" data-element_type="widget"
 												data-widget_type="heading.default">
 												<div class="elementor-widget-container">
-													<p class="elementor-heading-title elementor-size-default">Putra
-														dari<br>Bapak {{ $groomFather }} &amp; Ibu {{ $groomMother }}
+													<p class="elementor-heading-title elementor-size-default">{{ $groomChildLabel }}<br>Bapak {{ $groomFather }} &amp; Ibu {{ $groomMother }}
 													</p>
 												</div>
 											</div>
@@ -2727,7 +2735,11 @@
 										<div class="elementor-widget-container">
 											<div class="elementor-icon-wrapper">
 												<div class="elementor-icon">
-													<i aria-hidden="true" class="im im-gift"></i>
+													<svg aria-hidden="true"
+														class="e-font-icon-svg e-fas-gift"
+														viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+														<path d="M32 448c0 17.7 14.3 32 32 32h160V320H32v128zm256 32h160c17.7 0 32-14.3 32-32V320H288v160zm192-320h-42.1c6.2-12.1 10.1-25.5 10.1-40 0-48.5-39.5-88-88-88-41.6 0-68.5 21.3-103 68.3-34.5-47-61.4-68.3-103-68.3-48.5 0-88 39.5-88 88 0 14.5 3.8 27.9 10.1 40H32c-17.7 0-32 14.3-32 32v80c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16v-80c0-17.7-14.3-32-32-32zm-326.1 0c-22.1 0-40-17.9-40-40s17.9-40 40-40c19.9 0 34.6 3.3 86.1 80h-86.1zm206.1 0h-86.1c51.4-76.5 65.7-80 86.1-80 22.1 0 40 17.9 40 40s-17.9 40-40 40z"></path>
+													</svg>
 												</div>
 											</div>
 										</div>
@@ -2767,19 +2779,19 @@
 														</span>
 														<span class='e-n-accordion-item-title-icon'>
 															<span class='e-opened'><svg aria-hidden="true"
-																	class="e-font-icon-svg e-fas-minus"
+																	class="e-font-icon-svg e-fas-chevron-down"
 																	viewBox="0 0 448 512"
 																	xmlns="http://www.w3.org/2000/svg">
 																	<path
-																		d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z">
+																		d="M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z">
 																	</path>
 																</svg></span>
 															<span class='e-closed'><svg aria-hidden="true"
-																	class="e-font-icon-svg e-fas-gift"
-																	viewBox="0 0 512 512"
+																	class="e-font-icon-svg e-fas-chevron-right"
+																	viewBox="0 0 320 512"
 																	xmlns="http://www.w3.org/2000/svg">
 																	<path
-																		d="M32 448c0 17.7 14.3 32 32 32h160V320H32v128zm256 32h160c17.7 0 32-14.3 32-32V320H288v160zm192-320h-42.1c6.2-12.1 10.1-25.5 10.1-40 0-48.5-39.5-88-88-88-41.6 0-68.5 21.3-103 68.3-34.5-47-61.4-68.3-103-68.3-48.5 0-88 39.5-88 88 0 14.5 3.8 27.9 10.1 40H32c-17.7 0-32 14.3-32 32v80c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16v-80c0-17.7-14.3-32-32-32zm-326.1 0c-22.1 0-40-17.9-40-40s17.9-40 40-40c19.9 0 34.6 3.3 86.1 80h-86.1zm206.1 0h-86.1c51.4-76.5 65.7-80 86.1-80 22.1 0 40 17.9 40 40s-17.9 40-40 40z">
+																		d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z">
 																	</path>
 																</svg></span>
 														</span>
@@ -2813,15 +2825,12 @@
 																	<div class="elementor-widget-container">
 																		@if($giftIsAddress || !$giftLogoUrl)
 																			<div class="elementor-icon-wrapper">
-																				<div class="elementor-icon"><svg
-																						aria-hidden="true"
-																						class="e-font-icon-svg e-fas-gift"
-																						viewBox="0 0 512 512"
-																						xmlns="http://www.w3.org/2000/svg">
-																						<path
-																							d="M32 448c0 17.7 14.3 32 32 32h160V320H32v128zm256 32h160c17.7 0 32-14.3 32-32V320H288v160zm192-320h-42.1c6.2-12.1 10.1-25.5 10.1-40 0-48.5-39.5-88-88-88-41.6 0-68.5 21.3-103 68.3-34.5-47-61.4-68.3-103-68.3-48.5 0-88 39.5-88 88 0 14.5 3.8 27.9 10.1 40H32c-17.7 0-32 14.3-32 32v80c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16v-80c0-17.7-14.3-32-32-32zm-326.1 0c-22.1 0-40-17.9-40-40s17.9-40 40-40c19.9 0 34.6 3.3 86.1 80h-86.1zm206.1 0h-86.1c51.4-76.5 65.7-80 86.1-80 22.1 0 40 17.9 40 40s-17.9 40-40 40z">
-																						</path>
-																					</svg></div>
+																				<div class="elementor-icon"><svg aria-hidden="true"
+																	class="e-font-icon-svg e-fas-envelope"
+																	viewBox="0 0 512 512"
+																	xmlns="http://www.w3.org/2000/svg">
+																	<path d="M464 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm0 48v40.805c-22.422 18.259-58.168 46.651-134.587 106.49-16.841 13.247-50.201 45.072-73.413 44.701-23.208.375-56.579-31.459-73.413-44.701C106.18 199.465 70.425 171.067 48 152.805V112h416zM48 400V214.398c22.914 18.251 55.409 43.862 104.938 82.646 21.857 17.205 60.134 55.186 103.062 54.955 42.717.231 80.509-37.199 103.053-54.947 49.528-38.783 82.032-64.401 104.947-82.653V400H48z"></path>
+																</svg></div>
 																		</div>@else<img loading="lazy" decoding="async"
 																			src="{{ $giftLogoUrl }}"
 																			class="attachment-large size-large"
