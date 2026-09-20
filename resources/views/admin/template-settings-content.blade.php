@@ -255,6 +255,11 @@
 
     .ts-wrap .gallery-item.dragging { opacity: .45; transform: scale(.97); }
 
+    /* Kartu melayang yang mengikuti kursor saat drag. */
+    .ts-wrap .gallery-item.drag-ghost { box-shadow: 0 14px 30px rgba(0, 0, 0, .28); border: 2px solid #e44d26; cursor: grabbing; }
+
+    body.is-sorting-gallery { cursor: grabbing; }
+
     .ts-wrap .gallery-item.drag-over { outline: 2px dashed #e44d26; outline-offset: -2px; }
 
     .ts-wrap .reorder-hint { font-size: .78rem; color: #6b7280; }

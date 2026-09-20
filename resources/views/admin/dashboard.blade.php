@@ -1686,25 +1686,86 @@
         grid.dataset.sortReady = '1';
         paintSettingsGalleryOrder(grid);
 
-        var dragged = null;
+        // Ghost ditempel di dalam `.ts-wrap` supaya gaya `.ts-wrap .gallery-item`
+        // tetap berlaku (kalau ditempel ke <body>, style-nya tidak ikut).
+        var wrap = grid.closest('.ts-wrap') || document.body;
+
+        var dragged = null;   // kartu asli yang sedang diurutkan (tetap di grid)
+        var ghost = null;     // salinan melayang yang mengikuti kursor
+        var grabOffsetX = 0;
+        var grabOffsetY = 0;
+        var dragOver = null;  // kartu acuan sisip, untuk indikator drop
+        var orderBefore = ''; // urutan saat drag dimulai
+
+        function currentOrder() {
+            return settingsGalleryItems(grid).map(function (item) { return item.dataset.path; }).join('\n');
+        }
+
+        function setDragOver(target) {
+            if (dragOver === target) return;
+            if (dragOver) dragOver.classList.remove('drag-over');
+            dragOver = target;
+            if (dragOver) dragOver.classList.add('drag-over');
+        }
+
+        function removeGhost() {
+            if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
+            ghost = null;
+        }
 
         function finishDrag() {
             if (!dragged) return;
+
+            var changed = currentOrder() !== orderBefore;
+
+            setDragOver(null);
+            removeGhost();
             dragged.classList.remove('dragging');
             dragged = null;
             document.body.style.userSelect = '';
-            saveSettingsGalleryOrder();
+            document.body.classList.remove('is-sorting-gallery');
+
+            // Hanya kirim ke server kalau urutannya benar-benar berubah, jadi
+            // klik di handle tanpa menggeser tidak memicu request/notifikasi.
+            if (changed) saveSettingsGalleryOrder();
         }
 
-        // Insert `dragged` next to `target` depending on where the pointer is.
+        function moveGhost(clientX, clientY) {
+            if (!ghost) return;
+            ghost.style.left = (clientX - grabOffsetX) + 'px';
+            ghost.style.top = (clientY - grabOffsetY) + 'px';
+        }
+
+        // Auto-scroll saat pointer mendekati tepi viewport supaya daftar panjang
+        // tetap bisa diurutkan tanpa melepas drag.
+        function autoScroll(clientY) {
+            var edge = 80;
+            if (clientY < edge) window.scrollBy(0, -18);
+            else if (clientY > window.innerHeight - edge) window.scrollBy(0, 18);
+        }
+
+        // Pindahkan `dragged` ke sebelah `target`, mengikuti posisi pointer.
+        // Grid mengalir kiri→kanan lalu turun baris: kalau pointer masih dekat
+        // tengah kartu (satu baris) dipakai sumbu horizontal, kalau sudah
+        // melewati baris dipakai sumbu vertikal.
         function moveOver(target, clientX, clientY) {
             if (!target || target === dragged || target.parentNode !== grid) return;
+
+            setDragOver(target);
+
             var rect = target.getBoundingClientRect();
-            var centerY = rect.top + rect.height / 2;
-            var after = Math.abs(clientY - centerY) > rect.height / 4
-                ? clientY > centerY
-                : clientX > rect.left + rect.width / 2;
-            grid.insertBefore(dragged, after ? target.nextSibling : target);
+            var relX = clientX - (rect.left + rect.width / 2);
+            var relY = clientY - (rect.top + rect.height / 2);
+            var after = Math.abs(relY) > rect.height * 0.25 ? relY > 0 : relX > 0;
+
+            // Lewati kalau kartu sudah ada di posisi itu (menghindari DOM churn
+            // yang bikin drag terasa bergetar).
+            var items = settingsGalleryItems(grid);
+            var from = items.indexOf(dragged);
+            var to = items.indexOf(target) + (after ? 1 : 0);
+            if (from > -1 && to > -1 && (from < to ? to - 1 : to) === from) return;
+
+            grid.insertBefore(dragged, after ? target.nextElementSibling : target);
             paintSettingsGalleryOrder(grid);
         }
 
@@ -1713,16 +1774,46 @@
             if (!handle) return;
 
             handle.addEventListener('pointerdown', function(e) {
+                if (e.button !== undefined && e.button !== 0) return;
                 e.preventDefault();
+
                 dragged = item;
+                orderBefore = currentOrder();
+                var rect = item.getBoundingClientRect();
+                grabOffsetX = e.clientX - rect.left;
+                grabOffsetY = e.clientY - rect.top;
+
+                // Salinan melayang supaya kartu terlihat terangkat mengikuti
+                // kursor. `pointer-events: none` agar elemen di bawah kursor
+                // tetap kartu grid asli, bukan ghost-nya.
+                ghost = item.cloneNode(true);
+                ghost.classList.add('drag-ghost');
+                ghost.removeAttribute('id');
+                ghost.style.position = 'fixed';
+                ghost.style.left = rect.left + 'px';
+                ghost.style.top = rect.top + 'px';
+                ghost.style.width = rect.width + 'px';
+                ghost.style.height = rect.height + 'px';
+                ghost.style.margin = '0';
+                ghost.style.zIndex = '9999';
+                ghost.style.pointerEvents = 'none';
+                ghost.style.opacity = '.9';
+                wrap.appendChild(ghost);
+
                 item.classList.add('dragging');
                 document.body.style.userSelect = 'none';
-                handle.setPointerCapture(e.pointerId);
+                document.body.classList.add('is-sorting-gallery');
+
+                try { handle.setPointerCapture(e.pointerId); } catch (err) { }
             });
 
             handle.addEventListener('pointermove', function(e) {
                 if (!dragged || dragged !== item) return;
                 e.preventDefault();
+
+                moveGhost(e.clientX, e.clientY);
+                autoScroll(e.clientY);
+
                 var under = document.elementFromPoint(e.clientX, e.clientY);
                 var target = under && under.closest ? under.closest('#tsGalleryGrid .gallery-item') : null;
                 if (target) moveOver(target, e.clientX, e.clientY);

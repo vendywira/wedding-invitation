@@ -4144,7 +4144,26 @@
 		document.getElementById('commentform-31261').innerHTML = pos2;
 	</script>
 	<script id="swiper-js" src="/assets/vintage/vendor/swiper.min.js?ver=8.4.5"></script>
+	<script>
+		// `wdp-swiper.min.js` di bawah menimpa global `Swiper` dengan versi lama
+		// (memakai kelas `swiper-container-*`). Referensi Swiper v8 disimpan di
+		// sini dulu supaya galeri slide memakai versi yang cocok dengan CSS yang
+		// dimuat — versi lama tidak menambahkan `swiper-backface-hidden` sehingga
+		// gambar bisa kosong/berkedip selama transisi.
+		window.wdpSwiperV8 = window.Swiper;
+	</script>
 	<script id="wdp-swiper-js-js" src="/assets/vintage/vendor/wdp-swiper.min.js"></script>
+	<script>
+		// `wdp-swiper.min.js` hanya menaruh Swiper versi lamanya di global, jadi
+		// dikembalikan ke v8 di sini. Handler Elementor (mis. background slideshow
+		// di section countdown) dibuat belakangan saat DOMContentLoaded dan akan
+		// memakai global ini, sehingga ikut memakai v8 yang cocok dengan CSS-nya.
+		// `wdp.min.js` tidak memakai Swiper, jadi tidak ada yang bergantung pada
+		// versi lama; tetap disimpan `wdpSwiperLegacy` kalau sewaktu-waktu
+		// dibutuhkan.
+		window.wdpSwiperLegacy = window.Swiper;
+		window.Swiper = window.wdpSwiperV8;
+	</script>
 	<script id="weddingpress-qr-js" src="/assets/vintage/vendor/qr-code.js"></script>
 	<script id="exad-main-script-js" src="/assets/vintage/vendor/exad-scripts.min.js?ver=3.1.12"></script>
 	<script id="qr-code-styling-js" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
@@ -4328,9 +4347,21 @@
 			// belakangan, sehingga hasil akhirnya selalu satu instance.
 			var galleryCarouselEl = document.querySelector('.elementor-image-carousel-wrapper.swiper');
 			var gallerySwiper = null;
+			// Pakai Swiper v8 yang sudah disimpan sebelum `wdp-swiper.min.js`
+			// menimpa global `Swiper`. Versi lama memakai kelas `swiper-container-*`
+			// dan tidak menambahkan `swiper-backface-hidden`, sehingga gambar bisa
+			// terlihat kosong/berkedip selama transisi.
+			var SwiperLib = window.wdpSwiperV8 || window.Swiper;
+			var gallerySlidesPerView = 2;
+			var gallerySlideCount = galleryCarouselEl
+				? galleryCarouselEl.querySelectorAll('.swiper-wrapper > .swiper-slide').length
+				: 0;
+			// Loop (dan autoplay) hanya masuk akal kalau slide lebih banyak daripada
+			// yang tampil sekaligus; kalau tidak ada yang bisa diputar, biarkan diam.
+			var galleryCanLoop = gallerySlideCount > gallerySlidesPerView;
 
 			function ensureSingleGallerySwiper() {
-				if (!galleryCarouselEl || typeof Swiper === 'undefined') return;
+				if (!galleryCarouselEl || typeof SwiperLib === 'undefined') return;
 
 				// Instance kita masih terpasang dan belum tergantikan — tidak perlu apa-apa.
 				if (gallerySwiper && galleryCarouselEl.swiper === gallerySwiper) return;
@@ -4346,14 +4377,14 @@
 					galleryCarouselEl.swiper = null;
 				}
 
-				gallerySwiper = new Swiper(galleryCarouselEl, {
-					slidesPerView: 2,
+				gallerySwiper = new SwiperLib(galleryCarouselEl, {
+					slidesPerView: gallerySlidesPerView,
 					spaceBetween: 10,
-					loop: true,
-					autoplay: {
+					loop: galleryCanLoop,
+					autoplay: galleryCanLoop ? {
 						delay: 3000,
 						disableOnInteraction: false
-					},
+					} : false,
 					speed: 1500,
 					pagination: {
 						el: '.swiper-pagination',
