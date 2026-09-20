@@ -103,9 +103,13 @@ class WeddingTemplate extends Model
         return $this->styling_config[$key] ?? $default;
     }
 
-    public function getSetting(string $key, ?string $default = null): ?string
+    public function getSetting(string $key, $default = null)
     {
-        return $this->template_settings[$key] ?? $default;
+        $val = $this->template_settings[$key] ?? $default;
+        if (is_array($val)) {
+            return json_encode($val);
+        }
+        return $val;
     }
 
     /**
