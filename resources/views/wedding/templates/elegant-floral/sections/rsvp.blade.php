@@ -80,6 +80,11 @@
                             </button>
                         </div>
                     </div>
+
+                    {{-- Pesan error/status dari server ditampilkan di sini (bukan
+                         lewat alert generik) supaya tamu tahu persis kenapa
+                         konfirmasinya ditolak. Diisi oleh template.js. --}}
+                    <div class="konfirmasi-status" id="konfirmasi-status" role="status" aria-live="polite"></div>
                 </form>
             </div>
         </div>
@@ -92,6 +97,35 @@
         <div align="center">Mohon menunggu kami sedang memproses data anda</div>
     </div>
 </section>
+
+<style>
+    /* Pesan status konfirmasi: hanya tampil saat diisi oleh template.js. */
+    .konfirmasi-status {
+        display: none;
+        margin-top: 14px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        line-height: 1.45;
+        text-align: center;
+    }
+
+    .konfirmasi-status.is-visible {
+        display: block;
+    }
+
+    .konfirmasi-status.is-error {
+        background: rgba(200, 89, 81, 0.12);
+        border: 1px solid rgba(200, 89, 81, 0.45);
+        color: #b23b34;
+    }
+
+    .konfirmasi-status.is-success {
+        background: rgba(49, 147, 66, 0.12);
+        border: 1px solid rgba(49, 147, 66, 0.45);
+        color: #2f7d3d;
+    }
+</style>
 
 <script>
     // Pilihan jumlah tamu muncul hanya saat memilih "Iya, Saya Hadir".

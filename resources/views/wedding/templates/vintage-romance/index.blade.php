@@ -1102,6 +1102,28 @@
 			background-image: url('{{ $template->getAssetUrl('gift_card_bg', 'assets/vintage/vendor/ATC-CARD-1.jpg') }}') !important;
 		}
 
+		/* Section Wedding Day: di mobile, container acara (79bcddc0) di-fix
+		   --width:345px tapi flex-grow:0 + container-widget-width-nya calc((1-0)*100%)
+		   jadi 0% — flexbox menyusutkannya ke ~129px, sehingga teks acara
+		   (Resepsi Pernikahan, jam, tempat) terpotong di pinggir. Lebarkan ke penuh. */
+		@media (max-width: 767px) {
+			.elementor-element-79bcddc0,
+			.elementor-element-68e309a1 {
+				--container-widget-width: 100% !important;
+				--container-widget-flex-grow: 1 !important;
+				width: 100% !important;
+				max-width: 100% !important;
+			}
+
+			.elementor-element-463876b2 {
+				--border-radius: 0px !important;
+				border-radius: 0 !important;
+				--overflow: visible !important;
+				overflow: visible !important;
+				--padding-bottom: 140px !important;
+			}
+		}
+
 		.elementor-element-3ca3dd75 .overlayy {
 			background-image: url('{{ $template->getAssetUrl('modal_overlay', 'assets/vintage/vendor/CB-VIN-2-FIX-RE.jpg') }}') !important;
 		}
@@ -2631,7 +2653,13 @@
 									</div>
 								</div>
 								@endif
-								{{-- Pilihan tampilan galeri: Slide (swiper) atau Grid (bisa diklik) --}}
+								{{-- Pilihan tampilan galeri: Slide (swiper) atau Grid (bisa diklik).
+     Mode Slide diinisialisasi oleh script galeri di bawah halaman (bagian
+     "Fallback Swiper initialization"). Karena itu `data-widget_type` sengaja
+     dilepas dari widget image-carousel di bawah: kalau dibiarkan, handler
+     bawaan Elementor juga membuat instance Swiper sendiri secara async di
+     elemen yang sama, sehingga dua instance bertabrakan dan slide-nya rusak
+     (lompat / berlipat / panah tidak konsisten). --}}
 								<div class="wdp-gallery-switch" data-gallery-switch role="tablist"
 									aria-label="Tampilan galeri">
 									<button type="button" role="tab" aria-selected="true" class="is-active"
@@ -2642,7 +2670,7 @@
 								<div class="elementor-element elementor-element-46be85fa elementor-pagination-position-outside jltma-glass-effect-no elementor-widget elementor-widget-image-carousel"
 									data-id="46be85fa" data-gallery-panel="slide" data-element_type="widget"
 									data-settings="{&quot;slides_to_show_mobile&quot;:&quot;2&quot;,&quot;navigation&quot;:&quot;dots&quot;,&quot;autoplay_speed&quot;:3000,&quot;speed&quot;:2000,&quot;image_spacing_custom_mobile&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:10,&quot;sizes&quot;:[]},&quot;autoplay&quot;:&quot;yes&quot;,&quot;pause_on_hover&quot;:&quot;yes&quot;,&quot;pause_on_interaction&quot;:&quot;yes&quot;,&quot;infinite&quot;:&quot;yes&quot;,&quot;image_spacing_custom&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:20,&quot;sizes&quot;:[]},&quot;image_spacing_custom_tablet&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:&quot;&quot;,&quot;sizes&quot;:[]}}"
-									data-widget_type="image-carousel.default">
+									>
 									<div class="elementor-widget-container">
 										{{-- Panah navigasi mode Slide: pindah foto tanpa membuka lightbox.
 										     Tombolnya disambungkan ke instance Swiper di script
@@ -4285,32 +4313,61 @@
 				});
 			});
 
-			// 4. Fallback Swiper initialization for 'The Moments Of' carousel.
-			// If Elementor/WDP already initialised a Swiper instance without
-			// autoplay, destroy it and recreate with correct settings so the
-			// carousel always auto-plays consistently.
-			if (typeof Swiper !== 'undefined') {
-				var carouselEl = document.querySelector('.elementor-image-carousel-wrapper.swiper');
-				if (carouselEl) {
-					if (carouselEl.swiper) {
-						carouselEl.swiper.destroy(true, true);
-					}
-					new Swiper(carouselEl, {
-						slidesPerView: 2,
-						spaceBetween: 10,
-						loop: true,
-						autoplay: {
-							delay: 3000,
-							disableOnInteraction: false
-						},
-						speed: 1500,
-						pagination: {
-							el: '.swiper-pagination',
-							clickable: true
-						}
-					});
+			// 4. Swiper initialization for 'The Moments Of' carousel.
+			// Widget image-carousel di markup sengaja dibiarkan tanpa
+			// `data-widget_type` (lihat catatan di markup galeri) supaya handler
+			// bawaan Elementor tidak ikut meng-init elemen yang sama.
+			//
+			// Guard: elemen ini hanya boleh punya SATU instance Swiper, apa pun
+			// urutan init-nya. Handler carousel Elementor dimuat secara async, jadi
+			// script lain bisa meng-init elemen yang sama sebelum ATAU sesudah kita.
+			// Karena itu inisialisasi dibungkus fungsi yang (a) idempoten — instance
+			// milik kita sendiri tidak dibuat ulang — dan (b) selalu membuang semua
+			// instance asing sebelum membuat yang baru. Fungsi dipanggil lagi
+			// beberapa saat setelah load untuk menutup celah init yang datang
+			// belakangan, sehingga hasil akhirnya selalu satu instance.
+			var galleryCarouselEl = document.querySelector('.elementor-image-carousel-wrapper.swiper');
+			var gallerySwiper = null;
+
+			function ensureSingleGallerySwiper() {
+				if (!galleryCarouselEl || typeof Swiper === 'undefined') return;
+
+				// Instance kita masih terpasang dan belum tergantikan — tidak perlu apa-apa.
+				if (gallerySwiper && galleryCarouselEl.swiper === gallerySwiper) return;
+
+				// Ada instance asing (mis. dari Elementor), atau instance kita sudah
+				// digantikan. Bersihkan semuanya dulu supaya tidak ada Swiper ganda.
+				if (gallerySwiper) {
+					try { gallerySwiper.destroy(true, true); } catch (e) { }
+					gallerySwiper = null;
 				}
+				if (galleryCarouselEl.swiper) {
+					galleryCarouselEl.swiper.destroy(true, true);
+					galleryCarouselEl.swiper = null;
+				}
+
+				gallerySwiper = new Swiper(galleryCarouselEl, {
+					slidesPerView: 2,
+					spaceBetween: 10,
+					loop: true,
+					autoplay: {
+						delay: 3000,
+						disableOnInteraction: false
+					},
+					speed: 1500,
+					pagination: {
+						el: '.swiper-pagination',
+						clickable: true
+					}
+				});
 			}
+
+			ensureSingleGallerySwiper();
+
+			// Cek ulang setelah load untuk menangkap init susulan (chunk async).
+			[0, 400, 1500, 3000].forEach(function (delay) {
+				setTimeout(ensureSingleGallerySwiper, delay);
+			});
 
 			// 5. Countdown background slideshow animation.
 			// Photos come from Dashboard > Settings > Foto (Background Slide 1 & 2).
@@ -4513,16 +4570,88 @@
 			});
 		})();
 
+		// Pesan status form ucapan ditampilkan di elemen status plugin
+		// (`#cui-comment-status-*`) yang berada tepat di bawah form, bukan lewat
+		// alert generik. Kalau elemennya tidak ada, baru jatuh ke alert.
+		function showWishesStatus(type, message) {
+			var status = document.getElementById('cui-comment-status-31261');
+			if (!status) return false;
+			status.innerHTML = '';
+			var p = document.createElement('p');
+			p.className = type === 'error' ? 'cui-ajax-error' : 'cui-ajax-success';
+			p.textContent = message;
+			status.appendChild(p);
+			status.style.display = 'block';
+			return true;
+		}
+
+		function clearWishesStatus() {
+			var status = document.getElementById('cui-comment-status-31261');
+			if (!status) return;
+			status.innerHTML = '';
+			status.style.display = 'none';
+		}
+
+		// Ambil pesan paling spesifik dari body JSON Laravel: `errors` (per field)
+		// lebih dulu, lalu `message`.
+		function extractWishesErrorMessage(data) {
+			if (!data) return null;
+
+			if (data.errors) {
+				var first = null;
+				Object.keys(data.errors).some(function (key) {
+					var value = data.errors[key];
+					if (Object.prototype.toString.call(value) === '[object Array]' && value.length) {
+						first = value[0];
+						return true;
+					}
+					if (typeof value === 'string' && value) {
+						first = value;
+						return true;
+					}
+					return false;
+				});
+				if (first) return first;
+			}
+
+			return data.message || null;
+		}
+
+		// Ubah respons server menjadi pesan yang jelas. Status teknis dipetakan
+		// lebih dulu (mis. 419 bawaan Laravel berbahasa Inggris), baru kemudian
+		// pesan validasi dari server dipakai.
+		function describeWishesError(status, data) {
+			switch (status) {
+				case 419:
+					return 'Sesi Anda sudah berakhir. Muat ulang halaman lalu coba kirim lagi.';
+				case 429:
+					return 'Terlalu banyak percobaan. Mohon tunggu sebentar lalu coba lagi.';
+				case 500:
+				case 503:
+					return 'Server sedang bermasalah. Silakan coba lagi beberapa saat lagi.';
+			}
+
+			return extractWishesErrorMessage(data)
+				|| 'Gagal mengirim ucapan (kode ' + status + '). Silakan coba lagi.';
+		}
+
+		function reportWishesError(status, data) {
+			var message = describeWishesError(status, data);
+			if (!showWishesStatus('error', message)) alert(message);
+		}
+
 		function submitBestWishes(e) {
 			e.preventDefault();
 			var form = document.getElementById('bestWishesForm');
 			if (!form) return;
 
+			clearWishesStatus();
+
 			// Select kehadiran disembunyikan dan digantikan tombol Hadir/Tidak
 			// Hadir, jadi `required` bawaan HTML tidak dipakai — divalidasi di sini.
 			var attendanceField = form.querySelector('[name="attendance"]');
 			if (attendanceField && !attendanceField.value) {
-				alert('Mohon konfirmasi kehadiran anda terlebih dahulu.');
+				reportWishesError(0, { message: 'Mohon konfirmasi kehadiran Anda terlebih dahulu.' });
 				return;
 			}
 
@@ -4535,13 +4664,26 @@
 				method: 'POST',
 				headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
 				body: formData
-			}).then(function (r) { return r.json(); }).then(function (d) {					if (d.success) {
-						btn.value = 'Terkirim!';
+			}).then(function (r) {
+				// Server bisa membalas JSON (sukses / validasi) atau halaman HTML
+				// (mis. error 500 / 419). Body dibaca sebagai teks dulu, lalu
+				// di-parse kalau memang JSON.
+				return r.text().then(function (text) {
+					var data = null;
+					try { data = text ? JSON.parse(text) : null; } catch (err) { data = null; }
+					return { ok: r.ok, status: r.status, data: data };
+				});
+			}).then(function (res) {
+				var d = res.data;
 
-						// Hanya ucapan yang dikosongkan; nama, kehadiran, dan jumlah
-						// tamu dibiarkan supaya tamu bisa menambah ucapan lain.
-						var textarea = form.querySelector('textarea[name="message"]');
-						if (textarea) textarea.value = '';
+				if (res.ok && d && d.success) {
+					btn.value = 'Terkirim!';
+					showWishesStatus('success', d.message || 'Ucapan Anda berhasil dikirim.');
+
+					// Hanya ucapan yang dikosongkan; nama, kehadiran, dan jumlah
+					// tamu dibiarkan supaya tamu bisa menambah ucapan lain.
+					var textarea = form.querySelector('textarea[name="message"]');
+					if (textarea) textarea.value = '';
 
 					if (d.message_data && window.wdpWishes) {
 						window.wdpWishes.push(d.message_data);
@@ -4549,12 +4691,12 @@
 
 					setTimeout(function () { btn.value = origText; btn.disabled = false; }, 2000);
 				} else {
-					alert(d.message || 'Gagal mengirim');
+					reportWishesError(res.status, d);
 					btn.value = origText;
 					btn.disabled = false;
 				}
 			}).catch(function () {
-				alert('Terjadi kesalahan');
+				reportWishesError(0, { message: 'Tidak dapat menghubungi server. Periksa koneksi Anda lalu coba lagi.' });
 				btn.value = origText;
 				btn.disabled = false;
 			});

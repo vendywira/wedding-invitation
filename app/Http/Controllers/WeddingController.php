@@ -195,22 +195,48 @@ class WeddingController extends Controller
             'message' => 'nullable|string|max:500',
             'guest_code' => 'nullable|string',
             'guest_id' => 'nullable|integer',
+        ], [
+            // Pesan validasi ditulis dalam Bahasa Indonesia supaya form ucapan
+            // bisa menampilkan alasan penolakan yang jelas (bukan pesan bawaan
+            // Laravel yang berbahasa Inggris).
+            'name.required' => 'Nama wajib diisi.',
+            'name.max' => 'Nama maksimal 255 karakter.',
+            'guest_attends.required' => 'Jumlah tamu wajib diisi.',
+            'guest_attends.integer' => 'Jumlah tamu tidak valid.',
+            'guest_attends.min' => 'Jumlah tamu minimal 1 orang.',
+            'guest_attends.max' => 'Jumlah tamu maksimal 10 orang.',
+            'attendance.required' => 'Mohon konfirmasi kehadiran Anda terlebih dahulu.',
+            'attendance.in' => 'Konfirmasi kehadiran tidak valid.',
+            'message.max' => 'Ucapan maksimal 500 karakter.',
         ]);
 
-        // Update guest data jika ada guest_code
-        if ($request->get('guest_code')) {
-            Guest::where('code', $request->get('guest_code'))
-                ->update([
-                    'guest_attends' => $request->get('guest_attends'),
-                    'is_opened' => true,
-                    'attendance' => $request->get('attendance'),
-                ]);
+        // Tamu di-link lewat `guest_code` (link pribadi) atau `guest_id`. Tamu
+        // yang membuka link umum tidak punya baris di tabel `guests`, jadi
+        // `guest_id` bisa kosong — ucapan tetap disimpan tanpa relasi tamu.
+        // `guest_id` yang tidak valid (mis. sudah terhapus) juga diabaikan,
+        // supaya tidak memicu pelanggaran foreign key.
+        $guest = null;
+
+        if ($request->filled('guest_code')) {
+            $guest = Guest::where('code', $request->get('guest_code'))->first();
+        }
+
+        if (! $guest && $request->filled('guest_id')) {
+            $guest = Guest::find($request->get('guest_id'));
+        }
+
+        if ($guest) {
+            $guest->update([
+                'guest_attends' => $request->get('guest_attends'),
+                'is_opened' => true,
+                'attendance' => $request->get('attendance'),
+            ]);
         }
 
         // Create new message
         $newMessage = Message::create([
             'name' => $request->name,
-            'guest_id' => $request->get('guest_id'),
+            'guest_id' => $guest?->id,
             'message' => $request->message,
         ]);
 

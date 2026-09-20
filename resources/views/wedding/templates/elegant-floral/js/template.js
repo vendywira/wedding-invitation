@@ -484,10 +484,65 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// ===== Pesan status form RSVP (inline, bukan alert generik) =====
+// Ambil pesan paling spesifik dari body JSON Laravel: `errors` (per field)
+// lebih dulu, lalu `message`.
+function extractKonfirmasiErrorMessage(xhr) {
+    const data = xhr && xhr.responseJSON;
+    if (!data) return null;
+
+    if (data.errors) {
+        for (const key in data.errors) {
+            if (!Object.prototype.hasOwnProperty.call(data.errors, key)) continue;
+            const value = data.errors[key];
+            if (Array.isArray(value) && value.length) return value[0];
+            if (typeof value === 'string' && value) return value;
+        }
+    }
+
+    return data.message || null;
+}
+
+// Status teknis dipetakan lebih dulu (mis. 419 bawaan Laravel berbahasa
+// Inggris), baru kemudian pesan validasi dari server dipakai.
+function describeKonfirmasiError(xhr) {
+    const status = (xhr && xhr.status) || 0;
+
+    switch (status) {
+        case 419:
+            return 'Sesi Anda sudah berakhir. Muat ulang halaman lalu coba kirim lagi.';
+        case 429:
+            return 'Terlalu banyak percobaan. Mohon tunggu sebentar lalu coba lagi.';
+        case 500:
+        case 503:
+            return 'Server sedang bermasalah. Silakan coba lagi beberapa saat lagi.';
+    }
+
+    return extractKonfirmasiErrorMessage(xhr)
+        || 'Gagal mengirim konfirmasi (kode ' + status + '). Silakan coba lagi.';
+}
+
+function showKonfirmasiStatus(type, message) {
+    const status = document.getElementById('konfirmasi-status');
+    if (!status) return false;
+    status.className = 'konfirmasi-status is-visible ' + (type === 'error' ? 'is-error' : 'is-success');
+    status.textContent = message;
+    return true;
+}
+
+function clearKonfirmasiStatus() {
+    const status = document.getElementById('konfirmasi-status');
+    if (!status) return;
+    status.className = 'konfirmasi-status';
+    status.textContent = '';
+}
+
 // Form submission
 $(document).ready(function () {
     $('#konfirmasi-form').on('submit', function (e) {
         e.preventDefault();
+
+        clearKonfirmasiStatus();
 
         const submitBtn = $('#send-konfirmasi');
         const btnText = submitBtn.find('.btn-text');
@@ -514,11 +569,19 @@ $(document).ready(function () {
                     $('#konfirmasi-form')[0].reset();
                     $('#char-count').text('0');
                     updateMessages(response.messages);
+                } else {
+                    // Server membalas 200 tetapi menolak (mis. validasi yang
+                    // dikembalikan sebagai JSON biasa).
+                    const message = (response && response.message) || 'Konfirmasi belum bisa dikirim. Mohon periksa kembali.';
+                    if (!showKonfirmasiStatus('error', message)) showToast(message, true);
                 }
             },
             error: function (xhr) {
                 console.error('Error:', xhr);
-                alert('Terjadi kesalahan saat mengirim konfirmasi. Silakan coba lagi.');
+                const message = describeKonfirmasiError(xhr);
+                // Inline di form; toast dipakai sebagai cadangan kalau elemen
+                // status tidak ada.
+                if (!showKonfirmasiStatus('error', message)) showToast(message, true);
             },
             complete: function () {
                 btnText.removeClass('d-none');
