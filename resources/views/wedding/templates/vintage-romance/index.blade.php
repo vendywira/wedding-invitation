@@ -2321,7 +2321,12 @@
 													target="_blank" rel="noopener">
 													<span class="elementor-button-content-wrapper">
 														<span class="elementor-button-icon">
-															<i aria-hidden="true" class="im im-save"></i> </span>
+															<svg aria-hidden="true"
+																class="e-font-icon-svg e-far-calendar-check"
+																viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+																<path
+																	d="M400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48zM0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm325.8-174.8l-72.8 88.9c-6.2 7.6-17.4 8.7-25 2.1l-56-48c-7.5-6.4-8.3-17.8-1.9-25.3 6.4-7.5 17.8-8.3 25.3-1.9l41.9 35.9 60.9-74.4c6.2-7.6 17.4-8.7 25-2.1 7.6 6.2 8.7 17.4 2.1 25z"></path>
+															</svg> </span>
 														<span class="elementor-button-text">SAVE THE DATE</span>
 													</span>
 												</a>
