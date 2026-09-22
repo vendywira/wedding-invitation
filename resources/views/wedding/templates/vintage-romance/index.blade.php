@@ -54,7 +54,14 @@
 	$showLive = $template->getSetting('show_live', '1');
 	$showDresscode = $template->getSetting('show_dresscode', '1');
 	$showBestWishes = $template->getSetting('show_best_wishes', '1');
-	$showFooter = $template->getSetting('show_footer', '1');
+	$brideInstagram = $template->getSetting('bride_instagram', '');
+	$groomInstagram = $template->getSetting('groom_instagram', '');
+	$instagramUrl = function ($handle) {
+		if (!$handle) return '';
+		return preg_match('#^https?://#i', $handle) ? $handle : 'https://instagram.com/' . ltrim($handle, '@');
+	};
+	$brideInstagramUrl = $instagramUrl($brideInstagram);
+	$groomInstagramUrl = $instagramUrl($groomInstagram);
 	// Daftar hadiah (bank / e-wallet / alamat kado) diatur dari Settings → Hadiah.
 	$giftAccounts = $template->getGifts();
 @endphp
@@ -1379,54 +1386,65 @@
 			background: rgba(255, 255, 255, .25);
 		}
 
-		/* ============ Footer / Penutup ============ */
-		/* Di desktop kolom kiri (66.666%) dipasang `position:fixed`, jadi footer
-		   diberi lebar sisa 33.334% di kanan supaya tidak tertutup kolom itu. */
-		.wdp-footer-section {
-			position: relative;
-			z-index: 30;
-			background-color: #1a1a1a;
-			padding: 42px 24px;
+		/* ============ Credit penutup ============ */
+		.wdp-credit {
 			text-align: center;
-			box-sizing: border-box;
+			padding: 10px 0 6px;
 		}
 
-		@media (min-width: 768px) {
-			.wdp-footer-section {
-				margin-left: 66.666%;
-				width: 33.334%;
-			}
-		}
-
-		.wdp-footer-section .wdp-footer-eyebrow {
-			font-family: 'Caudex', serif;
-			font-size: 1.05rem;
-			letter-spacing: 2px;
-			color: #AF976A;
-			margin-bottom: 8px;
-		}
-
-		.wdp-footer-section .wdp-footer-couple {
-			font-family: 'Playfair Display', serif;
-			font-size: 1.75rem;
-			color: #fff;
-			margin-bottom: 12px;
-		}
-
-		.wdp-footer-section .wdp-footer-thanks {
+		.wdp-credit-happy {
 			font-family: 'Cormorant Garamond', serif;
-			font-size: .9rem;
-			line-height: 1.7;
-			color: #c9c1b6;
-			margin-bottom: 18px;
+			font-size: .72rem;
+			letter-spacing: 4px;
+			text-transform: uppercase;
+			color: rgba(255, 241, 212, .55);
+			margin: 0;
 		}
 
-		.wdp-footer-section .wdp-footer-copy {
+		.wdp-credit-divider {
+			display: block;
+			width: 44px;
+			height: 1px;
+			margin: 12px auto;
+			background: linear-gradient(90deg, transparent, #AF976A, transparent);
+		}
+
+		.wdp-credit-couple {
+			font-family: 'Playfair Display', serif;
+			font-style: italic;
+			font-size: 1.5rem;
+			letter-spacing: .5px;
+			color: #FFF1D4;
+			margin: 0 0 14px;
+		}
+
+		.wdp-credit-design {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: .78rem;
+			letter-spacing: 1.2px;
+			color: rgba(255, 241, 212, .55);
+			margin: 0;
+		}
+
+		.wdp-credit-design a {
+			color: #AF976A;
+			text-decoration: none;
+			border-bottom: 1px solid rgba(175, 151, 106, .45);
+			transition: color .25s ease, border-color .25s ease;
+		}
+
+		.wdp-credit-design a:hover,
+		.wdp-credit-design a:focus-visible {
+			color: #D8BE8F;
+			border-bottom-color: #D8BE8F;
+		}
+
+		.wdp-credit-copy {
+			font-family: 'Cormorant Garamond', serif;
 			font-size: .72rem;
-			color: #6f6f6f;
-			border-top: 1px solid rgba(175, 151, 106, .3);
-			padding-top: 16px;
-			margin-bottom: 0;
+			letter-spacing: 1px;
+			color: rgba(255, 241, 212, .45);
+			margin: 10px 0 0;
 		}
 
 		/* ============ Best Wishes: daftar ucapan tamu ============ */
@@ -2134,6 +2152,7 @@
 													</p>
 												</div>
 											</div>
+@if($brideInstagramUrl)
 											<div class="elementor-element elementor-element-2e448cb7 elementor-shape-circle zoom elementor-grid-0 e-grid-align-center jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-social-icons"
 												data-id="2e448cb7" data-element_type="widget"
 												data-settings="{&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:400}"
@@ -2142,7 +2161,7 @@
 													<div class="elementor-social-icons-wrapper elementor-grid">
 														<span class="elementor-grid-item">
 															<a class="elementor-icon elementor-social-icon elementor-social-icon-instagram elementor-repeater-item-0f94d9a"
-																target="_blank">
+																href="{{ $brideInstagramUrl }}" target="_blank" rel="noopener noreferrer">
 																<span class="elementor-screen-only">Instagram</span>
 																<svg class="e-font-icon-svg e-fab-instagram"
 																	viewBox="0 0 448 512"
@@ -2155,6 +2174,7 @@
 													</div>
 												</div>
 											</div>
+@endif
 											<div class="elementor-element elementor-element-5cbb6301 zoom jltma-glass-effect-no elementor-widget elementor-widget-heading"
 												data-id="5cbb6301" data-element_type="widget"
 												data-widget_type="heading.default">
@@ -2203,6 +2223,7 @@
 													</p>
 												</div>
 											</div>
+@if($groomInstagramUrl)
 											<div class="elementor-element elementor-element-68d487d7 elementor-shape-circle zoom elementor-grid-0 e-grid-align-center jltma-glass-effect-no elementor-invisible elementor-widget elementor-widget-social-icons"
 												data-id="68d487d7" data-element_type="widget"
 												data-settings="{&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:400}"
@@ -2211,7 +2232,7 @@
 													<div class="elementor-social-icons-wrapper elementor-grid">
 														<span class="elementor-grid-item">
 															<a class="elementor-icon elementor-social-icon elementor-social-icon-instagram elementor-repeater-item-0f94d9a"
-																target="_blank">
+																href="{{ $groomInstagramUrl }}" target="_blank" rel="noopener noreferrer">
 																<span class="elementor-screen-only">Instagram</span>
 																<svg class="e-font-icon-svg e-fab-instagram"
 																	viewBox="0 0 448 512"
@@ -2224,6 +2245,7 @@
 													</div>
 												</div>
 											</div>
+@endif
 											<div class="elementor-element elementor-element-186c6709 jltma-glass-effect-no elementor-widget elementor-widget-spacer"
 												data-id="186c6709" data-element_type="widget"
 												data-widget_type="spacer.default">
@@ -4039,6 +4061,19 @@
 												</style>
 											</div>
 										</div>
+										<div class="elementor-element elementor-element-e0a1b2c3 jltma-glass-effect-no elementor-widget elementor-widget-text-editor"
+											data-id="e0a1b2c3" data-element_type="widget"
+											data-widget_type="text-editor.default">
+											<div class="elementor-widget-container">
+												<div class="wdp-credit">
+													<p class="wdp-credit-happy">Happy Wedding</p>
+													<span class="wdp-credit-divider" aria-hidden="true"></span>
+													<p class="wdp-credit-couple">{{ $coupleName }}</p>
+													<p class="wdp-credit-design">Design by <a href="https://www.instagram.com/vendywira/" target="_blank" rel="noopener noreferrer">I Wayan Vendy Wiranatha</a></p>
+													<p class="wdp-credit-copy">&copy; {{ date('Y') }} weddingstory.my.id</p>
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -4839,21 +4874,6 @@
 			};
 		})();
 	</script>
-
-	{{-- Footer / penutup undangan. Sengaja diletakkan di luar struktur Elementor
-	     yang di-export (yang sarang-nya mudah bergeser) dan diatur lewat CSS
-	     `.wdp-footer-section` supaya tidak tertutup kolom kiri yang `fixed`.
-
-	     Bisa disembunyikan dari Dashboard > Settings > Teks
-	     (switch "Section Footer (penutup)"). --}}
-	@if(($showFooter ?? '1') !== '0')
-		<section class="wdp-footer-section" aria-label="Penutup undangan">
-			<p class="wdp-footer-eyebrow">Kami Yang Berbahagia</p>
-			<h2 class="wdp-footer-couple">{{ $coupleName }}</h2>
-			<p class="wdp-footer-thanks">{{ $template->getSetting('footer_message', 'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.') }}</p>
-			<p class="wdp-footer-copy">&copy; {{ date('Y') }} {{ $coupleName }} Wedding</p>
-		</section>
-	@endif
 
 </body>
 

@@ -2911,7 +2911,7 @@
 
             const formatter = new Intl.DateTimeFormat('id-ID', options);
             const formattedDate = event.event_date ? formatter.format(new Date(event.event_date)) : 'Tanggal belum ditentukan';
-            const eventTime = event.start_time && event.finish_time ? `${event.start_time} WITA - ${event.finish_time}` : 'Waktu belum ditentukan';
+            const eventTime = event.start_time && event.finish_time ? `${event.start_time} - ${event.finish_time}` : 'Waktu belum ditentukan';
             const eventLocation = event.location || 'Lokasi belum ditentukan';
 
             $('#shareModal').data('event-data', {

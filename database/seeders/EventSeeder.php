@@ -26,7 +26,7 @@ class EventSeeder extends Seeder
                 'location' => 'Wedding Venue Taman Prakerti Bhuana Indraprasta Ballroom',
                 'event_date' => '2025-11-12',
                 'start_time' => '17:00',
-                'finish_time' => '21:00 WITA',
+                'finish_time' => '21:00',
                 'google_map_link' => 'https://maps.app.goo.gl/gMvgt3TUPqrMAqRT7',
             ]
         );

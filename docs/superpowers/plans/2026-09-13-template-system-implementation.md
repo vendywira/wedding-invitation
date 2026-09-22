@@ -495,7 +495,7 @@ git commit -m "feat: seed default elegant-floral template"
                     <p>
                         <i class="far fa-map" aria-hidden="true"></i> {{ $event->location }}<br>
                         <i class="far fa-calendar-check" aria-hidden="true"></i> {{ (new \IntlDateFormatter('id_ID', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE, 'Asia/Jakarta', \IntlDateFormatter::GREGORIAN, 'EEEE, d MMMM y'))->format(new DateTime($event->event_date)) }}<br>
-                        <i class="far fa-clock" aria-hidden="true"></i> {{ $event->start_time }} WITA - {{ $event->finish_time }}<br>
+                        <i class="far fa-clock" aria-hidden="true"></i> {{ $event->start_time }} - {{ $event->finish_time }}<br>
                     </p>
                 </div>
                 <div data-aos="fade-up">

@@ -836,7 +836,7 @@
                         \IntlDateFormatter::FULL, \IntlDateFormatter::NONE, 'Asia/Jakarta',
                         \IntlDateFormatter::GREGORIAN, 'EEEE, d MMMM y'))->format(new DateTime($event->event_date))
                         }}<br>
-                        <i class="far fa-clock" aria-hidden="true"></i> {{ $event->start_time }} WITA - {{
+                        <i class="far fa-clock" aria-hidden="true"></i> {{ $event->start_time }} - {{
                         $event->finish_time }}<br>
                     </p>
                 </div>
